@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Build a Data Mesh with Knowledge Catalog: Challenge Lab</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul, .explain-box ol {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>🌐 Build a Data Mesh with Knowledge Catalog: Challenge Lab</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/681" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Build a Data Mesh with Knowledge Catalog</a> dan dokumentasi Google Cloud Dataplex (sekarang Knowledge Catalog).
+  </div>
+  <p>Silakan periksa parameter Region dan Email User 2 di modul Qwiklabs kamu, lalu masukkan nilainya pada form di bawah ini sebelum meng-copy perintah!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dinamis Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. Region Target (Task 1-5):</label>
+        <input type="text" id="inputRegion" value="us-west1" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Email User 2 (Task 3):</label>
+        <input type="text" id="inputUser2" value="student-01-4cddc7f8ab4b@qwiklabs.net" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>🏖️ Task 1: Create a Knowledge Catalog Lake with Two Zones & Two Assets</h2>
+    <p class="code-explain">Mengaktifkan API Dataplex/Data Catalog, membuat Dataplex Lake <code>Sales Lake</code>, menambahkan <code>Raw Customer Zone</code> & <code>Curated Customer Zone</code>, serta mengaitkan resource Storage Bucket dan BigQuery Dataset sebagai Asset.</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy Task 1</button>
+      <pre><code id="code1"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>Dataplex Lake (Sales Lake):</strong> Unit organisasi utama dalam arsitektur Data Mesh Google Cloud yang mengelompokkan data terdistribusi tanpa perlu memindahkan lokasi penyimpanan aslinya.</li>
+        <li><strong>Raw Zone vs Curated Zone:</strong> 
+          <ul>
+            <li><code>RAW</code>: Menyimpan data mentah yang belum diproses (dalam kasus ini: Cloud Storage Bucket <code>-customer-online-sessions</code>).</li>
+            <li><code>CURATED</code>: Menyimpan data yang sudah terstruktur, dibersihkan, dan siap dianalisis (BigQuery Dataset <code>customer_orders</code>).</li>
+          </ul>
+        </li>
+        <li><strong>Asset Attachment:</strong> Menghubungkan penyimpanan fisik ke dalam zona Dataplex agar metadata, skema, dan tata kelola (governance) dapat dikelola secara terpusat.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>🏷️ Task 2: Create an Aspect Type and Add an Aspect to a Zone</h2>
+    <p class="code-explain">Membuat Aspect Type bernama <code>Protected Customer Data Aspect</code> dengan dua field enum (<code>Raw Data Flag</code> & <code>Protected Contact Information Flag</code>) lalu memasangkannya pada <code>Raw Customer Zone</code>.</p>
+    
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2 (gcloud)</button>
+      <pre><code id="code2"></code></pre>
+    </div>
+
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah Manual via Cloud Console (Jika gcloud Mengalami Bug)</summary>
+      <ol>
+        <li>Buka <strong>Dataplex / Knowledge Catalog</strong> > <strong>Manage Metadata / Aspect types</strong> di Console.</li>
+        <li>Klik <strong>Create Aspect Type</strong>:
+          <ul>
+            <li>Display Name: <code>Protected Customer Data Aspect</code></li>
+            <li>ID: <code>protected-customer-data-aspect</code> | Region: sesuaikan dengan lab (misal <code>us-west1</code>).</li>
+          </ul>
+        </li>
+        <li>Tambahkan 2 Field bertipe <strong>Enumeration</strong>:
+          <ul>
+            <li>Field 1 ID: <code>raw_data_flag</code> | Display Name: <code>Raw Data Flag</code> | Values: <code>Yes</code>, <code>No</code></li>
+            <li>Field 2 ID: <code>protected_contact_information_flag</code> | Display Name: <code>Protected Contact Information Flag</code> | Values: <code>Yes</code>, <code>No</code></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Create</strong>. Selesai dibuat, buka menu <strong>Lakes</strong> > <strong>Sales Lake</strong> > buka zona <strong>Raw Customer Zone</strong>.</li>
+        <li>Masuk ke tab <strong>Aspects</strong> > Klik <strong>Add Aspect</strong> > Pilih <code>Protected Customer Data Aspect</code> > Set kedua flag ke nilai <code>Yes</code> > Klik <strong>Save</strong>.</li>
+      </ol>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>🔐 Task 3: Assign a Knowledge Catalog IAM Role to Another User</h2>
+    <p class="code-explain">Memberikan hak akses least-privilege (role <code>roles/dataplex.dataWriter</code>) kepada User 2 pada asset <code>Customer Engagements</code> agar dapat mengunggah file ke Cloud Storage terkait.</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy Task 3</button>
+      <pre><code id="code3"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
+      <ul>
+        <li><strong>Principle of Least Privilege:</strong> Memberikan otorisasi terbatas yang hanya diperlukan oleh pengguna untuk menyelesaikan pekerjaannya tanpa memberikan akses admin berlebih.</li>
+        <li><strong>roles/dataplex.dataWriter:</strong> Role khusus Dataplex yang mengizinkan pengguna menulis/mengunggah data pada spesifik asset terkelola tanpa mengakses manajemen konfigurasi lake secara menyeluruh.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="task-card">
+    <h2>📄 Task 4: Create and Upload a Data Quality Specification File</h2>
+    <p class="code-explain">Membuat file spesifikasi kualitas data YAML (<code>dq-customer-orders.yaml</code>) dengan aturan <code>NOT NULL</code> (threshold 100%) untuk kolom <code>user_id</code> dan <code>order_id</code> pada tabel <code>ordered_items</code>, lalu mengunggahnya ke bucket <code>-dq-config</code>.</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy Task 4</button>
+      <pre><code id="code4"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
+      <ul>
+        <li><strong>Data Quality Spec (YAML):</strong> Berisi pendefinisian aturan (*expectations*) kualitas data. Aturan <code>nonNullExpectation</code> memastikan tidak ada baris data kosong pada Primary Key/Foreign Key kunci.</li>
+        <li><strong>threshold: 1:</strong> Berarti tingkat toleransi kelengkapan data (*COMPLETENESS*) adalah 100%. Jika ada 1 saja baris NULL, pemeriksaan kualitas data dianggap gagal (*Failed*).</li>
+        <li><strong>postScanActions:</strong> Mengonfigurasi Dataplex agar secara otomatis mengekspor ringkasan hasil pemindaian kualitas data ke tabel BigQuery destination (<code>orders_dq_dataset.results</code>).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 5 -->
+  <div class="task-card">
+    <h2>📊 Task 5: Define and Run an Auto Data Quality Job</h2>
+    <p class="code-explain">Membuat resource pemindaian data (DataScan) kualitas data otomatis <code>customer-orders-data-quality-job</code> pada BigQuery table <code>customer_orders.ordered_items</code> menggunakan file YAML spesifikasi dari Task 4, kemudian langsung mengeksekusinya.</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code5', this)">📋 Copy Task 5</button>
+      <pre><code id="code5"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 5)</summary>
+      <ul>
+        <li><strong>Dataplex DataScan:</strong> Fitur serverless milik Google Cloud Dataplex yang menjalankan mesin pemindaian kualitas data dan profiling secara otomatis tanpa perlu mengelola infrastruktur Compute Engine/Dataproc secara manual.</li>
+        <li><strong>Execution Delay:</strong> Proses pemindaian Data Quality membutuhkan waktu 2 - 5 menit. Setelah menjalankan perintah, kamu bisa memantau statusnya di Cloud Console menu <strong>Dataplex</strong> > <strong>Data quality</strong>.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: Knowledge Catalog Data Mesh Lab">
+        
+        <!-- Anti-spam Honeypot Checkbox -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Create a new aspect type named..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
+
+  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037;">
+    ⚠️ <strong>Catatan Penting:</strong><br>
+    Saat menjalankan Task 5, pemindaian kualitas data memerlukan beberapa menit untuk selesai. Pastikan tombol <i>Check my progress</i> ditekan setelah status job di Console berubah menjadi <strong>Succeeded</strong>.
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const region = document.getElementById('inputRegion').value.trim() || 'us-west1';
+      const user2 = document.getElementById('inputUser2').value.trim() || 'student-01-4cddc7f8ab4b@qwiklabs.net';
+
+      // --- TASK 1 ---
+      document.getElementById('code1').innerText = 
+`# 1. Aktifkan API GCP yang dibutuhkan
+gcloud services enable dataplex.googleapis.com datacatalog.googleapis.com dataproc.googleapis.com
+
+# 2. Dapatkan Project ID otomatis
+export PROJECT_ID=$(gcloud config get-value project)
+export REGION=${region}
+
+# 3. Buat Dataplex Lake
+gcloud dataplex lakes create sales-lake \\
+  --location=$REGION \\
+  --display-name="Sales Lake"
+
+# 4. Buat Raw Customer Zone
+gcloud dataplex zones create raw-customer-zone \\
+  --lake=sales-lake \\
+  --location=$REGION \\
+  --display-name="Raw Customer Zone" \\
+  --type=RAW \\
+  --resource-location-type=SINGLE_REGION \\
+  --discovery-enabled \\
+  --discovery-schedule="0 * * * *"
+
+# 5. Buat Curated Customer Zone
+gcloud dataplex zones create curated-customer-zone \\
+  --lake=sales-lake \\
+  --location=$REGION \\
+  --display-name="Curated Customer Zone" \\
+  --type=CURATED \\
+  --resource-location-type=SINGLE_REGION \\
+  --discovery-enabled \\
+  --discovery-schedule="0 * * * *"
+
+# 6. Kaitkan Assets ke masing-masing Zona
+gcloud dataplex assets create customer-engagements \\
+  --lake=sales-lake \\
+  --zone=raw-customer-zone \\
+  --location=$REGION \\
+  --display-name="Customer Engagements" \\
+  --resource-type=STORAGE_BUCKET \\
+  --resource-name=projects/$PROJECT_ID/buckets/$PROJECT_ID-customer-online-sessions \\
+  --discovery-enabled
+
+gcloud dataplex assets create customer-orders \\
+  --lake=sales-lake \\
+  --zone=curated-customer-zone \\
+  --location=$REGION \\
+  --display-name="Customer Orders" \\
+  --resource-type=BIGQUERY_DATASET \\
+  --resource-name=projects/$PROJECT_ID/datasets/customer_orders \\
+  --discovery-enabled`;
+
+      // --- TASK 2 ---
+      document.getElementById('code2').innerText = 
+`# Dapatkan Project ID dan Region
+export PROJECT_ID=$(gcloud config get-value project)
+export REGION=${region}
+
+# Buat Aspect Type bernama Protected Customer Data Aspect
+gcloud dataplex aspect-types create protected-customer-data-aspect \\
+  --location=$REGION \\
+  --display-name="Protected Customer Data Aspect" \\
+  --metadata-template='{
+    "name": "protected-customer-data-aspect",
+    "fields": [
+      {
+        "id": "raw_data_flag",
+        "displayName": "Raw Data Flag",
+        "type": {
+          "primitiveType": "STRING"
+        }
+      },
+      {
+        "id": "protected_contact_information_flag",
+        "displayName": "Protected Contact Information Flag",
+        "type": {
+          "primitiveType": "STRING"
+        }
+      }
+    ]
+  }' 2>/dev/null || echo "Jika gcloud aspect-types belum didukung di versi CLI ini, silakan ikuti petunjuk manual Console di bawah."`;
+
+      // --- TASK 3 ---
+      document.getElementById('code3').innerText = 
+`export PROJECT_ID=$(gcloud config get-value project)
+export REGION=${region}
+export USER_2="${user2}"
+
+# Berikan hak akses Data Writer ke User 2 pada asset Customer Engagements
+gcloud dataplex assets add-iam-policy-binding customer-engagements \\
+  --lake=sales-lake \\
+  --zone=raw-customer-zone \\
+  --location=$REGION \\
+  --member=user:$USER_2 \\
+  --role=roles/dataplex.dataWriter`;
+
+      // --- TASK 4 ---
+      document.getElementById('code4').innerText = 
+`export PROJECT_ID=$(gcloud config get-value project)
+
+# 1. Buat file konfigurasi YAML Data Quality
+cat > dq-customer-orders.yaml <<EOF
+rules:
+- nonNullExpectation: {}
+  column: user_id
+  dimension: COMPLETENESS
+  threshold: 1
+
+- nonNullExpectation: {}
+  column: order_id
+  dimension: COMPLETENESS
+  threshold: 1
+
+postScanActions:
+  bigqueryExport:
+    resultsTable: projects/$PROJECT_ID/datasets/orders_dq_dataset/tables/results
+EOF
+
+# 2. Upload file spesifikasi ke Cloud Storage Bucket
+gsutil cp dq-customer-orders.yaml gs://$PROJECT_ID-dq-config/`;
+
+      // --- TASK 5 ---
+      document.getElementById('code5').innerText = 
+`export PROJECT_ID=$(gcloud config get-value project)
+export REGION=${region}
+
+# 1. Buat Data Quality Scan Job
+gcloud dataplex datascans create data-quality customer-orders-data-quality-job \\
+  --project=$PROJECT_ID \\
+  --location=$REGION \\
+  --data-source-resource="//bigquery.googleapis.com/projects/$PROJECT_ID/datasets/customer_orders/tables/ordered_items" \\
+  --data-quality-spec-file="gs://$PROJECT_ID-dq-config/dq-customer-orders.yaml"
+
+# 2. Eksekusi Data Quality Scan Job segera
+gcloud dataplex datascans run customer-orders-data-quality-job \\
+  --location=$REGION`;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    // Jalankan update awal saat halaman dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
