@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: App Building with AppSheet</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul, .explain-box ol {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+
+    .video-responsive {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: 12px 0 6px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .video-responsive iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>📱 App Building with AppSheet</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/635" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">App Building with AppSheet</a>.
+  </div>
+  <p>Silakan masukkan nama aplikasi dan email akun student kamu pada form di bawah ini sebelum mulai mengerjakan!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dinamis Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. Nama Aplikasi AppSheet (Task 1):</label>
+        <input type="text" id="inputAppName" placeholder="Company Details" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Email Akun Student (Qwiklabs):</label>
+        <input type="text" id="inputUserEmail" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Nama Aplikasi</strong> dan/atau <strong>Email Akun Student</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
+  </div>
+
+  <!-- COMMON PROBLEMS WARNING CALLOUT -->
+  <div class="callout" style="background: #fff5f5; border-left: 5px solid #e53e3e; color: #742a2a; padding: 16px; border-radius: 6px; margin-bottom: 24px;">
+    <h3 style="color: #c53030; margin-top: 0; margin-bottom: 10px; font-size: 16px;">🚨 COMMON PROBLEMS (PENYEBAB UTAMA PROGRESS GAGAL 100%):</h3>
+    <ol style="margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.6;">
+      <li><strong>Terjemahan Bahasa Otomatis (Website vs Situs):</strong> Jika browser/Google Sheets kamu memakai Bahasa Indonesia, nama kolom <code>Website</code> bisa otomatis terjemahkan menjadi <code>Situs</code>. Hal ini membuat Qwiklabs GAGAL mendeteksi progress. <strong>Pastikan kolom di Sheets dan AppSheet tetap bernama <code>Website</code> (Bahasa Inggris).</strong></li>
+      <li><strong>Nama Google Sheets Saat Copy:</strong> Saat menyalin spreadsheet ke Drive kamu, pastikan nama filenya diubah menjadi <strong style="color: #0366d6;"><code>companies</code></strong>. Jika masih bernama <code>Copy of companies</code>, sistem pengecekan progress tidak akan bisa membaca perubahannya!</li>
+      <li><strong>Input Form (Gunakan Copy-Paste & Hindari Autocomplete Alamat):</strong> Selalu <strong>copy-paste</strong> teks data yang diberikan agar tidak ada typo atau spasi berlebih. Saat mengetik <em>Business Address</em>, jika muncul rekomendasi dropdown yang menambahkan kata <em>"Amerika Serikat"</em> / <em>"United States"</em> di belakangnya, <strong>JANGAN DIKLIK</strong>. Cukup paste alamat asli lalu simpan!</li>
+    </ol>
+  </div>
+
+  <!-- VIDEO WALKTHROUGH EMBED -->
+  <div class="task-card">
+    <h2>📺 Video Panduan Visual (Walkthrough)</h2>
+    <p class="code-explain">Tonton video panduan pengerjaan interaktif di bawah ini untuk melihat gambaran visual langkah demi langkah:</p>
+    
+    <div class="video-responsive">
+      <iframe src="https://www.youtube.com/embed/Rr8wObrZePk" title="App Building with AppSheet Walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    
+    <div style="text-align: center; margin-top: 8px;">
+      <a href="https://youtu.be/Rr8wObrZePk" target="_blank" style="font-size: 13px; color: #0366d6; font-weight: bold; text-decoration: underline;">↗️ Buka Video Langsung di Aplikasi YouTube (Jika Player Error)</a>
+      <p style="font-size: 12.5px; color: #555; margin-top: 6px; margin-bottom: 0;">🙏 Terima kasih banyak kepada <strong>Kak Dyna Akmila</strong> atas video walkthrough-nya!</p>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>📱 Task 1: Create a new AppSheet app</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara langsung di AppSheet Console.</p>
+    
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka platform <strong>AppSheet Console</strong> dan pastikan login menggunakan email: <strong style="color: #0366d6;"><span id="task1UserText">&lt;EMAIL_STUDENT&gt;</span></strong>.</li>
+        <li>Klik tombol <strong>Create</strong> > pilih <strong>App</strong> > pilih <strong>Start with existing data</strong>.</li>
+        <li>Pada isian <strong>App name</strong>, ketik persis: <strong style="color: #0366d6;"><span id="task1AppNameText">&lt;NAMA_APLIKASI&gt;</span></strong>.</li>
+        <li>Pilih opsi sumber data <strong>Google Sheets</strong>, lalu cari dan pilih file spreadsheet bernama <strong style="color: #0366d6;"><code>companies</code></strong>.
+          <br><em style="color: #c53030; font-size: 13px;">⚠️ Pastikan nama filenya 'companies', BUKAN 'Copy of companies'!</em>
+        </li>
+        <li>Tunggu hingga AppSheet selesai memuat dan membuat draf aplikasi baru kamu.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>Start with existing data:</strong> Memungkinkan AppSheet menganalisis header kolom pada Google Sheets secara otomatis untuk membentuk skema data dan tampilan dasar (*default views*).</li>
+        <li><strong>Konsistensi Nama Aplikasi:</strong> Penamaan aplikasi harus sesuai dengan instruksi soal Qwiklabs (<code>Company Details</code>) agar sistem verifikasi dapat mendeteksi resource aplikasi kamu.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>➕ Task 2: Add a new company</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Gunakan panel Emulator Preview di sebelah kanan editor AppSheet <span id="task2AppNameText">&lt;NAMA_APLIKASI&gt;</span>.</p>
+    
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Pada panel preview aplikasi di sebelah kanan editor, klik ikon tambah (<strong>➕</strong>) untuk membuka formulir penambahan data.</li>
+        <li>Isi atribut formulir menggunakan metode <strong>Copy-Paste</strong> dengan nilai berikut:
+          <ul>
+            <li><strong>ID:</strong> <code>11</code></li>
+            <li><strong>Company Name:</strong> <code>Cymbal Austin</code></li>
+            <li><strong>Business Address:</strong> <code>500 W 2nd St, Austin, TX 78701</code></li>
+          </ul>
+          <em style="color: #c53030; font-size: 13px;">⚠️ Jangan klik opsi autocomplete yang menambahkan "Amerika Serikat" di belakang alamat!</em>
+        </li>
+        <li>Biarkan kolom atribut lainnya kosong (blank).</li>
+        <li>Klik tombol <strong>Save</strong> pada formulir preview.</li>
+      </ol>
+    </div>
+
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Ringkasan Task 2</button>
+      <pre><code id="code2"></code></pre>
+    </div>
+
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
+      <ul>
+        <li><strong>Preview Emulator:</strong> Melakukan pengujian langsung terhadap formulir input data sebelum aplikasi dipublikasikan ke pengguna umum.</li>
+        <li><strong>Atribut ID Unik:</strong> Setiap baris data dalam AppSheet membutuhkan pengenal unik (Key) agar record baru tidak tertimpa.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>🔄 Task 3: Update and regenerate your app's data structure</h2>
+    <p class="code-explain">Menambahkan kolom baru di Google Sheets dan memperbarui struktur kolom di editor AppSheet.</p>
+    
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka file Google Sheets <code>companies</code> di Google Drive kamu.</li>
+        <li>Tambahkan header kolom baru bernama <strong style="color: #0366d6;"><code>Website</code></strong> pada <strong>Kolom G</strong> (kolom ke-7).
+          <br><em style="color: #c53030; font-size: 13px;">⚠️ Pastikan nama kolom ber-ejaan Bahasa Inggris 'Website', BUKAN 'Situs'!</em>
+        </li>
+        <li>Kembali ke Editor AppSheet untuk aplikasi <strong style="color: #0366d6;"><span id="task3AppNameText">&lt;NAMA_APLIKASI&gt;</span></strong>.</li>
+        <li>Buka tab menu <strong>Data</strong> di bilah navigasi kiri > pilih tabel <code>companies</code>.</li>
+        <li>Klik tombol <strong>Regenerate Structure</strong> (atau ikon reload skema di bagian atas tabel).</li>
+        <li>Cari kolom <code>Website</code> yang baru muncul di daftar kolom, lalu ubah <strong>Type</strong>-nya menjadi <code>Url</code>.</li>
+        <li>Klik tombol <strong>Save</strong> di pojok kanan atas editor.</li>
+      </ol>
+    </div>
+
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy Ringkasan Task 3</button>
+      <pre><code id="code3"></code></pre>
+    </div>
+
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
+      <ul>
+        <li><strong>Regenerate Structure:</strong> Memaksa AppSheet membaca ulang header kolom dari tabel Google Sheets jika ada penambahan atau perubahan skema data.</li>
+        <li><strong>Tipe Data Url:</strong> Mengubah tipe data menjadi `Url` secara otomatis mengaktifkan tautan interaktif yang dapat diklik langsung oleh pengguna aplikasi.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="task-card">
+    <h2>🚀 Task 4: Deploy and test your app</h2>
+    <p class="code-explain">Memublikasikan aplikasi dan menguji penginputan data pada browser aplikasi yang telah di-deploy.</p>
+    
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Pada Editor AppSheet aplikasi <strong style="color: #0366d6;"><span id="task4AppNameText">&lt;NAMA_APLIKASI&gt;</span></strong>, buka menu <strong>Manage</strong> > <strong>Deploy State</strong> (atau klik ikon peringatan status di pojok kiri atas).</li>
+        <li>Klik tombol <strong>Run deployment check</strong>.</li>
+        <li>Setelah pemeriksaan selesai tanpa error kritikal, klik tombol <strong>Move app to deployed state</strong>.</li>
+        <li>Buka aplikasi yang sudah di-deploy melalui link browser atau mode preview penuh.</li>
+        <li>Klik ikon <strong>➕</strong> untuk menambahkan data perusahaan baru dengan rincian (gunakan Copy-Paste):
+          <ul>
+            <li><strong>ID:</strong> <code>12</code></li>
+            <li><strong>Company Name:</strong> <code>Cymbal Houston</code></li>
+            <li><strong>Business Address:</strong> <code>3663 Washington Ave, Houston, TX 77007</code></li>
+            <li><strong>Website:</strong> <code>cymbal-houston.com</code></li>
+          </ul>
+          <em style="color: #c53030; font-size: 13px;">⚠️ Jangan klik saran autocomplete alamat yang menambahkan "Amerika Serikat"!</em>
+        </li>
+        <li>Biarkan kolom lainnya kosong, lalu klik <strong>Save</strong>.</li>
+      </ol>
+    </div>
+
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy Ringkasan Task 4</button>
+      <pre><code id="code4"></code></pre>
+    </div>
+
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
+      <ul>
+        <li><strong>Deployed State:</strong> Mengubah status dari *In Development* menjadi *Deployed* untuk memverifikasi bahwa aplikasi memenuhi standar publikasi AppSheet.</li>
+        <li><strong>Testing Deployed App:</strong> Pengujian akhir pada lingkungan produksi langsung untuk memastikan seluruh fitur input data dan tipe data baru (`Url`) berjalan dengan sempurna.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: App Building with AppSheet">
+        
+        <!-- Anti-spam Honeypot Checkbox -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Add a new company with..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
+
+  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037;">
+    ⚠️ <strong>Catatan Penting:</strong><br>
+    Saat mengerjakan lab berbasis AppSheet, pastikan setiap perubahan telah disimpan dengan menekan tombol <strong>Save</strong> di pojok kanan atas editor. Biarkan emulator aplikasi memperbarui tampilan sebelum menekan tombol <i>Check my progress</i> di Qwiklabs.
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const appNameInput = document.getElementById('inputAppName').value.trim();
+      const userEmailInput = document.getElementById('inputUserEmail').value.trim();
+
+      // Tampilkan warning jika salah satu parameter kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!appNameInput || !userEmailInput) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const appName = appNameInput || 'Company Details';
+      const userEmail = userEmailInput || '<EMAIL_STUDENT>';
+
+      // Update Teks Span Dinamis
+      document.getElementById('task1UserText').innerText = userEmail;
+      document.getElementById('task1AppNameText').innerText = appName;
+      document.getElementById('task2AppNameText').innerText = appName;
+      document.getElementById('task3AppNameText').innerText = appName;
+      document.getElementById('task4AppNameText').innerText = appName;
+
+      // Update Copyable Text Task 2
+      document.getElementById('code2').innerText = 
+`# DATA TASK 2
+App Name         : ${appName}
+ID               : 11
+Company Name     : Cymbal Austin
+Business Address : 500 W 2nd St, Austin, TX 78701`;
+
+      // Update Copyable Text Task 3
+      document.getElementById('code3').innerText = 
+`# DATA TASK 3
+App Name    : ${appName}
+New Column  : Website (Google Sheet Column G)
+Column Type : Url
+Action      : Regenerate Structure & Save`;
+
+      // Update Copyable Text Task 4
+      document.getElementById('code4').innerText = 
+`# DATA TASK 4
+App Name         : ${appName}
+Deployment Status: Move app to deployed state
+Test Record:
+  - ID               : 12
+  - Company Name     : Cymbal Houston
+  - Business Address : 3663 Washington Ave, Houston, TX 77007
+  - Website          : cymbal-houston.com`;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    // Jalankan update awal saat halaman dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
