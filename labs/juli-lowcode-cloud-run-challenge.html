@@ -32,6 +32,9 @@
   <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
 
   <h1>🚀 Build Serverless Applications with Cloud Run Functions: Challenge Lab</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi kode dan instruksi resmi lab ini diambil dari <a href="https://www.skills.google/games/7314/labs/45054" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Google Cloud Skills Boost (Lab 45054)</a>.
+  </div>
   <p>Silakan isi parameter lab sesuai dengan instruksi yang kamu dapatkan di halaman Google Skills. Seluruh skrip di bawah akan otomatis menyesuaikan nilainya!</p>
 
   <!-- FORM INPUT INTERAKTIF -->
@@ -69,18 +72,46 @@
     <pre><code id="code2"></code></pre>
   </div>
 
-  <h2>⚡ Task 2: Storage Function Deployment</h2>
-  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project, menyusun file source code <code>index.js</code> & <code>package.json</code>, lalu men-deploy Event-Driven Cloud Function Gen 2 yang terhubung ke Cloud Storage bucket.</p>
+  <h2>⚡ Task 2: Storage Function</h2>
+  
+  <h3>A. Tulis Source Code</h3>
+  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project <code>~/hello-storage</code> dan menyusun file source code <code>index.js</code> & <code>package.json</code>.</p>
   <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy</button>
-    <pre><code id="code3"></code></pre>
+    <button class="copy-btn" onclick="copyCode('code3a', this)">📋 Copy</button>
+    <pre><code id="code3a"></code></pre>
   </div>
 
-  <h2>🌐 Task 3: HTTP Function Deployment</h2>
-  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project baru, menyusun kode aplikasi HTTP, dan men-deploy Cloud Function Gen 2 bertipe HTTP trigger dengan konfigurasi penanganan instance secara otomatis.</p>
+  <h3>B. Deploy Cloud Function</h3>
+  <p class="code-explain">Perintah ini berfungsi untuk men-deploy Event-Driven Cloud Function Gen 2 yang terhubung ke Cloud Storage bucket yang telah dibuat sebelumnya.</p>
   <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy</button>
-    <pre><code id="code4"></code></pre>
+    <button class="copy-btn" onclick="copyCode('code3b', this)">📋 Copy</button>
+    <pre><code id="code3b"></code></pre>
+  </div>
+
+  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037;">
+    ⚠️ <strong>PENTING (Mengatasi Error 403 / Permission Denied):</strong><br>
+    Jika kamu mendapatkan error seperti:<br>
+    <code style="background: #ffe082; padding: 2px 6px; border-radius: 4px; font-size: 12px; display: block; margin: 6px 0; overflow-x: auto;">
+      ERROR: (gcloud.functions.deploy) ResponseError: status=[403], ... Permission "storage.buckets.get" denied on "Bucket ... could not be validated ...
+    </code>
+    <strong>Alasan:</strong> Error ini terjadi karena kebijakan akses IAM (IAM Policy Binding) yang kita daftarkan di Langkah 1 atau pembuatan Storage Bucket baru membutuhkan waktu sinkronisasi (eventual consistency/propagation delay) agar dapat dikenali sepenuhnya oleh sistem Eventarc Google Cloud.<br>
+    <strong>Solusi:</strong> Jangan panik! Cukup <strong>tunggu sekitar 1 - 2 menit</strong> agar permission menyebar sempurna, lalu jalankan kembali perintah <strong>Deploy Cloud Function (Bagian B)</strong> di atas.
+  </div>
+
+  <h2>🌐 Task 3: HTTP Function</h2>
+  
+  <h3>A. Tulis Source Code</h3>
+  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project baru <code>~/hello-http</code> dan menyusun file source code aplikasi HTTP <code>index.js</code> & <code>package.json</code>.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code4a', this)">📋 Copy</button>
+    <pre><code id="code4a"></code></pre>
+  </div>
+
+  <h3>B. Deploy Cloud Function</h3>
+  <p class="code-explain">Perintah ini berfungsi untuk men-deploy Cloud Function Gen 2 bertipe HTTP trigger dengan konfigurasi penanganan instance secara otomatis.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code4b', this)">📋 Copy</button>
+    <pre><code id="code4b"></code></pre>
   </div>
 
   <script>
@@ -104,8 +135,8 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GCS
 `PROJECT_ID=$(gcloud config get-value project)
 gsutil mb -l ${region} gs://$PROJECT_ID`;
 
-      // Code 3: Task 2 Storage Function
-      document.getElementById('code3').innerText = 
+      // Code 3a: Task 2 Storage Function - Source Code
+      document.getElementById('code3a').innerText = 
 `mkdir -p ~/hello-storage && cd ~/hello-storage
 
 cat > index.js <<EOF
@@ -125,8 +156,11 @@ cat > package.json <<EOF
     "@google-cloud/functions-framework": "^2.0.0"
   }
 }
-EOF
+EOF`;
 
+      // Code 3b: Task 2 Storage Function - Deploy
+      document.getElementById('code3b').innerText = 
+`cd ~/hello-storage
 PROJECT_ID=$(gcloud config get-value project)
 gcloud functions deploy ${csName} \\
   --gen2 \\
@@ -139,8 +173,8 @@ gcloud functions deploy ${csName} \\
   --max-instances 2 \\
   --quiet`;
 
-      // Code 4: Task 3 HTTP Function
-      document.getElementById('code4').innerText = 
+      // Code 4a: Task 3 HTTP Function - Source Code
+      document.getElementById('code4a').innerText = 
 `mkdir -p ~/hello-http && cd ~/hello-http
 
 cat > index.js <<EOF
@@ -159,8 +193,11 @@ cat > package.json <<EOF
     "@google-cloud/functions-framework": "^2.0.0"
   }
 }
-EOF
+EOF`;
 
+      // Code 4b: Task 3 HTTP Function - Deploy
+      document.getElementById('code4b').innerText = 
+`cd ~/hello-http
 gcloud functions deploy ${httpName} \\
   --gen2 \\
   --runtime nodejs24 \\
