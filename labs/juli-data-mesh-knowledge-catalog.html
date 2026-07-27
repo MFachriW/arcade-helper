@@ -77,11 +77,11 @@
     <div class="config-grid">
       <div class="form-group">
         <label>1. Region Target (Task 1-5):</label>
-        <input type="text" id="inputRegion" value="us-west1" oninput="updateCommands()">
+        <input type="text" id="inputRegion" placeholder="Misal: us-west1" oninput="updateCommands()">
       </div>
       <div class="form-group">
         <label>2. Email User 2 (Task 3):</label>
-        <input type="text" id="inputUser2" value="student-01-4cddc7f8ab4b@qwiklabs.net" oninput="updateCommands()">
+        <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
       </div>
     </div>
   </div>
@@ -239,8 +239,8 @@
 
   <script>
     function updateCommands() {
-      const region = document.getElementById('inputRegion').value.trim() || 'us-west1';
-      const user2 = document.getElementById('inputUser2').value.trim() || 'student-01-4cddc7f8ab4b@qwiklabs.net';
+      const region = document.getElementById('inputRegion').value.trim() || '<REGION>';
+      const user2 = document.getElementById('inputUser2').value.trim() || '<EMAIL_USER_2>';
 
       // --- TASK 1 ---
       document.getElementById('code1').innerText = 
