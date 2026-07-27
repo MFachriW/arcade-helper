@@ -86,6 +86,11 @@
     </div>
   </div>
 
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Region Target</strong> dan/atau <strong>Email User 2</strong>. Harap lengkapi form di atas terlebih dahulu agar perintah yang di-copy di bawah tidak salah!
+  </div>
+
   <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
 
   <!-- TASK 1 -->
@@ -239,8 +244,19 @@
 
   <script>
     function updateCommands() {
-      const region = document.getElementById('inputRegion').value.trim() || '<REGION>';
-      const user2 = document.getElementById('inputUser2').value.trim() || '<EMAIL_USER_2>';
+      const regionVal = document.getElementById('inputRegion').value.trim();
+      const user2Val = document.getElementById('inputUser2').value.trim();
+
+      // Tampilkan warning jika salah satu parameter kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!regionVal || !user2Val) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const region = regionVal || '<REGION>';
+      const user2 = user2Val || '<EMAIL_USER_2>';
 
       // --- TASK 1 ---
       document.getElementById('code1').innerText = 

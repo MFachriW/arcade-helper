@@ -81,13 +81,18 @@
     <div class="config-grid">
       <div class="form-group">
         <label>1. Dataset Target 1 (Task 1):</label>
-        <input type="text" id="inputDataset1" value="covid" oninput="updateCommands()">
+        <input type="text" id="inputDataset1" value="covid" placeholder="Misal: covid" oninput="updateCommands()">
       </div>
       <div class="form-group">
         <label>2. Dataset Target 2 (Task 2-4):</label>
-        <input type="text" id="inputDataset2" value="covid_data" oninput="updateCommands()">
+        <input type="text" id="inputDataset2" value="covid_data" placeholder="Misal: covid_data" oninput="updateCommands()">
       </div>
     </div>
+  </div>
+
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi nama <strong>Dataset Target</strong>. Harap lengkapi form di atas terlebih dahulu agar perintah yang di-copy di bawah tidak salah!
   </div>
 
   <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
@@ -218,8 +223,19 @@
 
   <script>
     function updateCommands() {
-      const ds1 = document.getElementById('inputDataset1').value.trim() || 'covid';
-      const ds2 = document.getElementById('inputDataset2').value.trim() || 'covid_data';
+      const ds1Val = document.getElementById('inputDataset1').value.trim();
+      const ds2Val = document.getElementById('inputDataset2').value.trim();
+
+      // Tampilkan warning jika salah satu dataset kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!ds1Val || !ds2Val) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const ds1 = ds1Val || '<DATASET_1>';
+      const ds2 = ds2Val || '<DATASET_2>';
 
       // --- TASK 1 ---
       document.getElementById('code1').innerText = 
