@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Build a Data Warehouse with BigQuery: Challenge Lab</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .task-selector { background: #eef6ff; border: 1px solid #b6d4fe; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
+    .task-selector label { font-weight: bold; font-size: 13px; color: #0366d6; display: block; margin-bottom: 4px; }
+    
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 18px; margin: 28px 0; }
+
+    /* Gaya Baru untuk Section Penjelasan */
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>📊 Build a Data Warehouse with BigQuery: Challenge Lab</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/624" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Build a Data Warehouse with BigQuery</a> dan dokumentasi Google Cloud.
+  </div>
+  <p>Silakan sesuaikan variabel nama dataset di bawah ini, lalu pilih variasi perintah sesuai dengan instruksi yang muncul pada layar Qwiklabs kamu di setiap Task!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dataset Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. Dataset Target 1 (Task 1):</label>
+        <input type="text" id="inputDataset1" value="covid" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Dataset Target 2 (Task 2-4):</label>
+        <input type="text" id="inputDataset2" value="covid_data" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>📦 Task 1: Create a table partitioned by date</h2>
+    <p class="code-explain">Membuat dataset lokal serta menduplikasi Oxford Policy Tracker public data ke dalam tabel yang terpartisi berdasarkan tanggal.</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy Task 1</button>
+      <pre><code id="code1"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>bq mk --dataset:</strong> Membuat dataset kosong di project BigQuery Anda untuk menampung tabel-tabel lokal.</li>
+        <li><strong>PARTITION BY date:</strong> Membagi penyimpanan data secara fisik berdasarkan hari/tanggal. Saat Anda melakukan query dengan filter rentang tanggal tertentu, BigQuery hanya memindai partisi tanggal tersebut sehingga menghemat penggunaan kuota scan data.</li>
+        <li><strong>partition_expiration_days = 2175:</strong> Membatasi masa kedaluwarsa data partisi hingga 2175 hari. Setelah melampaui masa tersebut, data lama akan otomatis dihapus secara berkala demi efisiensi biaya.</li>
+        <li><strong>alpha_3_code NOT IN ('GBR', 'BRA', 'CAN', 'USA'):</strong> Memfilter dan mengabaikan record dari empat negara tersebut dari tabel target Anda.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>🗺️ Task 2</h2>
+    <div class="task-selector">
+      <label>📌 Pilih Instruksi Task 2 yang muncul di layar Qwiklabs kamu:</label>
+      <select id="selTask2" onchange="updateCommands()">
+        <option value="A">Varian A: Create a new table 'country_area_data'</option>
+        <option value="B">Varian B: Alter Table 'global_mobility_tracker_data' (Add Columns/STRUCT)</option>
+      </select>
+    </div>
+    <p class="code-explain" id="descTask2"></p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2</button>
+      <pre><code id="code2"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
+      <div id="explainTask2"></div>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>🚶 Task 3</h2>
+    <div class="task-selector">
+      <label>📌 Pilih Instruksi Task 3 yang muncul di layar Qwiklabs kamu:</label>
+      <select id="selTask3" onchange="updateCommands()">
+        <option value="A">Varian A: Create a new table 'mobility_data'</option>
+        <option value="B">Varian B: Populate Population Data (ECDC Data)</option>
+      </select>
+    </div>
+    <p class="code-explain" id="descTask3"></p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy Task 3</button>
+      <pre><code id="code3"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
+      <div id="explainTask3"></div>
+    </details>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="task-card">
+    <h2>🗑️ Task 4</h2>
+    <div class="task-selector">
+      <label>📌 Pilih Instruksi Task 4 yang muncul di layar Qwiklabs kamu:</label>
+      <select id="selTask4" onchange="updateCommands()">
+        <option value="A">Varian A: Delete Null population and country area data</option>
+        <option value="B">Varian B: Populate/Update Country Area & Mobility Data</option>
+      </select>
+    </div>
+    <p class="code-explain" id="descTask4"></p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy Task 4</button>
+      <pre><code id="code4"></code></pre>
+    </div>
+    <details class="explain-box" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
+      <div id="explainTask4"></div>
+    </details>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU -->
+  <div class="report-card">
+    <h3 style="color: #c53030; margin-top: 0;">❓ Variasi soalmu tidak ada di daftar atas?</h3>
+    <p style="font-size: 14px; color: #4a5568;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+    
+    <form action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+      <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: BigQuery Challenge Lab">
+      
+      <div class="form-group">
+        <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+        <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+      </div>
+      
+      <div class="form-group">
+        <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+        <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Create a new table 'xyz' with..." required></textarea>
+      </div>
+      
+      <button type="submit" class="submit-btn">🚀 Kirimkan Soal</button>
+    </form>
+  </div>
+
+  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d40 brown;">
+    ⚠️ <strong>Catatan Penting:</strong><br>
+    Jika pesan error mengenai <i>resource provisioning</i> muncul saat mengeksekusi query di BigQuery, tunggu beberapa saat hingga Google Cloud selesai menyiapkan resource publik, lalu jalankan kembali perintah query tersebut.
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const ds1 = document.getElementById('inputDataset1').value.trim() || 'covid';
+      const ds2 = document.getElementById('inputDataset2').value.trim() || 'covid_data';
+
+      // --- TASK 1 ---
+      document.getElementById('code1').innerText = 
+`# 1. Membuat dataset target baru lokal
+bq mk --dataset $DEVSHELL_PROJECT_ID:${ds1}
+
+# 2. Query BigQuery untuk menyalin & mempartisi tabel
+bq query --use_legacy_sql=false \\
+"
+CREATE OR REPLACE TABLE ${ds1}.oxford_policy_tracker
+PARTITION BY date
+OPTIONS(
+  partition_expiration_days=2175,
+  description='oxford_policy_tracker table in the COVID 19 Government Response public dataset with expiry time set to 2175 days.'
+) AS
+SELECT
+  *
+FROM
+  \\\`bigquery-public-data.covid19_govt_response.oxford_policy_tracker\\\`
+WHERE
+  -- Memfilter record agar tidak memasukkan negara berikut
+  alpha_3_code NOT IN ('GBR', 'BRA', 'CAN', 'USA')
+"`;
+
+      // --- TASK 2 ---
+      const t2Val = document.getElementById('selTask2').value;
+      if (t2Val === 'A') {
+        document.getElementById('descTask2').innerText = "Membuat tabel 'country_area_data' dari data Census Bureau International.";
+        document.getElementById('code2').innerText = 
+`# Menduplikasi data nama dan luas area negara dari Census Bureau public dataset ke dataset lokal Anda
+bq query --use_legacy_sql=false \\
+"
+CREATE OR REPLACE TABLE ${ds2}.country_area_data AS
+SELECT *
+FROM \\\`bigquery-public-data.census_bureau_international.country_names_area\\\`
+"`;
+        document.getElementById('explainTask2').innerHTML = 
+`<ul>
+  <li><strong>CREATE OR REPLACE TABLE ... AS SELECT:</strong> Query BigQuery yang membuat tabel lokal bernama <code>country_area_data</code> di bawah dataset target, lalu mengisi datanya langsung dengan hasil duplikasi dari public dataset Census Bureau.</li>
+  <li><strong>census_bureau_international.country_names_area:</strong> Dataset publik global Google Cloud yang memuat informasi statistik demografi serta batas wilayah/luas area geografis negara di dunia.</li>
+</ul>`;
+      } else {
+        document.getElementById('descTask2').innerText = "Menambahkan kolom population, country_area, dan mobility STRUCT pada tabel global_mobility_tracker_data.";
+        document.getElementById('code2').innerText = 
+`# Memodifikasi skema tabel yang sudah ada untuk menambahkan kolom baru serta tipe objek bersarang (STRUCT)
+bq query --use_legacy_sql=false \\
+"
+ALTER TABLE ${ds2}.global_mobility_tracker_data
+-- Menambahkan kolom populasi dengan tipe bilangan bulat 64-bit
+ADD COLUMN population INT64,
+-- Menambahkan kolom luas wilayah negara dengan tipe angka desimal
+ADD COLUMN country_area FLOAT64,
+-- Menambahkan kolom record terstruktur (STRUCT) yang menyimpan sub-kolom persentase pergerakan rata-rata
+ADD COLUMN mobility STRUCT<
+    avg_retail      FLOAT64,
+    avg_grocery     FLOAT64,
+    avg_parks       FLOAT64,
+    avg_transit     FLOAT64,
+    avg_workplace   FLOAT64,
+    avg_residential FLOAT64
+>
+"`;
+        document.getElementById('explainTask2').innerHTML = 
+`<ul>
+  <li><strong>ALTER TABLE ... ADD COLUMN:</strong> Mengubah definisi skema tabel tanpa merusak data yang telah tersimpan sebelumnya. Sangat berguna saat struktur skema perlu disesuaikan di tengah jalan.</li>
+  <li><strong>STRUCT:</strong> Tipe data BigQuery yang merepresentasikan kontainer terstruktur bersarang (nested structure) mirip format JSON. Membantu mengelompokkan metrik mobilitas harian (retail, grocery, dll) ke dalam satu lingkup kolom bernama <code>mobility</code> untuk mempermudah organisasi skema database.</li>
+</ul>`;
+      }
+
+      // --- TASK 3 ---
+      const t3Val = document.getElementById('selTask3').value;
+      if (t3Val === 'A') {
+        document.getElementById('descTask3').innerText = "Membuat tabel 'mobility_data' dari dataset publik Google COVID-19 Mobility Report.";
+        document.getElementById('code3').innerText = 
+`# Menduplikasi data mobilitas Google ke dalam tabel lokal dataset Anda
+bq query --use_legacy_sql=false \\
+"
+CREATE OR REPLACE TABLE ${ds2}.mobility_data AS
+SELECT *
+FROM \\\`bigquery-public-data.covid19_google_mobility.mobility_report\\\`
+"`;
+        document.getElementById('explainTask3').innerHTML = 
+`<ul>
+  <li><strong>covid19_google_mobility.mobility_report:</strong> Dataset publik yang merekam statistik pergerakan harian masyarakat global ke berbagai kategori titik penting (mall, halte transit, taman) selama pandemi untuk dianalisis relasinya terhadap kebijakan pemerintah.</li>
+</ul>`;
+      } else {
+        document.getElementById('descTask3').innerText = "Membuat tabel bantu populasi ECDC 2019 dan meng-update kolom populasi pada tabel konsolidasi.";
+        document.getElementById('code3').innerText = 
+`# 1. Membuat tabel duplikat mentah dari data ECDC global
+bq query --use_legacy_sql=false \\
+"
+CREATE OR REPLACE TABLE ${ds2}.pop_data_2019 AS
+SELECT * FROM \\\`bigquery-public-data.covid19_ecdc.covid_19_geographic_distribution_worldwide\\\`;
+
+# 2. Membuat tabel agregat populasi unik per negara agar tidak ada duplikasi data saat JOIN
+CREATE OR REPLACE TABLE ${ds2}.pop_data_2019_small AS
+SELECT country_territory_code, pop_data_2019
+FROM \\\`${ds2}.pop_data_2019\\\`
+GROUP BY country_territory_code, pop_data_2019;
+
+# 3. Melakukan sinkronisasi (UPDATE) kolom population tabel utama (t0) dari tabel agregat (t1) berdasarkan kode negara
+UPDATE \\\`${ds2}.consolidate_covid_tracker_data\\\` t0
+SET population = t1.pop_data_2019
+FROM \\\`${ds2}.pop_data_2019_small\\\` t1
+WHERE TRIM(t0.alpha_3_code) = TRIM(t1.country_territory_code);
+"`;
+        document.getElementById('explainTask3').innerHTML = 
+`<ul>
+  <li><strong>pop_data_2019_small:</strong> Dibuat dengan metode <code>GROUP BY</code> agar diperoleh pasangan unik kode negara dan total populasinya. Jika kita langsung melakukan update dari tabel mentah ECDC yang memiliki banyak tanggal per negara, BigQuery akan memunculkan error karena query menghasilkan banyak nilai untuk satu target update.</li>
+  <li><strong>UPDATE ... FROM:</strong> Query DML BigQuery untuk meng-update record kolom pada tabel konsolidasi dengan mencocokkan kode negara (JOIN) dari tabel populasi yang telah disederhanakan.</li>
+</ul>`;
+      }
+
+      // --- TASK 4 ---
+      const t4Val = document.getElementById('selTask4').value;
+      if (t4Val === 'A') {
+        document.getElementById('descTask4').innerText = "Membersihkan baris data bertipe NULL pada tabel oxford_policy_tracker_by_countries.";
+        document.getElementById('code4').innerText = 
+`# Menghapus baris data yang cacat / tidak lengkap nilainya demi menjaga integritas data analisis
+bq query --use_legacy_sql=false \\
+"
+DELETE FROM ${ds2}.oxford_policy_tracker_by_countries
+WHERE population IS NULL OR country_area IS NULL
+"`;
+        document.getElementById('explainTask4').innerHTML = 
+`<ul>
+  <li><strong>DELETE FROM:</strong> Perintah pembersihan data (data cleansing) untuk membuang seluruh record baris yang tidak memiliki nilai (NULL) pada kolom populasi atau luas area, memastikan analisis atau pemodelan ke depan terbebas dari bias data kosong.</li>
+</ul>`;
+      } else {
+        document.getElementById('descTask4').innerText = "Meng-update data country_area dari Census Bureau dan mengisi nilai agregat mobility STRUCT ke tabel konsolidasi.";
+        document.getElementById('code4').innerText = 
+`# 1. Update data luas area negara (country_area) pada tabel konsolidasi (t0) dengan mencocokkan nama negara dari data Census Bureau (t1)
+bq query --use_legacy_sql=false \\
+"
+UPDATE \\\`${ds2}.consolidate_covid_tracker_data\\\` t0
+SET t0.country_area = t1.country_area
+FROM \\\`bigquery-public-data.census_bureau_international.country_names_area\\\` t1
+WHERE t0.country_name = t1.country_name;
+
+# 2. Update kolom bertipe STRUCT (t0.mobility) dari rata-rata perubahan mobilitas harian subquery agregasi t1
+UPDATE \\\`${ds2}.consolidate_covid_tracker_data\\\` t0
+SET
+  t0.mobility.avg_retail      = t1.avg_retail,
+  t0.mobility.avg_grocery     = t1.avg_grocery,
+  t0.mobility.avg_parks       = t1.avg_parks,
+  t0.mobility.avg_transit     = t1.avg_transit,
+  t0.mobility.avg_workplace   = t1.avg_workplace,
+  t0.mobility.avg_residential = t1.avg_residential
+FROM (
+  -- Subquery menghitung rata-rata mobilitas harian per negara
+  SELECT country_region, date,
+    AVG(retail_and_recreation_percent_change_from_baseline) as avg_retail,
+    AVG(grocery_and_pharmacy_percent_change_from_baseline)  as avg_grocery,
+    AVG(parks_percent_change_from_baseline) as avg_parks,
+    AVG(transit_stations_percent_change_from_baseline) as avg_transit,
+    AVG(workplaces_percent_change_from_baseline) as avg_workplace,
+    AVG(residential_percent_change_from_baseline)  as avg_residential
+  FROM \\\`bigquery-public-data.covid19_google_mobility.mobility_report\\\`
+  GROUP BY country_region, date
+) AS t1
+WHERE CONCAT(t0.country_name, t0.date) = CONCAT(t1.country_region, t1.date);
+"`;
+        document.getElementById('explainTask4').innerHTML = 
+`<ul>
+  <li><strong>Akses STRUCT Column:</strong> Di BigQuery, properti di dalam STRUCT diakses dengan notasi titik seperti objek biasa (misal: <code>t0.mobility.avg_retail</code>).</li>
+  <li><strong>Subquery Aggregation:</strong> Bagian <code>FROM (...) AS t1</code> melakukan pra-kalkulasi rata-rata (AVG) persentase perubahan harian dari seluruh stasiun pemantau sebelum dicocokkan ke tabel gabungan <code>t0</code> berdasarkan kombinasi nama negara dan tanggal.</li>
+</ul>`;
+      }
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    updateCommands();
+  </script>
+</body>
+</html>
