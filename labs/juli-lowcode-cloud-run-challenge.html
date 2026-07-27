@@ -12,6 +12,7 @@
     .back-btn:hover { background: #dbeeff; }
     
     .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
     .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
     .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
     .form-group input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
@@ -30,17 +31,17 @@
 
   <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
   <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
-
+ 
   <h1>🚀 Build Serverless Applications with Cloud Run Functions: Challenge Lab</h1>
   <div class="callout">
     💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi kode dan instruksi resmi lab ini diambil dari <a href="https://www.skills.google/games/7314/labs/45054" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Google Cloud Skills Boost (Lab 45054)</a>.
   </div>
   <p>Silakan isi parameter lab sesuai dengan instruksi yang kamu dapatkan di halaman Google Skills. Seluruh skrip di bawah akan otomatis menyesuaikan nilainya!</p>
-
+ 
   <!-- FORM INPUT INTERAKTIF -->
   <div class="config-card">
     <h3>⚙️ Parameter Lab Kamu</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+    <div class="config-grid">
       <div class="form-group">
         <label>1. Region Target:</label>
         <input type="text" id="inputRegion" value="us-west1" oninput="updateCommands()">
