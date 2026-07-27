@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Build Serverless Applications with Cloud Run Functions</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+    
+    .code-explain { font-size: 14px; color: #444; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 24px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+
+  <h1>🚀 Challenge Lab: Cloud Functions Gen 2 Guide</h1>
+  <p>Silakan isi parameter lab sesuai dengan instruksi yang kamu dapatkan di halaman Google Cloud Skills Boost. Seluruh skrip di bawah akan otomatis menyesuaikan nilainya secara <i>real-time</i>!</p>
+
+  <!-- FORM INPUT INTERAKTIF -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Lab Kamu</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+      <div class="form-group">
+        <label>1. Region Target:</label>
+        <input type="text" id="inputRegion" value="us-west1" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Storage Function Name:</label>
+        <input type="text" id="inputCS" value="cs-tracker" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>3. HTTP Function Name:</label>
+        <input type="text" id="inputHTTP" value="hello-http" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <h2>📌 Langkah 1: Aktifkan API & Set IAM (Wajib Pertama)</h2>
+  <p class="code-explain">Perintah ini berfungsi untuk mengaktifkan seluruh API Google Cloud Service yang dibutuhkan serta memberikan akses Pub/Sub Publisher pada Service Account Cloud Storage untuk mencegah error <i>permission denied</i>.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy</button>
+    <pre><code id="code1"></code></pre>
+  </div>
+
+  <h2>📦 Task 1: Create Storage Bucket</h2>
+  <p class="code-explain">Perintah ini berfungsi untuk mengambil Project ID aktif di Cloud Shell dan membuat satu bucket Cloud Storage baru di region pilihanmu.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy</button>
+    <pre><code id="code2"></code></pre>
+  </div>
+
+  <h2>⚡ Task 2: Storage Function Deployment</h2>
+  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project, menyusun file source code <code>index.js</code> & <code>package.json</code>, lalu men-deploy Event-Driven Cloud Function Gen 2 yang terhubung ke Cloud Storage bucket.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy</button>
+    <pre><code id="code3"></code></pre>
+  </div>
+
+  <h2>🌐 Task 3: HTTP Function Deployment</h2>
+  <p class="code-explain">Perintah ini berfungsi untuk membuat folder project baru, menyusun kode aplikasi HTTP, dan men-deploy Cloud Function Gen 2 bertipe HTTP trigger dengan konfigurasi penanganan instance secara otomatis.</p>
+  <div class="code-container">
+    <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy</button>
+    <pre><code id="code4"></code></pre>
+  </div>
+
+  <script>
+    function updateCommands() {
+      const region = document.getElementById('inputRegion').value.trim() || 'us-west1';
+      const csName = document.getElementById('inputCS').value.trim() || 'cs-tracker';
+      const httpName = document.getElementById('inputHTTP').value.trim() || 'hello-http';
+
+      // Code 1: Setup IAM & API
+      document.getElementById('code1').innerText = 
+`PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
+
+gcloud services enable artifactregistry.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com run.googleapis.com logging.googleapis.com pubsub.googleapis.com
+
+GCS_SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
+gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GCS_SERVICE_ACCOUNT" --role="roles/pubsub.publisher"`;
+
+      // Code 2: Task 1 Bucket
+      document.getElementById('code2').innerText = 
+`PROJECT_ID=$(gcloud config get-value project)
+gsutil mb -l ${region} gs://$PROJECT_ID`;
+
+      // Code 3: Task 2 Storage Function
+      document.getElementById('code3').innerText = 
+`mkdir -p ~/hello-storage && cd ~/hello-storage
+
+cat > index.js <<EOF
+const functions = require('@google-cloud/functions-framework');
+functions.cloudEvent('${csName}', (cloudevent) => {
+  console.log('A new event in your Cloud Storage bucket has been logged!');
+  console.log(cloudevent);
+});
+EOF
+
+cat > package.json <<EOF
+{
+  "name": "nodejs-functions-gen2-codelab",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^2.0.0"
+  }
+}
+EOF
+
+PROJECT_ID=$(gcloud config get-value project)
+gcloud functions deploy ${csName} \\
+  --gen2 \\
+  --runtime nodejs24 \\
+  --entry-point ${csName} \\
+  --source . \\
+  --region ${region} \\
+  --trigger-bucket $PROJECT_ID \\
+  --trigger-location ${region} \\
+  --max-instances 2 \\
+  --quiet`;
+
+      // Code 4: Task 3 HTTP Function
+      document.getElementById('code4').innerText = 
+`mkdir -p ~/hello-http && cd ~/hello-http
+
+cat > index.js <<EOF
+const functions = require('@google-cloud/functions-framework');
+functions.http('${httpName}', (req, res) => {
+  res.status(200).send('HTTP function (2nd gen) has been called!');
+});
+EOF
+
+cat > package.json <<EOF
+{
+  "name": "nodejs-functions-gen2-codelab",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^2.0.0"
+  }
+}
+EOF
+
+gcloud functions deploy ${httpName} \\
+  --gen2 \\
+  --runtime nodejs24 \\
+  --entry-point ${httpName} \\
+  --source . \\
+  --region ${region} \\
+  --trigger-http \\
+  --min-instances 1 \\
+  --max-instances 2 \\
+  --quiet`;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      // Feedback UI saat berhasil di-copy
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    // Jalankan otomatis saat halaman pertama dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
