@@ -119,32 +119,60 @@
   <!-- TASK 2 -->
   <div class="task-card">
     <h2>🏷️ Task 2: Create an Aspect Type and Add an Aspect to a Zone</h2>
-    <p class="code-explain">Membuat Aspect Type bernama <code>Protected Customer Data Aspect</code> dengan dua field enum (<code>Raw Data Flag</code> & <code>Protected Contact Information Flag</code>) lalu memasangkannya pada <code>Raw Customer Zone</code>.</p>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini WAJIB dikerjakan secara manual melalui Google Cloud Console.</p>
     
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2 (gcloud)</button>
-      <pre><code id="code2"></code></pre>
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka Google Cloud Console. Di bilah pencarian atas (atau simbol kaca pembesar jika layar dipersempit), ketik <strong>"Knowledge Catalog"</strong>, lalu klik hasil pencariannya.</li>
+        <li>Untuk membuat Aspect Type: Di bilah navigasi kiri, di bawah bagian <strong>Manage metadata</strong>, pilih <strong>Metadata types</strong>.</li>
+        <li>Pada tab <strong>Aspect types</strong>, klik tombol <strong>➕ Create</strong>.</li>
+        <li>Masukkan parameter berikut:
+          <ul>
+            <li>Display name: <code>Protected Customer Data Aspect</code></li>
+            <li>Aspect type ID: *(Biarkan terisi otomatis)*</li>
+            <li>Location: <strong style="color: #0366d6;"><span id="task2RegionText">&lt;REGION&gt;</span></strong> *(Sesuai dengan Region Target di atas)*</li>
+          </ul>
+        </li>
+        <li>Pada bagian <strong>Template</strong>, klik <strong>Add Field</strong>, lalu isikan:
+          <ul>
+            <li>Display Name: <code>Raw Data Flag</code></li>
+            <li>Type: <strong>Enum</strong></li>
+            <li>Klik <strong>Add Enum Value</strong>, ketik <code>Yes</code>, klik <strong>Add Enum Value</strong> lagi, ketik <code>no</code>.</li>
+            <li>Klik tombol <strong>Done</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik tombol <strong>Add Field</strong> sekali lagi, lalu isikan field kedua:
+          <ul>
+            <li>Display Name: <code>Protected Contact Information Flag</code></li>
+            <li>Type: <strong>Enum</strong></li>
+            <li>Klik <strong>Add Enum Value</strong>, ketik <code>Yes</code>, klik <strong>Add Enum Value</strong> lagi, ketik <code>no</code>.</li>
+            <li>Klik tombol <strong>Done</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik tombol <strong>Save</strong> di bawah untuk membuat Aspect Type tersebut.</li>
+        <li>Untuk menambahkan Aspect ke Raw Customer Zone:
+          <ul>
+            <li>Kembali ke menu <strong>Knowledge Catalog</strong>.</li>
+            <li>Di bawah bagian <strong>Discover</strong> di bilah navigasi kiri, pilih <strong>Search</strong>.</li>
+            <li>Ketik <code>Raw Customer Zone</code> pada kolom pencarian dan jalankan.</li>
+            <li>Klik hasil pencarian teratas bernama <code>raw_customer_zone</code>.</li>
+            <li>Masuk ke tab <strong>Details</strong>, lalu gulir ke bawah hingga menemukan bagian <strong>Aspects</strong>.</li>
+            <li>Klik tombol <strong>➕ Add</strong> di samping <em>Optional aspects</em>.</li>
+            <li>Pilih <code>Protected Customer Data Aspect</code> dari daftar pilihan yang muncul.</li>
+            <li>Pilih nilai <code>yes</code> untuk kedua kolom field yang tersedia, lalu klik <strong>Save</strong>.</li>
+          </ul>
+        </li>
+      </ol>
     </div>
 
-    <details class="explain-box" open>
-      <summary>🔍 Penjelasan Langkah Manual via Cloud Console (Jika gcloud Mengalami Bug)</summary>
-      <ol>
-        <li>Buka <strong>Dataplex / Knowledge Catalog</strong> > <strong>Manage Metadata / Aspect types</strong> di Console.</li>
-        <li>Klik <strong>Create Aspect Type</strong>:
-          <ul>
-            <li>Display Name: <code>Protected Customer Data Aspect</code></li>
-            <li>ID: <code>protected-customer-data-aspect</code> | Region: sesuaikan dengan lab (misal <code>us-west1</code>).</li>
-          </ul>
-        </li>
-        <li>Tambahkan 2 Field bertipe <strong>Enumeration</strong>:
-          <ul>
-            <li>Field 1 ID: <code>raw_data_flag</code> | Display Name: <code>Raw Data Flag</code> | Values: <code>Yes</code>, <code>No</code></li>
-            <li>Field 2 ID: <code>protected_contact_information_flag</code> | Display Name: <code>Protected Contact Information Flag</code> | Values: <code>Yes</code>, <code>No</code></li>
-          </ul>
-        </li>
-        <li>Klik <strong>Create</strong>. Selesai dibuat, buka menu <strong>Lakes</strong> > <strong>Sales Lake</strong> > buka zona <strong>Raw Customer Zone</strong>.</li>
-        <li>Masuk ke tab <strong>Aspects</strong> > Klik <strong>Add Aspect</strong> > Pilih <code>Protected Customer Data Aspect</code> > Set kedua flag ke nilai <code>Yes</code> > Klik <strong>Save</strong>.</li>
-      </ol>
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>💡 Konsep & Mengapa Kita Melakukan Ini (Task 2)</summary>
+      <ul>
+        <li><strong>Apa itu Aspect Type & Aspect?</strong> Aspect Type adalah skema kustom tambahan yang kita definisikan untuk memberikan konteks tata kelola (governance), keamanan, atau bisnis pada data di Knowledge Catalog. Mirip seperti membuat tag/label kustom berskala enterprise.</li>
+        <li><strong>Mengapa Menggunakan Tipe Enum (Yes / no)?</strong> Membatasi pilihan nilai hanya ke "Yes" atau "no" bertujuan untuk standarisasi tata kelola data. Hal ini meminimalkan kesalahan ketik manual dari tim analis dan memudahkan filtering klasifikasi data sensitif.</li>
+        <li><strong>Tujuan Menempelkan Aspect pada Zona (Zone-level):</strong> Menempelkan aspek langsung pada level zona (seperti <code>raw_customer_zone</code>) memastikan seluruh aset data di dalam zona tersebut (dalam hal ini Cloud Storage bucket) secara otomatis ditandai dan mewarisi kebijakan kepatuhan keamanan yang sama secara terpusat.</li>
+      </ul>
     </details>
   </div>
 
@@ -311,35 +339,8 @@ gcloud dataplex assets create customer-orders \\
   --resource-name=projects/$PROJECT_ID/datasets/customer_orders \\
   --discovery-enabled`;
 
-      // --- TASK 2 ---
-      document.getElementById('code2').innerText = 
-`# Dapatkan Project ID dan Region
-export PROJECT_ID=$(gcloud config get-value project)
-export REGION=${region}
-
-# Buat Aspect Type bernama Protected Customer Data Aspect
-gcloud dataplex aspect-types create protected-customer-data-aspect \\
-  --location=$REGION \\
-  --display-name="Protected Customer Data Aspect" \\
-  --metadata-template='{
-    "name": "protected-customer-data-aspect",
-    "fields": [
-      {
-        "id": "raw_data_flag",
-        "displayName": "Raw Data Flag",
-        "type": {
-          "primitiveType": "STRING"
-        }
-      },
-      {
-        "id": "protected_contact_information_flag",
-        "displayName": "Protected Contact Information Flag",
-        "type": {
-          "primitiveType": "STRING"
-        }
-      }
-    ]
-  }' 2>/dev/null || echo "Jika gcloud aspect-types belum didukung di versi CLI ini, silakan ikuti petunjuk manual Console di bawah."`;
+      // --- TASK 2 (CONSOLE ONLY) ---
+      document.getElementById('task2RegionText').innerText = region;
 
       // --- TASK 3 ---
       document.getElementById('code3').innerText = 
