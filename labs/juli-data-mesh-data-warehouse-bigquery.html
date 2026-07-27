@@ -32,7 +32,12 @@
     .submit-btn:hover { background: #024ea4; }
 
     .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
-    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 18px; margin: 28px 0; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
 
     /* Gaya Baru untuk Section Penjelasan */
     .explain-box {
@@ -169,28 +174,33 @@
     </details>
   </div>
 
-  <!-- KARTU LAPOR SOAL BARU -->
-  <div class="report-card">
-    <h3 style="color: #c53030; margin-top: 0;">❓ Variasi soalmu tidak ada di daftar atas?</h3>
-    <p style="font-size: 14px; color: #4a5568;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
-    
-    <form action="https://api.web3forms.com/submit" method="POST">
-      <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
-      <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: BigQuery Challenge Lab">
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
       
-      <div class="form-group">
-        <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
-        <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
-      </div>
-      
-      <div class="form-group">
-        <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
-        <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Create a new table 'xyz' with..." required></textarea>
-      </div>
-      
-      <button type="submit" class="submit-btn">🚀 Kirimkan Soal</button>
-    </form>
-  </div>
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: BigQuery Challenge Lab">
+        
+        <!-- Anti-spam Honeypot Checkbox (Sembunyi dari user, dideteksi oleh bot) -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Create a new table 'xyz' with..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
 
   <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d40 brown;">
     ⚠️ <strong>Catatan Penting:</strong><br>
