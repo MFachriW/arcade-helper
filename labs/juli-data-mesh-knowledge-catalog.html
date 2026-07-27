@@ -96,7 +96,7 @@
   <!-- TASK 1 -->
   <div class="task-card">
     <h2>🏖️ Task 1: Create a Knowledge Catalog Lake with Two Zones & Two Assets</h2>
-    <p class="code-explain">Mengaktifkan API Dataplex/Data Catalog, membuat Dataplex Lake <code>Sales Lake</code>, menambahkan <code>Raw Customer Zone</code> & <code>Curated Customer Zone</code>, serta mengaitkan resource Storage Bucket dan BigQuery Dataset sebagai Asset.</p>
+    <p class="code-explain">Jalankan perintah berikut di <strong>Cloud Shell</strong> untuk mengaktifkan API, membuat Dataplex Lake, Zones, dan mengaitkan Assets:</p>
     <div class="code-container">
       <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy Task 1</button>
       <pre><code id="code1"></code></pre>
@@ -179,7 +179,7 @@
   <!-- TASK 3 -->
   <div class="task-card">
     <h2>🔐 Task 3: Assign a Knowledge Catalog IAM Role to Another User</h2>
-    <p class="code-explain">Memberikan hak akses least-privilege (role <code>roles/dataplex.dataWriter</code>) kepada User 2 pada asset <code>Customer Engagements</code> agar dapat mengunggah file ke Cloud Storage terkait.</p>
+    <p class="code-explain">Jalankan perintah berikut di <strong>Cloud Shell</strong> untuk memberikan hak akses dataWriter kepada User 2 pada asset Customer Engagements:</p>
     <div class="code-container">
       <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy Task 3</button>
       <pre><code id="code3"></code></pre>
@@ -196,7 +196,7 @@
   <!-- TASK 4 -->
   <div class="task-card">
     <h2>📄 Task 4: Create and Upload a Data Quality Specification File</h2>
-    <p class="code-explain">Membuat file spesifikasi kualitas data YAML (<code>dq-customer-orders.yaml</code>) dengan aturan <code>NOT NULL</code> (threshold 100%) untuk kolom <code>user_id</code> dan <code>order_id</code> pada tabel <code>ordered_items</code>, lalu mengunggahnya ke bucket <code>-dq-config</code>.</p>
+    <p class="code-explain">Jalankan perintah berikut di <strong>Cloud Shell</strong> untuk membuat file konfigurasi YAML Data Quality dan mengunggahnya ke Cloud Storage:</p>
     <div class="code-container">
       <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy Task 4</button>
       <pre><code id="code4"></code></pre>
@@ -214,7 +214,7 @@
   <!-- TASK 5 -->
   <div class="task-card">
     <h2>📊 Task 5: Define and Run an Auto Data Quality Job</h2>
-    <p class="code-explain">Membuat resource pemindaian data (DataScan) kualitas data otomatis <code>customer-orders-data-quality-job</code> pada BigQuery table <code>customer_orders.ordered_items</code> menggunakan file YAML spesifikasi dari Task 4, kemudian langsung mengeksekusinya.</p>
+    <p class="code-explain">Jalankan perintah berikut di <strong>Cloud Shell</strong> untuk membuat dan menjalankan Data Quality Scan Job di BigQuery:</p>
     <div class="code-container">
       <button class="copy-btn" onclick="copyCode('code5', this)">📋 Copy Task 5</button>
       <pre><code id="code5"></code></pre>
