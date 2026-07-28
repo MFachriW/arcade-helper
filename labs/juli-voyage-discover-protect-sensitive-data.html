@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul, .explain-box ol {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>🛡️ Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh instruksi resmi dan materi pendukung lab ini dapat diakses langsung pada halaman course <a href="https://www.skills.google/course_templates/1177" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Discover and Protect Sensitive Data Across Your Ecosystem</a>.
+  </div>
+  <p>Silakan masukkan <strong>Project ID</strong> dan <strong>Email Username 2</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dinamis Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. GCP Project ID:</label>
+        <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Email Username 2:</label>
+        <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong> dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>☁️ Task 1. Enable sensitive data protection for Cloud Storage</h2>
+    <p class="code-explain">Membuka Discovery scan harian untuk Cloud Storage bucket, membuat De-identify template untuk nomor kartu kredit, dan menjalankan De-identify job.</p>
+
+    <!-- Subtask A: Console Step -->
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 1: Buat & Jadwalkan Discovery Scan Configuration di Console</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka Google Cloud Console, lalu navigasi ke <strong>Navigation menu (☰)</strong> > <strong>Security</strong> > <strong>Sensitive Data Protection</strong>.</li>
+        <li>Buka tab <strong>Discovery</strong>. Pada bagian Cloud Storage, klik <strong>Enable</strong>.</li>
+        <li>Untuk <i>Select scope</i>, biarkan opsi <strong>Scan selected project</strong>, lalu klik <strong>Continue</strong>.</li>
+        <li>Pada <i>Managed schedules</i>, klik <strong>Edit Default schedule</strong>, sesuaikan:
+          <ul>
+            <li>On a schedule: <strong>Reprofile Daily</strong></li>
+            <li>When inspect template changes: <strong>Reprofile Daily</strong></li>
+            <li>Klik <strong>Done</strong>, lalu klik <strong>Continue</strong>.</li>
+          </ul>
+        </li>
+        <li>Untuk <i>Select inspection template</i>, biarkan opsi <strong>Create a new inspection template</strong> tercentang, lalu klik <strong>Continue</strong>.</li>
+        <li>Pada bagian <i>Add actions</i>:
+          <ul>
+            <li>Aktifkan <strong>Save data profile copies to BigQuery</strong>.</li>
+            <li>Dataset ID: <code>cs_discovery</code></li>
+            <li>Table ID: <code>cs_data_profiles</code></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong> pada bagian pemrosesan fallback.</li>
+        <li>Untuk <i>Set location to store configuration</i>, pilih <strong>Multi_region > us (multiple regions in United States)</strong>, lalu klik <strong>Continue</strong>.</li>
+        <li>Isikan Display name: <code>Cloud Storage Daily Discovery</code></li>
+        <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Create configuration</strong>.</li>
+      </ol>
+    </div>
+
+    <!-- Subtask B & C: CLI Shortcut -->
+    <p class="code-explain" style="margin-top: 18px;">🛠️ <strong>Langkah 2: Buat De-identify Template & Jalankan Job Redaksi Kartu Kredit via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy Task 1 Commands</button>
+      <pre><code id="code1"></code></pre>
+    </div>
+
+    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin-top: 14px;">
+      ⏳ <strong>Proses Pemindaian Latar Belakang:</strong> Eksekusi DLP Job memerlukan waktu sekitar 1–2 menit hingga statusnya berubah menjadi <i>Done</i>. Kamu bisa melanjutkan ke Task 2 selagi job memproses berkas CSV.
+    </div>
+
+    <details class="explain-box" open style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>Discovery Scan Configuration:</strong> Fitur pemindaian otomatis Sensitive Data Protection yang memantau penambahan berkas baru secara harian di Cloud Storage bucket <code>gs://&lt;PROJECT_ID&gt;-car-owners</code>.</li>
+        <li><strong>Record Transformation & Replace with infoType:</strong> Mengubah kolom data terstruktur (kolom <code>message</code>) dan menggantikan string sensitif Credit Card Number dengan nama kategori infoType-nya.</li>
+        <li><strong>De-identified Output Storage:</strong> Menyimpan berkas CSV yang telah dibersihkan secara otomatis ke bucket tujuan baru <code>gs://&lt;PROJECT_ID&gt;-car-owners-transformed</code>.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>📊 Task 2. Enable sensitive data protection for BigQuery</h2>
+    <p class="code-explain">Membuat Resource Tag <code>SPII</code> di IAM, memberikan conditional access berbasis Tag untuk Username 2, serta melabeli dataset <code>orders</code>.</p>
+
+    <!-- Subtask A: CLI Tag Creation -->
+    <p class="code-explain">🛠️ <strong>Langkah 1: Buat IAM Tag Key & Tag Values (SPII) via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2 Tag Command</button>
+      <pre><code id="code2"></code></pre>
+    </div>
+
+    <!-- Subtask B & C: Console Guidance -->
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 16px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 2: Berikan Conditional Access pada Username 2 & Tag Dataset</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>IAM & Admin</strong> > <strong>IAM</strong>.</li>
+        <li>Cari baris untuk Username 2: <strong style="color: #0366d6;"><span id="task2User2Text">&lt;EMAIL_USER_2&gt;</span></strong>, lalu klik ikon pensil (<strong>Edit principal</strong>).</li>
+        <li>Ganti peran <strong>Viewer</strong> menjadi <strong>Browser</strong> (Klik ikon tempat sampah pada Viewer, lalu tambahkan role <i>Basic > Browser</i>).</li>
+        <li>Pertahankan peran <strong>BigQuery Data Viewer</strong>, lalu klik tombol <strong>Add IAM condition</strong>.</li>
+        <li>Isikan konfigurasi Condition:
+          <ul>
+            <li>Title: <code>No SPII Access Only</code></li>
+            <li>Condition builder: Pilih <strong>Tag</strong> untuk Condition type 1, dan pilih <strong>has value</strong> untuk Operator.</li>
+            <li>Value path: <strong style="color: #0366d6;"><span id="task2ValuePath">&lt;PROJECT_ID&gt;/SPII/No</span></strong></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Save</strong>, lalu klik <strong>Save</strong> lagi pada panel IAM utama.</li>
+        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>BigQuery</strong>.</li>
+        <li>Di panel Explorer sebelah kiri, luaskan ID Project: <strong style="color: #0366d6;"><span id="task2ProjectText">&lt;PROJECT_ID&gt;</span></strong>.</li>
+        <li>Klik dataset bernama <code>orders</code>.</li>
+        <li>Di panel sebelah kanan, klik <strong>Edit details</strong> (ikon pensil).</li>
+        <li>Pada bagian <strong>Tags</strong>, klik <strong>Select scope</strong> > <strong>Select current project</strong>, lalu pilih:
+          <ul>
+            <li>Tag key: <code>SPII</code></li>
+            <li>Tag value: <code>No</code></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Save</strong>.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
+      <ul>
+        <li><strong>Attribute-Based Access Control (ABAC):</strong> Pendekatan keamanan granular yang membatasi hak akses Username 2 hanya pada dataset BigQuery yang bertag <code>SPII/No</code>, sementara dataset sensitif seperti <code>car_owners</code> tersembunyi.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>🤖 Task 3. Protect sensitive data in Gen AI model responses</h2>
+    <p class="code-explain">Mengupdate kode Python pada Jupyter Notebook di Workbench Agent Platform untuk memblokir respon model Gemini yang mengandung US Vehicle Identification Number (VIN).</p>
+
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Kerja di Workbench JupyterLab:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka Console GCP, navigasi ke <strong>Agent Platform</strong> (atau Vertex AI) > <strong>Notebooks</strong> > <strong>Workbench</strong>.</li>
+        <li>Cari instance bernama <code>vertex-ai-jupyterlab</code>, lalu klik tombol <strong>Open JupyterLab</strong>.</li>
+        <li>Buka file notebook bernama <code>deidentify-model-response-challenge-lab.ipynb</code>.</li>
+        <li>Jika muncul pop-up <i>Select Kernel</i>, pilih <strong>Python 3 (Local)</strong>.</li>
+        <li>Jalankan sel-sel awal pada bagian <i>Getting started with this notebook</i> secara berurutan.</li>
+        <li>Pada sel <strong>Set your project ID and region</strong>, sesuaikan variabelnya:
+          <br><code style="color: #0366d6;">PROJECT_ID = "<span class="valProjectId">&lt;PROJECT_ID&gt;</span>"</code>
+          <br><code style="color: #0366d6;">LOCATION = "global"</code>
+        </li>
+      </ol>
+    </div>
+
+    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Update Fungsi Python untuk Memblokir US VIN:</strong><br>Gantikan/isikan kode pada sel fungsi <code>deidentify_with_replace_infotype</code> dengan blok berikut lalu jalankan selnya:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3a', this)">📋 Copy Updated Python Function</button>
+      <pre><code id="code3a"># Redefine original function to inspect and deidentify output with Sensitive Data Protection
+import google.cloud.dlp  
+from typing import List 
+
+def deidentify_with_replace_infotype(
+    project: str, item: str, info_types: List[str]
+) -> None:
+    # Instantiate a client
+    dlp = google.cloud.dlp_v2.DlpServiceClient()
+
+    # Convert the project id into a full resource id.
+    parent = f"projects/{PROJECT_ID}"
+
+    # Construct inspect configuration dictionary
+    inspect_config = {"info_types": [{"name": info_type} for info_type in info_types]}
+
+    # Construct deidentify configuration dictionary
+    deidentify_config = {
+        "info_type_transformations": {
+            "transformations": [
+                {"primitive_transformation": {"replace_with_info_type_config": {}}}
+            ]
+        }
+    }
+
+    # Call the API for deidentify
+    response = dlp.deidentify_content(
+        request={
+            "parent": parent,
+            "deidentify_config": deidentify_config,
+            "inspect_config": inspect_config,
+            "item": {"value": item},
+        }
+    )
+
+    return_payload = response.item.value
+    
+    # Detect US Vehicle Identification Numbers
+    info_types = ["US_VEHICLE_IDENTIFICATION_NUMBER"]
+
+    inspect_config = {
+        "info_types": [
+            {"name": info_type}
+            for info_type in info_types
+        ]
+    }
+
+    response = dlp.inspect_content(
+        request={
+            "parent": parent,
+            "inspect_config": inspect_config,
+            "item": {"value": item},
+        }
+    )
+
+    # Block the complete model response if a VIN is detected
+    if response.result.findings:
+        for finding in response.result.findings:
+            if (
+                finding.info_type.name
+                == "US_VEHICLE_IDENTIFICATION_NUMBER"
+            ):
+                return_payload = (
+                    "[Blocked due to category: "
+                    "US Vehicle Identification Number (VIN)]"
+                )
+                
+    # Print results
+    print(return_payload)</code></pre>
+    </div>
+
+    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Generate & Uji Prompt dengan Temperature = 0:</strong><br>Pada sel pengetesan pertama (di bawah bagian <i>Generate an example with VIN...</i>), masukkan dan jalankan kode berikut:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3b', this)">📋 Copy Prompt Test Cell</button>
+      <pre><code id="code3b">from google.genai import types
+
+# Create prompt that contains a US VIN
+prompt_vin = (
+    "Is 4Y1SL65848Z411439 an example of a "
+    "US Vehicle Identification Number (VIN)?"
+)
+
+# Run Gemini 3.5 Flash with temperature set to 0
+response_vin = client.models.generate_content(
+    model=model,
+    contents=prompt_vin,
+    config=types.GenerateContentConfig(
+        temperature=0
+    ),
+)
+
+# Print response without blocking it
+print(response_vin.text)</code></pre>
+    </div>
+
+    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Eksekusi Pemblokiran Output Respon VIN:</strong><br>Pada sel terakhir notebook, masukkan dan jalankan kode berikut:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code3c', this)">📋 Copy Block Execution Cell</button>
+      <pre><code id="code3c"># Block model response that includes US Vehicle Identification Number (VIN)
+deidentify_with_replace_infotype(
+    PROJECT_ID,
+    response_vin.text,
+    ["US_VEHICLE_IDENTIFICATION_NUMBER"],
+)</code></pre>
+    </div>
+
+    <details class="explain-box" open style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
+      <ul>
+        <li><strong>Generative AI Redaction Guardrails:</strong> Mengintegrasikan Cloud Data Loss Prevention (DLP) API sebagai guardrail pasca-generasi untuk memeriksa respon teks model Gen AI secara real-time sebelum disajikan ke pengguna.</li>
+        <li><strong>infoType US_VEHICLE_IDENTIFICATION_NUMBER:</strong> Kategori infoType bawaan DLP API yang mengenali format 17 digit kode unik kendaraan bermotor standar Amerika Utara.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: Discover & Protect Sensitive Data Challenge Lab">
+        
+        <!-- Anti-spam Honeypot Checkbox -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Update python function with..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const projectIdInput = document.getElementById('inputProjectId').value.trim();
+      const user2Input = document.getElementById('inputUser2').value.trim();
+
+      // Tampilkan warning jika salah satu parameter kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!projectIdInput || !user2Input) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const projectId = projectIdInput || '<PROJECT_ID>';
+      const user2 = user2Input || '<EMAIL_USER_2>';
+
+      // Update Teks Span Dinamis
+      const projElements = document.getElementsByClassName('valProjectId');
+      for (let i = 0; i < projElements.length; i++) {
+        projElements[i].innerText = projectId;
+      }
+
+      document.getElementById('task2User2Text').innerText = user2;
+      document.getElementById('task2ValuePath').innerText = `${projectId}/SPII/No`;
+      document.getElementById('task2ProjectText').innerText = projectId;
+
+      // Update Script Command Task 1 (Cloud Shell)
+      document.getElementById('code1').innerText = 
+`export DEVSHELL_PROJECT_ID="${projectId}"
+export PROJECT_NUMBER=$(gcloud projects describe $DEVSHELL_PROJECT_ID --format="value(projectNumber)")
+
+# 1. Buat Konfigurasi De-identify Template JSON
+cat <<EOF > deidentify-template.json
+{
+  "deidentifyTemplate": {
+    "deidentifyConfig": {
+      "recordTransformations": {
+        "fieldTransformations": [
+          {
+            "fields": [
+              {
+                "name": "message"
+              }
+            ],
+            "infoTypeTransformations": {
+              "transformations": [
+                {
+                  "primitiveTransformation": {
+                    "replaceWithInfoTypeConfig": {}
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "displayName": "De-identify Credit Card Numbers"
+  },
+  "locationId": "global",
+  "templateId": "us_ccn_deidentify"
+}
+EOF
+
+# 2. Kirim De-identify Template ke DLP API
+curl -X POST -s \\
+  -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \\
+  -H "Content-Type: application/json" \\
+  -d @deidentify-template.json \\
+  "https://dlp.googleapis.com/v2/projects/$DEVSHELL_PROJECT_ID/locations/global/deidentifyTemplates"
+
+# 3. Dapatkan Full Template Resource Path
+export TEMPLATE_ID=$(curl -s \\
+  --request GET \\
+  --url "https://dlp.googleapis.com/v2/projects/$DEVSHELL_PROJECT_ID/locations/global/deidentifyTemplates/us_ccn_deidentify" \\
+  --header "Authorization: Bearer $(gcloud auth application-default print-access-token)" \\
+  --header "Content-Type: application/json" \\
+  | jq -r '.name')
+
+# 4. Buat Konfigurasi De-identify Job JSON
+cat > job-configuration.json << EOM
+{
+  "jobId": "us_ccn_deidentify",
+  "inspectJob": {
+    "actions": [
+      {
+        "deidentify": {
+          "fileTypesToTransform": [
+            "CSV"
+          ],
+          "transformationDetailsStorageConfig": {
+            "table": {
+              "projectId": "$DEVSHELL_PROJECT_ID",
+              "datasetId": "cs_transformations",
+              "tableId": "deidentify_ccn"
+            }
+          },
+          "transformationConfig": {
+            "structuredDeidentifyTemplate": "$TEMPLATE_ID"
+          },
+          "cloudStorageOutput": "gs://$DEVSHELL_PROJECT_ID-car-owners-transformed"
+        }
+      }
+    ],
+    "inspectConfig": {
+      "infoTypes": [
+        {
+          "name": "CREDIT_CARD_NUMBER"
+        }
+      ],
+      "minLikelihood": "POSSIBLE"
+    },
+    "storageConfig": {
+      "cloudStorageOptions": {
+        "filesLimitPercent": 100,
+        "fileTypes": [
+          "CSV"
+        ],
+        "fileSet": {
+          "url": "gs://$DEVSHELL_PROJECT_ID-car-owners/**"
+        }
+      }
+    }
+  }
+}
+EOM
+
+# 5. Eksekusi DLP Job
+curl -s \\
+  -X POST \\
+  -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \\
+  -H "Content-Type: application/json" \\
+  "https://dlp.googleapis.com/v2/projects/$DEVSHELL_PROJECT_ID/dlpJobs" \\
+  -d @job-configuration.json`;
+
+      // Update Script Command Task 2 (Cloud Shell)
+      document.getElementById('code2').innerText = 
+`export PROJECT_ID="${projectId}"
+export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
+
+# 1. Buat IAM Tag Key untuk SPII
+gcloud resource-manager tags keys create SPII \\
+    --parent=projects/$PROJECT_NUMBER \\
+    --description="Flag for sensitive personally identifiable information (SPII)"
+
+# 2. Ambil Tag Key ID yang baru dibuat
+TAG_KEY_ID=$(gcloud resource-manager tags keys list --parent="projects/${PROJECT_NUMBER}" --format="value(NAME)")
+
+# 3. Buat Tag Values Yes & No
+gcloud resource-manager tags values create Yes \\
+    --parent=$TAG_KEY_ID \\
+    --description="Contains sensitive personally identifiable information (SPII)"
+
+gcloud resource-manager tags values create No \\
+    --parent=$TAG_KEY_ID \\
+    --description="Does not contain sensitive personally identifiable information (SPII)"`;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    // Jalankan update awal saat halaman dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
