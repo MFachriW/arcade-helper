@@ -58,6 +58,24 @@
     .explain-box li {
       margin-bottom: 6px;
     }
+
+    .video-responsive {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: 16px 0 24px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .video-responsive iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -69,6 +87,12 @@
   <div class="callout">
     💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil langsung dari modul <a href="https://www.skills.google/games/7315/labs/45059" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Enabling Sensitive Data Protection Discovery for Cloud Storage</a> (Diakses: 28 Juli 2026).
   </div>
+
+  <!-- VIDEO TUTORIAL PENDUKUNG -->
+  <div class="video-responsive">
+    <iframe src="https://www.youtube.com/embed/7l5-JnO9lzM" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
   <p>Silakan periksa parameter Project ID, Template ID, dan Email Username 2 pada modul Qwiklabs kamu, lalu masukkan nilainya pada form di bawah ini sebelum mengikuti langkah-langkahnya!</p>
   
   <!-- FORM INPUT INTERAKTIF UTAMA -->
@@ -100,10 +124,10 @@
   <!-- TASK 1 -->
   <div class="task-card">
     <h2>🔍 Task 1: Enable Discovery for Continuous Monitoring of Cloud Storage</h2>
-    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+    <p class="code-explain">💻 Task ini diselesaikan secara manual melalui <strong>Google Cloud Console UI</strong>.</p>
 
-    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
-      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
       <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
         <li>Buka Google Cloud Console. Di <strong>Navigation menu (☰)</strong>, pilih <strong>Security</strong> > <strong>Sensitive Data Protection</strong> (di bawah bagian <em>Data Protection</em>).</li>
         <li>Pilih tab <strong>Discovery</strong>. Pada bagian <strong>Cloud Storage</strong>, klik <strong>Enable</strong>.</li>
@@ -146,10 +170,10 @@
   <!-- TASK 2 -->
   <div class="task-card">
     <h2>🛠️ Task 2: Create and Modify Reusable Templates for Inspecting and Redacting Specific infoTypes</h2>
-    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+    <p class="code-explain">💻 Task ini diselesaikan secara manual melalui <strong>Google Cloud Console UI</strong>.</p>
 
-    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
-      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
       
       <h4 style="margin: 10px 0 5px 0; font-size: 14px; color: #0366d6;">A. Modify Existing Inspection Template:</h4>
       <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
@@ -214,7 +238,7 @@
   <!-- TASK 3 -->
   <div class="task-card">
     <h2>📊 Task 3: Review Initial Discovery Results</h2>
-    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini hanya berupa tinjauan visual dashboard dan IAM permissions (Tanpa Check Progress).</p>
+    <p class="code-explain">💻 Task ini berupa tinjauan visual dashboard dan IAM permissions pada <strong>Google Cloud Console</strong>.</p>
 
     <div class="explain-box" style="background: #f0f4f8; border-color: #bee3f8; margin-top: 10px;">
       <h3 style="color: #2b6cb0; margin-top: 0; font-size: 15px;">📖 Alur Tinjauan Dashboard & IAM:</h3>
@@ -239,10 +263,10 @@
   <!-- TASK 4 -->
   <div class="task-card">
     <h2>🔎 Task 4: Create and Run an Inspection Job</h2>
-    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+    <p class="code-explain">💻 Task ini diselesaikan secara manual melalui <strong>Google Cloud Console UI</strong>.</p>
 
-    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
-      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
       <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
         <li>Buka menu <strong>Sensitive Data Protection</strong> > tab <strong>Inspection</strong>. Klik <strong>Create job and job triggers</strong>.</li>
         <li>Pada <strong>Choose input data</strong>, isikan:
@@ -295,14 +319,14 @@
   <!-- TASK 5 -->
   <div class="task-card">
     <h2>🛡️ Task 5: Create and Run a De-identify Job</h2>
-    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+    <p class="code-explain">💻 Task ini diselesaikan secara manual melalui <strong>Google Cloud Console UI</strong>.</p>
 
     <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin: 12px 0;">
       ⚠️ <strong>Perhatian:</strong> Job De-identification memproses pembuatan salinan berkas baru di Cloud Storage. Tunggu hingga status job di Console berubah menjadi <strong>Done</strong> (membutuhkan waktu sekitar 1 - 3 menit) sebelum menekan tombol <i>Check my progress</i>.
     </div>
 
-    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
-      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
       <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
         <li>Buka menu <strong>Sensitive Data Protection</strong> > tab <strong>Inspection</strong>. Klik <strong>Create job and job triggers</strong>.</li>
         <li>Pada <strong>Choose input data</strong>, isikan:
