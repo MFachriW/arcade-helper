@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Enabling Sensitive Data Protection Discovery for Cloud Storage</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul, .explain-box ol {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>🔒 Enabling Sensitive Data Protection Discovery for Cloud Storage</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil langsung dari modul <a href="https://www.skills.google/games/7315/labs/45059" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Enabling Sensitive Data Protection Discovery for Cloud Storage</a> (Diakses: 28 Juli 2026).
+  </div>
+  <p>Silakan periksa parameter Project ID, Template ID, dan Email Username 2 pada modul Qwiklabs kamu, lalu masukkan nilainya pada form di bawah ini sebelum mengikuti langkah-langkahnya!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dinamis Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. Project ID (GCP):</label>
+        <input type="text" id="inputProjectId" placeholder="student-XX-xxxxxxx" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Template ID (Task 2 & 4):</label>
+        <input type="text" id="inputTemplateId" placeholder="Misal: 7216194786087173213" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>3. Email Username 2 (Task 3):</label>
+        <input type="text" id="inputUsername2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong>, <strong>Template ID</strong>, dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks petunjuk di bawah terupdate dengan benar!
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>🔍 Task 1: Enable Discovery for Continuous Monitoring of Cloud Storage</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka Google Cloud Console. Di <strong>Navigation menu (☰)</strong>, pilih <strong>Security</strong> > <strong>Sensitive Data Protection</strong> (di bawah bagian <em>Data Protection</em>).</li>
+        <li>Pilih tab <strong>Discovery</strong>. Pada bagian <strong>Cloud Storage</strong>, klik <strong>Enable</strong>.</li>
+        <li>Untuk <strong>Select a discovery type</strong>, biarkan opsi <em>Cloud Storage</em> aktif, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <strong>Select scope</strong>, biarkan <em>Scan selected project</em> aktif, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <strong>Managed schedules</strong>, biarkan default, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <strong>Select inspection template</strong>, biarkan <em>Create a new inspection template</em> aktif, lalu klik <strong>Continue</strong>.</li>
+        <li>Pada bagian <strong>Add actions</strong>:
+          <ul>
+            <li>Aktifkan <strong>Publish to Security Command Center</strong>.</li>
+            <li>Aktifkan <strong>Save data profile copies to BigQuery</strong>. Isikan parameter berikut:
+              <ul>
+                <li>Project ID: <strong style="color: #0366d6;"><span class="valProjectId">&lt;PROJECT_ID&gt;</span></strong></li>
+                <li>Dataset ID: <code>cloudstorage_discovery</code></li>
+                <li>Table ID: <code>data_profiles</code></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>.</li>
+        <li>Untuk <strong>Set fallback processing locations</strong>, biarkan default, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <strong>Set location to store configuration</strong>, biarkan <em>us (multiple regions in United States)</em> aktif, lalu klik <strong>Continue</strong>.</li>
+        <li>Isikan Display name: <code>Cloud Storage Discovery</code></li>
+        <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Create configuration</strong>.</li>
+        <li>Masuk ke tab <strong>Profiles</strong>. Pilih <strong>Location type: Region > Region</strong>.</li>
+        <li>Klik tab <strong>File Stores</strong> pada tabel Data Profiles. Setelah tampilan memuat, kamu bisa langsung menekan tombol <strong>Check my progress</strong> di portal Qwiklabs.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>Discovery Service:</strong> Fitur pemindaian otomatis Sensitive Data Protection yang mengidentifikasi lokasi data sensitif/berrisiko tinggi di seluruh Cloud Storage bucket organisasi secara kontinu.</li>
+        <li><strong>Data Profiles:</strong> Ringkasan wawasan mengenai tipe data sensitif (infoTypes) serta level sensitivitas dan risiko data yang terdeteksi.</li>
+        <li><strong>BigQuery Export:</strong> Menyimpan salinan profil data ke tabel BigQuery (<code>cloudstorage_discovery.data_profiles</code>) agar dapat dianalisis lebih lanjut via SQL atau visualisasi Looker Studio.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>🛠️ Task 2: Create and Modify Reusable Templates for Inspecting and Redacting Specific infoTypes</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+      
+      <h4 style="margin: 10px 0 5px 0; font-size: 14px; color: #0366d6;">A. Modify Existing Inspection Template:</h4>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
+        <li>Navigasi ke <strong>Sensitive Data Protection</strong> > tab <strong>Configuration</strong> > tab <strong>Templates</strong>.</li>
+        <li>Cari template yang otomatis dibuat oleh discovery di Task 1 (Catat ID template tersebut, misal <code>7216194786087173213</code> dan masukkan ke form input atas).</li>
+        <li>Klik titik tiga vertikal (<strong>⋮</strong>) pada kolom <em>Actions</em> untuk ID template tersebut, lalu pilih <strong>Edit</strong>.</li>
+        <li>Ubah <strong>Display name</strong> menjadi: <code>Inspection Template for US SSN</code></li>
+        <li>Ubah <strong>Description</strong> menjadi: <code>This template was created as part of a Sensitive Data Protection profiler configuration and was modified for deeper inspection for US Social Security numbers.</code></li>
+        <li>Pada <strong>InfoTypes</strong>, klik <strong>Manage InfoTypes</strong>.
+          <ul>
+            <li>Centang hanya <code>US_SOCIAL_SECURITY_NUMBER</code> dan hapus centang pada opsi lainnya. (Tips: Klik <em>Select all rows</em> dua kali untuk dengan cepat menghapus centang semua).</li>
+            <li>Klik <strong>Done</strong>.</li>
+          </ul>
+        </li>
+        <li>Untuk <strong>Confidence threshold ("minimum likelihood")</strong>, pilih <strong>Unlikely</strong>.</li>
+        <li>Biarkan default lainnya, klik <strong>Save</strong>, lalu klik <strong>Confirm save</strong>.</li>
+      </ol>
+
+      <h4 style="margin: 10px 0 5px 0; font-size: 14px; color: #0366d6;">B. Create a De-identify Template for Structured Data:</h4>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Masih di tab <strong>Templates</strong>, klik <strong>Create Template</strong>.</li>
+        <li>Isikan nilai berikut:
+          <ul>
+            <li>Template type: <strong>De-identify (remove sensitive data)</strong></li>
+            <li>Data transformation type: <strong>Record</strong></li>
+            <li>Template ID: <code>us_ssn_deidentify</code></li>
+            <li>Display name: <code>De-identification Template for US SSN</code></li>
+            <li>Location type: <strong>Multi_region > global (Global)</strong></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>.</li>
+        <li>Pada <strong>Configure de-identification > Transformation Rule #1</strong>:
+          <ul>
+            <li>Field names: Ketik <code>ssn</code> lalu tekan Enter, ketik <code>email</code> lalu tekan Enter.</li>
+            <li>Transformation type: <strong>Primitive field transformation</strong>.</li>
+            <li>Transformation method > Transformation: <strong>Replace</strong>.</li>
+            <li>Replace type: <strong>String</strong>.</li>
+            <li>String value: Biarkan default <code>[redacted]</code>.</li>
+          </ul>
+        </li>
+        <li>Klik <strong>+ Add Transformation Rule</strong> untuk menambah aturan kedua:
+          <ul>
+            <li>Field name: Ketik <code>message</code> lalu tekan Enter.</li>
+            <li>Transformation type: <strong>Match on infoType</strong>, lalu klik <strong>Add Transformation</strong>.</li>
+            <li>Transformation Method: <strong>Replace with infoType name</strong>.</li>
+            <li>InfoTypes to transform: <strong>Any detected infoTypes defined in an inspection template or inspect config that are not specified in other rules</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik <strong>Create</strong>. Jika langkah A dan B selesai, kamu bisa menekan tombol <strong>Check my progress</strong> di Qwiklabs.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
+      <ul>
+        <li><strong>Inspection Template:</strong> Konfigurasi terintegrasi yang mendefinisikan apa yang harus dicari (infoTypes) dan seberapa yakin algoritma sebelum menandainya sebagai temuan sensitif (likelihood threshold).</li>
+        <li><strong>De-identification Template:</strong> Konfigurasi aturan transformasi untuk menyamarkan/meredaksi data sensitif (seperti mengganti string dengan <code>[redacted]</code> atau menimpa dengan nama infoType).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>📊 Task 3: Review Initial Discovery Results</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini hanya berupa tinjauan visual dashboard dan IAM permissions (Tanpa Check Progress).</p>
+
+    <div class="explain-box" style="background: #f0f4f8; border-color: #bee3f8; margin-top: 10px;">
+      <h3 style="color: #2b6cb0; margin-top: 0; font-size: 15px;">📖 Alur Tinjauan Dashboard & IAM:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Di Sensitive Data Protection > tab <strong>Discovery</strong> > <strong>Scan Configurations</strong>, cari baris <code>Cloud Storage Discovery</code>.</li>
+        <li>Di kolom <em>Data Studio</em>, klik link <strong>Looker</strong>.</li>
+        <li>Berikan otorisasi Looker Studio (Authorize -> Akun <strong style="color: #0366d6;"><span class="valProjectId">&lt;PROJECT_ID&gt;</span></strong> / Username 1 -> Acknowledge -> Allow).</li>
+        <li>Tinjau ringkasan di tab <strong>Summary Overview</strong> dan <strong>Advanced Exploration (Asset Details)</strong>.</li>
+        <li>Kembali ke Console Sensitive Data Protection untuk melihat detail IAM Permissions pada Cloud Storage profile details, perhatikan pengguna <strong style="color: #0366d6;"><span class="valUsername2">&lt;EMAIL_USER_2&gt;</span></strong> terdaftar sebagai <em>Storage Admin</em>.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>💡 Mengapa Kita Meninjau Hasil Discovery? (Task 3)</summary>
+      <ul>
+        <li>Dashboard Looker memberi visibilitas cepat mengenai persebaran tipe data berrisiko (misal: keberadaan <code>US_SOCIAL_SECURITY_NUMBER</code>) di bucket storage.</li>
+        <li>Pemeriksaan IAM memastikan kita mengetahui siapa saja akun pengguna yang memiliki wewenang penuh (seperti Storage Admin) terhadap data mentah sensitif tersebut.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="task-card">
+    <h2>🔎 Task 4: Create and Run an Inspection Job</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka menu <strong>Sensitive Data Protection</strong> > tab <strong>Inspection</strong>. Klik <strong>Create job and job triggers</strong>.</li>
+        <li>Pada <strong>Choose input data</strong>, isikan:
+          <ul>
+            <li>Job ID: <code>us_ssn_inspection</code></li>
+            <li>Location type: <strong>Multi_region > us (multiple regions in United States)</strong></li>
+            <li>Storage type: <strong>Google Cloud Storage</strong></li>
+            <li>Location type: <strong>Scan a single file or folder path</strong></li>
+            <li>URL: <strong style="color: #0366d6;">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-input/</strong> <em>(Pastikan ada garis miring <code>/</code> di akhir!)</em></li>
+            <li>Scan recursively: <strong>Enable / Centang</strong></li>
+            <li>Sampling: Naikkan menjadi <strong>100%</strong></li>
+            <li>Sampling method: <strong>No sampling</strong></li>
+            <li>Files: Pilih hanya <strong>TEXT</strong> dan <strong>CSV</strong> (hapus centang opsi lainnya), lalu klik <strong>OK</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>.</li>
+        <li>Pada <strong>Inspection template > Template name</strong>, masukkan path template yang telah kamu sesuaikan:
+          <br><code style="color: #0366d6; font-weight: bold; font-size: 12.5px;">projects/<span class="valProjectId">&lt;PROJECT_ID&gt;</span>/locations/global/inspectTemplates/<span class="valTemplateId">&lt;TEMPLATE_ID&gt;</span></code>
+          <br><em>(Pastikan tidak ada spasi tambahan!)</em>
+        </li>
+        <li>Klik <strong>Continue</strong>.</li>
+        <li>Pada <strong>Add actions</strong>:
+          <ul>
+            <li>Aktifkan <strong>Save to BigQuery</strong> dan centang <strong>Include quote</strong>.</li>
+            <li>Isikan BigQuery destination:
+              <ul>
+                <li>Project ID: <strong style="color: #0366d6;"><span class="valProjectId">&lt;PROJECT_ID&gt;</span></strong></li>
+                <li>Dataset ID: <code>cloudstorage_inspection</code></li>
+                <li>Table ID: <code>us_ssn</code></li>
+              </ul>
+            </li>
+            <li>Aktifkan juga <strong>Publish to Security Command Center</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>. Biarkan Schedule sebagai <em>None</em>.</li>
+        <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Confirm create</strong>.</li>
+        <li>Tunggu hingga status job berubah menjadi <strong>Done</strong>. Setelah status <em>Done</em>, klik <strong>Check my progress</strong> di Qwiklabs.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
+      <ul>
+        <li><strong>Inspection Job:</strong> Proses pemindaian terarah (deep inspection) pada jalur direktori tertentu menggunakan kriteria dari inspection template yang spesifik.</li>
+        <li><strong>Include Quote & BigQuery Export:</strong> Opsi ini menyimpan teks kutipan persis (quote) yang teridentifikasi sebagai data sensitif beserta lokasi filenya ke dalam tabel BigQuery untuk auditibilitas penuh.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 5 -->
+  <div class="task-card">
+    <h2>🛡️ Task 5: Create and Run a De-identify Job</h2>
+    <p class="code-explain" style="color: #e53e3e; font-weight: bold;">⚠️ Task ini dikerjakan secara manual melalui Google Cloud Console UI.</p>
+
+    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin: 12px 0;">
+      ⚠️ <strong>Perhatian:</strong> Job De-identification memproses pembuatan salinan berkas baru di Cloud Storage. Tunggu hingga status job di Console berubah menjadi <strong>Done</strong> (membutuhkan waktu sekitar 1 - 3 menit) sebelum menekan tombol <i>Check my progress</i>.
+    </div>
+
+    <div class="explain-box" style="background: #fff8f8; border-color: #feb2b2; margin-top: 10px;">
+      <h3 style="color: #c53030; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Cloud Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka menu <strong>Sensitive Data Protection</strong> > tab <strong>Inspection</strong>. Klik <strong>Create job and job triggers</strong>.</li>
+        <li>Pada <strong>Choose input data</strong>, isikan:
+          <ul>
+            <li>Job ID: <code>us_ssn_deidentify</code></li>
+            <li>Location type: <strong>Multi_region > us (multiple regions in United States)</strong></li>
+            <li>Storage type: <strong>Google Cloud Storage</strong></li>
+            <li>Location type: <strong>Scan a bucket with optional include/exclude rules</strong></li>
+            <li>Bucket name: <strong style="color: #0366d6;"><span class="valProjectId">&lt;PROJECT_ID&gt;</span>-input</strong> <em>(Tanpa spasi & tanpa garis miring di akhir)</em></li>
+            <li>Sampling: Naikkan menjadi <strong>100%</strong></li>
+            <li>Sampling method: <strong>No sampling</strong></li>
+            <li>Files: Pilih hanya <strong>TEXT</strong> dan <strong>CSV</strong> (hapus centang opsi lainnya), lalu klik <strong>OK</strong>.</li>
+            <li>Pada <strong>Exclude paths</strong>, klik <strong>Add exclude regex</strong>, lalu ketik: <code>ignore</code> (menjadi: <code>gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-input/ignore</code>).</li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>. Pada <em>Configure detection</em>, biarkan default dan klik <strong>Continue</strong>.</li>
+        <li>Pada <strong>Add actions</strong>, gulir ke bawah dan aktifkan <strong>Make a de-identified copy</strong>.
+          <ul>
+            <li>Structured de-identification template: 
+              <br><code style="color: #0366d6; font-weight: bold; font-size: 12.5px;">projects/<span class="valProjectId">&lt;PROJECT_ID&gt;</span>/locations/global/deidentifyTemplates/us_ssn_deidentify</code>
+            </li>
+            <li>Aktifkan <strong>Export transformation details to BigQuery</strong>:
+              <ul>
+                <li>Project ID: <strong style="color: #0366d6;"><span class="valProjectId">&lt;PROJECT_ID&gt;</span></strong></li>
+                <li>Dataset ID: <code>cloudstorage_transformations</code></li>
+                <li>Table ID: <code>deidentify_ssn_csv</code></li>
+              </ul>
+            </li>
+            <li>Cloud Storage output location: <strong style="color: #0366d6;">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-output</strong></li>
+            <li>Files: Pilih hanya <strong>TEXT</strong> dan <strong>CSV</strong>, lalu klik <strong>OK</strong>.</li>
+          </ul>
+        </li>
+        <li>Klik <strong>Continue</strong>. Biarkan Schedule sebagai <em>None</em>.</li>
+        <li>Klik <strong>Create</strong>, lalu klik <strong>Confirm create</strong>.</li>
+        <li>Tunggu hingga status job berubah menjadi <strong>Done</strong>, lalu klik <strong>Check my progress</strong> di Qwiklabs.</li>
+      </ol>
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;" open>
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 5)</summary>
+      <ul>
+        <li><strong>De-identification Job:</strong> Eksekusi penyamaran/redaksi data sensitif yang menghasilkan berkas salinan baru yang aman di bucket tujuan (<code>gs://[PROJECT_ID]-output</code>). Berkas ini aman dibagikan ke tim analisis tanpa merusak integritas data asli.</li>
+        <li><strong>Transformation Details:</strong> Menyimpan riwayat serta metadata baris mana saja yang telah diubah ke BigQuery untuk pelacakan audit.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: Sensitive Data Protection Lab">
+        
+        <!-- Anti-spam Honeypot Checkbox -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 2: Create a new inspection template with..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
+
+  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037;">
+    ⚠️ <strong>Catatan Penting:</strong><br>
+    Saat menjalankan Task 4 dan Task 5, pastikan kamu menunggu hingga status job di GCP Console berubah menjadi <strong>Done</strong> sebelum menekan tombol <i>Check my progress</i>.
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const projectIdVal = document.getElementById('inputProjectId').value.trim();
+      const templateIdVal = document.getElementById('inputTemplateId').value.trim();
+      const username2Val = document.getElementById('inputUsername2').value.trim();
+
+      // Tampilkan warning jika salah satu parameter kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!projectIdVal || !templateIdVal || !username2Val) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const projectId = projectIdVal || '<PROJECT_ID>';
+      const templateId = templateIdVal || '<TEMPLATE_ID>';
+      const username2 = username2Val || '<EMAIL_USER_2>';
+
+      // Update elemen span yang terhubung dengan form input
+      const projElements = document.getElementsByClassName('valProjectId');
+      for (let i = 0; i < projElements.length; i++) {
+        projElements[i].innerText = projectId;
+      }
+
+      const tmplElements = document.getElementsByClassName('valTemplateId');
+      for (let i = 0; i < tmplElements.length; i++) {
+        tmplElements[i].innerText = templateId;
+      }
+
+      const user2Elements = document.getElementsByClassName('valUsername2');
+      for (let i = 0; i < user2Elements.length; i++) {
+        user2Elements[i].innerText = username2;
+      }
+    }
+
+    // Jalankan update awal saat halaman dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
