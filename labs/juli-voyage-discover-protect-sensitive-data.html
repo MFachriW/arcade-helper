@@ -442,23 +442,23 @@ curl -s \\
       // Update Script Command Task 2 (Cloud Shell)
       document.getElementById('code2').innerText = 
 `export PROJECT_ID="${projectId}"
-export PROJECT_NUMBER=$(gcloud projects describe \${projectId} --format="value(projectNumber)")
+export PROJECT_NUMBER=$(gcloud projects describe ${projectId} --format="value(projectNumber)")
 
 # 1. Buat IAM Tag Key untuk SPII
 gcloud resource-manager tags keys create SPII \\
-    --parent=projects/$PROJECT_NUMBER \\
+    --parent=projects/\$PROJECT_NUMBER \\
     --description="Flag for sensitive personally identifiable information (SPII)"
 
 # 2. Ambil Tag Key ID yang baru dibuat
-TAG_KEY_ID=$(gcloud resource-manager tags keys list --parent="projects/\${PROJECT_NUMBER}" --format="value(NAME)")
+TAG_KEY_ID=\$(gcloud resource-manager tags keys list --parent="projects/\$PROJECT_NUMBER" --format="value(NAME)")
 
 # 3. Buat Tag Values Yes & No
 gcloud resource-manager tags values create Yes \\
-    --parent=$TAG_KEY_ID \\
+    --parent=\$TAG_KEY_ID \\
     --description="Contains sensitive personally identifiable information (SPII)"
 
 gcloud resource-manager tags values create No \\
-    --parent=$TAG_KEY_ID \\
+    --parent=\$TAG_KEY_ID \\
     --description="Does not contain sensitive personally identifiable information (SPII)"`;
 
       // Update Python Snippets Task 3
