@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab: Enabling Sensitive Data Protection Discovery for BigQuery</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
+    h1, h2, h3 { color: #0366d6; }
+    
+    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
+    .back-btn:hover { background: #dbeeff; }
+    
+    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
+    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    
+    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
+    .code-container { position: relative; margin: 8px 0 12px 0; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
+    
+    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
+    .copy-btn:hover { background: #2c974b; }
+    
+    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #024ea4; }
+
+    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
+    .report-card[open] { padding: 18px; }
+    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
+    .report-card summary::-webkit-details-marker { display: none; }
+    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
+    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+
+    .explain-box {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+    .explain-box summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #0366d6;
+      outline: none;
+    }
+    .explain-box ul, .explain-box ol {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #444;
+    }
+    .explain-box li {
+      margin-bottom: 6px;
+    }
+
+    .video-responsive {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: 12px 0 6px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .video-responsive iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGASI KEMBALI -->
+  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
+  
+  <h1>🛡️ Enabling Sensitive Data Protection Discovery for BigQuery</h1>
+  <div class="callout">
+    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh instruksi resmi dan materi pendukung lab ini dapat diakses langsung pada modul <a href="https://www.skills.google/course_templates/1177/labs/609026" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Enabling Sensitive Data Protection Discovery for BigQuery</a>.
+  </div>
+  <p>Silakan masukkan <strong>Project ID</strong> dan <strong>Email Username 2</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
+  
+  <!-- FORM INPUT INTERAKTIF UTAMA -->
+  <div class="config-card">
+    <h3>⚙️ Parameter Dinamis Lab</h3>
+    <div class="config-grid">
+      <div class="form-group">
+        <label>1. GCP Project ID:</label>
+        <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+      </div>
+      <div class="form-group">
+        <label>2. Email Username 2:</label>
+        <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER WARNING PARAMETER -->
+  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong> dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
+  </div>
+
+  <!-- VIDEO WALKTHROUGH EMBED -->
+  <div class="task-card">
+    <h2>📺 Video Panduan Visual & Tips Pengerjaan Cepat</h2>
+    <p class="code-explain">Tonton video panduan pengerjaan interaktif di bawah ini untuk menyimak penjelasan lisan, *shortcut* pengerjaan, dan visualisasi langkah demi langkah:</p>
+    
+    <div class="video-responsive">
+      <iframe src="https://www.youtube.com/embed/7VP-m-DgRaA" title="Enabling Sensitive Data Protection Discovery for BigQuery Tutorial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    
+    <div style="text-align: center; margin-top: 8px;">
+      <a href="https://www.youtube.com/watch?v=7VP-m-DgRaA" target="_blank" style="font-size: 13px; color: #0366d6; font-weight: bold; text-decoration: underline;">↗️ Buka Video Langsung di Aplikasi YouTube (Jika Player Error)</a>
+      <p style="font-size: 12.5px; color: #555; margin-top: 6px; margin-bottom: 0;">🎥 Video tutorial dibuat oleh <strong>Muhamad Fachri Wijaya</strong>.</p>
+    </div>
+
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 14px;">
+      <summary style="color: #0366d6; font-weight: bold;">💡 Tips Pengerjaan Cepat & Catatan Video:</summary>
+      <ul style="margin-top: 6px; margin-bottom: 0; font-size: 13px; line-height: 1.5;">
+        <li><strong>Samping-Sampingan Layar (Ctrl + Minus):</strong> Jika jendela Console dipersempit ke samping layar, tekan <code>Ctrl</code> + <code>-</code> (zoom out) agar tombol simpan/scroll di bagian bawah tidak terpotong.</li>
+        <li><strong>Shortcut Task 4 (Tanpa Relogin Username 2):</strong> Kamu TIDAK PERLU logout dan login ke akun Username 2 hanya untuk menguji akses. Cukup ubah role IAM Username 2 dan tambahkan tag ke dataset dari Username 1, lalu klik <i>Check my progress</i>!</li>
+        <li><strong>Fitur Paused Scan Mode:</strong> Task 1 dikonfigurasi dalam mode <i>Paused</i> agar kita sempat membuat Resource Tag & IAM Service Agent Role sebelum pemindaian data (scan) berjalan secara aktual.</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+
+  <!-- TASK 1 -->
+  <div class="task-card">
+    <h2>⏸️ Task 1. Create a discovery scan configuration for BigQuery in paused mode</h2>
+    <p class="code-explain" style="color: #0366d6; font-weight: bold;">ℹ️ Task ini dikerjakan secara manual melalui Google Cloud Console.</p>
+    
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Di Google Cloud Console, klik <strong>Navigation menu (☰)</strong> > <strong>Security</strong> > <strong>Sensitive Data Protection</strong>.</li>
+        <li>Pilih tab <strong>Discovery</strong>.</li>
+        <li>Di bawah opsi BigQuery, klik <strong>Enable</strong>.</li>
+        <li>Untuk <i>Select a discovery type</i>, biarkan opsi <strong>BigQuery</strong> tercentang, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <i>Select scope</i>, biarkan opsi <strong>Scan selected project</strong>, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <i>Managed schedules</i>, biarkan default, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <i>Select inspection template</i>, biarkan opsi <strong>Create new inspection template</strong> tercentang, lalu klik <strong>Continue</strong>.</li>
+        <li>Pada bagian <strong>Add actions</strong>:
+          <ul>
+            <li>Aktifkan (Centang) <strong>Publish to Security Command Center</strong>.</li>
+            <li>Aktifkan (Centang) <strong>Save data profile copies to BigQuery</strong>. Isikan parameter berikut:
+              <ul>
+                <li>Dataset ID: <code>bq_discovery</code></li>
+                <li>Table ID: <code>data_profiles</code></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>Biarkan default lainnya, lalu klik <strong>Continue</strong>.</li>
+        <li>Untuk <i>Set location to store configuration</i>, biarkan terpilih <strong>us (multiple regions in United States)</strong>, lalu klik <strong>Continue</strong>.</li>
+        <li>Isikan Display Name: <code>BigQuery Discovery</code>
+          <br><em style="color: #c53030; font-size: 12.5px;">⚠️ Pastikan tidak ada spasi tidak sengaja di awal atau akhir nama!</em>
+        </li>
+        <li>Aktifkan/Centang opsi <strong>Create scan in paused mode</strong>.</li>
+        <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Create configuration</strong>.</li>
+      </ol>
+    </div>
+
+    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin-top: 14px;">
+      💡 <strong>Tips Progres:</strong> Setelah mengklik tombol <i>Create configuration</i>, kamu bisa langsung lanjut mengerjakan Task 2 tanpa perlu menunggu lama. Cek tombol <i>Check my progress</i> pada Task 1 selagi menyiapkan Task 2.
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
+      <ul>
+        <li><strong>Sensitive Data Protection Discovery:</strong> Layanan terkelola Google Cloud yang secara otomatis memindai aset BigQuery untuk mengidentifikasi keberadaan informasi sensitif (seperti infoType Nomor KTP/SSN, Email, Nama) dan tingkat risiko data.</li>
+        <li><strong>Data Profiles ke BigQuery:</strong> Menyimpan hasil ringkasan dan metadata profil pemindaian secara langsung ke dataset BigQuery (<code>bq_discovery.data_profiles</code>) agar dapat dianalisis ulang atau divisualisasikan.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 2 -->
+  <div class="task-card">
+    <h2>🏷️ Task 2. Create tags and grant role for automated tagging during discovery scan</h2>
+    <p class="code-explain">Membuat Resource Tags sensitivitas data di Console IAM, serta memberikan izin IAM ke Service Account DLP via Cloud Shell.</p>
+
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 1: Buat Sensitivity Level Tag di Console IAM</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>IAM & Admin</strong> > <strong>Tags</strong>.</li>
+        <li>Klik <strong>+ Create</strong>.</li>
+        <li>Isi Tag key: <code>sensitivity-level</code></li>
+        <li>Isi Tag description: <code>Sensitivity level tagged as low, moderate, high, and unknown</code></li>
+        <li>Klik <strong>+ Add value</strong> dan masukkan 4 Tag Values berikut satu per satu:
+          <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px;">
+            <tr style="background: #eef6ff; text-align: left;">
+              <th style="padding: 6px; border: 1px solid #cce0ff;">Tag value</th>
+              <th style="padding: 6px; border: 1px solid #cce0ff;">Tag description</th>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;"><code>low</code></td>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;">Tag value to attach to low-sensitivity data</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;"><code>moderate</code></td>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;">Tag value to attach to moderate-sensitivity data</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;"><code>high</code></td>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;">Tag value to attach to high-sensitivity data</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;"><code>unknown</code></td>
+              <td style="padding: 6px; border: 1px solid #e1e4e8;">Tag value to attach to resources with an unknown sensitivity level</td>
+            </tr>
+          </table>
+        </li>
+        <li style="margin-top: 8px;">Klik <strong>Create tag key</strong> dan tunggu proses pembuatan selesai.</li>
+      </ol>
+    </div>
+
+    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Langkah 2: Grant Role ke Service Account DLP via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2 Command</button>
+      <pre><code id="code2"></code></pre>
+    </div>
+
+    <details class="explain-box" open style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
+      <ul>
+        <li><strong>Resource Tags (IAM Tags):</strong> Kunci & Nilai (Key/Value) terpusat pada tingkat organisasi/project GCP yang digunakan untuk mengontrol tata kelola data dan kebijakan akses secara dinamis.</li>
+        <li><strong>roles/resourcemanager.tagUser:</strong> Peran IAM yang wajib diberikan kepada Service Agent bawaan DLP (<code>service-$PROJECT_NUMBER@dlp-api.iam.gserviceaccount.com</code>) agar pemindaian otomatis dapat menempelkan tag tingkat sensitivitas ke aset terkait.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 3 -->
+  <div class="task-card">
+    <h2>▶️ Task 3. Update the paused discovery scan with automated tagging and start scan</h2>
+    <p class="code-explain" style="color: #0366d6; font-weight: bold;">ℹ️ Task ini dikerjakan secara manual melalui Google Cloud Console.</p>
+    
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Manual di Console:</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Kembali ke menu <strong>Sensitive Data Protection</strong> > tab <strong>Discovery</strong> > tab <strong>Scan Configurations</strong>.</li>
+        <li>Cari baris bernama <code>BigQuery Discovery</code>, klik ikon titik tiga (<strong>⋮</strong>) di sebelah kanan, lalu pilih <strong>Edit</strong>.</li>
+        <li>Di bawah bagian <strong>Add actions</strong>, aktifkan/centang opsi <strong>Tag resources</strong>.</li>
+        <li>Aktifkan keempat opsi pemetaan tag dan isikan nilainya sesuai path berikut:
+          <ul>
+            <li>Tag high sensitivity resources: <strong style="color: #0366d6;"><span id="task3HighPath">&lt;PROJECT_ID&gt;/sensitivity-level/high</span></strong></li>
+            <li>Tag moderate sensitivity resources: <strong style="color: #0366d6;"><span id="task3ModeratePath">&lt;PROJECT_ID&gt;/sensitivity-level/moderate</span></strong></li>
+            <li>Tag low sensitivity resources: <strong style="color: #0366d6;"><span id="task3LowPath">&lt;PROJECT_ID&gt;/sensitivity-level/low</span></strong></li>
+            <li>Tag unknown sensitivity resources: <strong style="color: #0366d6;"><span id="task3UnknownPath">&lt;PROJECT_ID&gt;/sensitivity-level/unknown</span></strong></li>
+          </ul>
+        </li>
+        <li>Centang juga 2 opsi berikut:
+          <ul>
+            <li><strong>When a tag is applied to a resource, lower the data risk of its profile to LOW.</strong></li>
+            <li><strong>Tag a resource when it is profiled for the first time.</strong></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Save</strong>, lalu klik <strong>Confirm edit</strong>.</li>
+        <li>Terakhir, klik tombol <strong>Resume Scan</strong> untuk memulai proses pemindaian discovery secara aktif.</li>
+      </ol>
+    </div>
+
+    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin-top: 14px;">
+      ⚠️ <strong>Proses Pemindaian Latar Belakang:</strong> Setelah menekan <i>Resume Scan</i>, engine pemindaian SDP akan bekerja secara asinkron. Kamu bisa langsung mengklik <i>Check my progress</i> pada Task 3 tanpa harus menunggu pemindaian selesai seluruhnya.
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
+      <ul>
+        <li><strong>Automated Tagging:</strong> SDP Discovery akan melabeli tabel/dataset BigQuery secara otomatis berdasarkan kategori temuan infoType terdeteksi (seperti menandai <code>high</code> jika ditemukan SSN/KTP).</li>
+        <li><strong>Resume Scan:</strong> Mengubah status konfigurasi pemindaian dari terhenti (<i>Paused</i>) menjadi aktif (<i>Active</i>).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 4 -->
+  <div class="task-card">
+    <h2>🔐 Task 4. Explore conditional access for BigQuery using tags</h2>
+    <p class="code-explain" style="color: #0366d6; font-weight: bold;">ℹ️ Task ini dikerjakan secara manual melalui Google Cloud Console (Menggunakan Shortcut Video!).</p>
+
+    <div class="callout" style="background: #eef6ff; border-left: 4px solid #0366d6; color: #1e3a8a; font-size: 13.5px; margin-bottom: 14px;">
+      💡 <strong>Shortcut Pengerjaan Cepat (Sesuai Video Tutorial):</strong> Kamu <strong>TIDAK PERLU</strong> logout dan login ulang sebagai Username 2. Seluruh pengaturan IAM dan penempelan Tag pada dataset BigQuery dapat dikerjakan secara langsung menggunakan akun utama (Username 1).
+    </div>
+
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 1: Update IAM Roles untuk Username 2</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>IAM & Admin</strong> > <strong>IAM</strong> (Tetap login sebagai Username 1).</li>
+        <li>Cari baris untuk Username 2: <strong style="color: #0366d6;"><span id="task4User2Text">&lt;EMAIL_USER_2&gt;</span></strong>, lalu klik ikon pensil (<strong>Edit principal</strong>).</li>
+        <li>Cari peran <strong>Viewer</strong>, lalu klik ikon tempat sampah (<strong>Delete role</strong>).</li>
+        <li>Klik <strong>Add another role</strong>, pilih <strong>Basic</strong> > <strong>Browser</strong>.</li>
+        <li>Cari peran <strong>BigQuery Data Viewer</strong>, lalu klik tombol <strong>Add IAM condition</strong>.</li>
+        <li>Isikan konfigurasi Condition:
+          <ul>
+            <li>Title: <code>Low Sensitivity Data Access Only</code></li>
+            <li>Condition builder: Pilih <strong>Tag</strong> untuk Condition type 1, dan pilih <strong>has value</strong> untuk Operator.</li>
+            <li>Value path: <strong style="color: #0366d6;"><span id="task4LowPath">&lt;PROJECT_ID&gt;/sensitivity-level/low</span></strong></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Save</strong>, lalu klik <strong>Save</strong> lagi pada panel IAM utama.</li>
+      </ol>
+    </div>
+
+    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 16px;">
+      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 2: Tempelkan Low Sensitivity Tag ke Dataset BigQuery</h3>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
+        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>BigQuery</strong>.</li>
+        <li>Di panel Explorer sebelah kiri, luaskan ID Project: <strong style="color: #0366d6;"><span id="task4ProjectText">&lt;PROJECT_ID&gt;</span></strong>.</li>
+        <li>Klik dataset bernama <code>damaged_car_image_info</code>.</li>
+        <li>Di panel sebelah kanan, klik <strong>Edit details</strong> (ikon pensil).</li>
+        <li>Pada bagian <strong>Tags</strong>, klik <strong>Select scope</strong> > <strong>Select current project</strong>.</li>
+        <li>Pilih atribut berikut:
+          <ul>
+            <li>Key 1: <code>sensitivity-level</code></li>
+            <li>Value 1: <code>low</code></li>
+          </ul>
+        </li>
+        <li>Klik <strong>Save</strong>.</li>
+      </ol>
+    </div>
+
+    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin-top: 14px;">
+      ✅ Setelah menyelesaikan kedua langkah di atas, kamu dapat langsung mengklik tombol <i>Check my progress</i> pada Task 4 tanpa perlu berpindah browser/sesi login!
+    </div>
+
+    <details class="explain-box" style="margin-top: 16px;">
+      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
+      <ul>
+        <li><strong>Attribute-Based Access Control (ABAC) via Resource Tags:</strong> Membatasi hak akses BigQuery Data Viewer hanya pada dataset/tabel yang dilabeli tag `low`. Dataset berisi data sensitif (seperti `car_buyers`) yang tidak bertag `low` secara otomatis tersembunyi dari Username 2.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- TASK 5 -->
+  <div class="task-card">
+    <h2>📊 Task 5. Review initial discovery results (Optional / Peninjauan Hasil)</h2>
+    <p class="code-explain">Melihat ringkasan analisis infoType dan dashboard Looker/Sensitive Data Protection.</p>
+
+    <div class="callout" style="background: #eef6ff; border-left: 4px solid #0366d6; color: #1e3a8a; font-size: 13.5px; margin-bottom: 0;">
+      ℹ️ <strong>Catatan:</strong> Task 5 adalah panduan eksplorasi hasil laporan pemindaian sensitivitas data dan <strong>tidak memiliki tombol pengecekan progres (Check my progress)</strong> di Qwiklabs. Jika Task 1 sampai 4 sudah tercentang hijau, lab kamu telah selesai 100%!
+    </div>
+  </div>
+
+  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+  <details class="report-card">
+    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
+    <div style="margin-top: 16px;">
+      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+      
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: SDP Discovery for BigQuery Lab">
+        
+        <!-- Anti-spam Honeypot Checkbox -->
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+        
+        <div class="form-group">
+          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+        </div>
+        
+        <div class="form-group">
+          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Update the discovery scan..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
+      </form>
+    </div>
+  </details>
+
+  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+
+  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+    <br><br>
+    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+  </div>
+
+  <script>
+    function updateCommands() {
+      const projectIdInput = document.getElementById('inputProjectId').value.trim();
+      const user2Input = document.getElementById('inputUser2').value.trim();
+
+      // Tampilkan warning jika salah satu parameter kosong
+      const warningEl = document.getElementById('paramWarning');
+      if (!projectIdInput || !user2Input) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      const projectId = projectIdInput || '<PROJECT_ID>';
+      const user2 = user2Input || '<EMAIL_USER_2>';
+
+      // Update Teks Span Dinamis
+      document.getElementById('task3HighPath').innerText = `${projectId}/sensitivity-level/high`;
+      document.getElementById('task3ModeratePath').innerText = `${projectId}/sensitivity-level/moderate`;
+      document.getElementById('task3LowPath').innerText = `${projectId}/sensitivity-level/low`;
+      document.getElementById('task3UnknownPath').innerText = `${projectId}/sensitivity-level/unknown`;
+
+      document.getElementById('task4User2Text').innerText = user2;
+      document.getElementById('task4LowPath').innerText = `${projectId}/sensitivity-level/low`;
+      document.getElementById('task4ProjectText').innerText = projectId;
+
+      // Update Command Task 2 (Cloud Shell)
+      document.getElementById('code2').innerText = 
+`export PROJECT_ID="${projectId}"
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="get(projectNumber)")
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \\
+  --member=serviceAccount:service-$PROJECT_NUMBER@dlp-api.iam.gserviceaccount.com \\
+  --role=roles/resourcemanager.tagUser`;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText);
+      
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = 'Copied! ✔️';
+      btnElement.style.background = '#0366d6';
+      
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#2ea44f';
+      }, 1500);
+    }
+
+    // Jalankan update awal saat halaman dibuka
+    updateCommands();
+  </script>
+</body>
+</html>
