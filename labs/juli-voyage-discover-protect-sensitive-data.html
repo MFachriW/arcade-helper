@@ -83,16 +83,12 @@
         <label>2. Email Username 2:</label>
         <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
       </div>
-      <div class="form-group">
-        <label>3. Region / Location Lab:</label>
-        <input type="text" id="inputRegion" placeholder="us-west1" oninput="updateCommands()">
-      </div>
     </div>
   </div>
 
   <!-- REMINDER WARNING PARAMETER -->
   <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
-    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong>, <strong>Email Username 2</strong>, dan/atau <strong>Region Lab</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
+    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong> dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
   </div>
 
   <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
@@ -308,11 +304,10 @@
     function updateCommands() {
       const projectIdInput = document.getElementById('inputProjectId').value.trim();
       const user2Input = document.getElementById('inputUser2').value.trim();
-      const regionInput = document.getElementById('inputRegion').value.trim();
 
       // Tampilkan warning jika salah satu parameter kosong
       const warningEl = document.getElementById('paramWarning');
-      if (!projectIdInput || !user2Input || !regionInput) {
+      if (!projectIdInput || !user2Input) {
         warningEl.style.display = 'block';
       } else {
         warningEl.style.display = 'none';
@@ -320,7 +315,6 @@
 
       const projectId = projectIdInput || '<PROJECT_ID>';
       const user2 = user2Input || '<EMAIL_USER_2>';
-      const region = regionInput || '<REGION>';
 
       // Update Teks Span Dinamis
       const projElements = document.getElementsByClassName('valProjectId');
@@ -335,7 +329,6 @@
       // Update Script Command Task 1 - Langkah 2 (Cloud Shell)
       document.getElementById('code1a').innerText = 
 `export DEVSHELL_PROJECT_ID="${projectId}"
-export REGION="${region}"
 export PROJECT_NUMBER=$(gcloud projects describe $DEVSHELL_PROJECT_ID --format="value(projectNumber)")
 
 # 1. Buat Konfigurasi De-identify Template JSON
