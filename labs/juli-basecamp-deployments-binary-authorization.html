@@ -865,9 +865,11 @@
 
       // Task Prep
       document.getElementById('code-prep').textContent = 
-`export PROJECT_ID=$(gcloud config get-value project)
+`# 1. Inisialisasi variabel lingkungan proyek Google Cloud
+export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT_NUMBER=$(gcloud projects describe \$PROJECT_ID --format='value(projectNumber)')
 
+# 2. Mengaktifkan API pendukung (Cloud KMS, GKE, Binary Authorization, Scanner)
 gcloud services enable \\
   cloudkms.googleapis.com \\
   cloudbuild.googleapis.com \\
@@ -880,14 +882,17 @@ gcloud services enable \\
 
       // Task 1
       document.getElementById('code-task-1').textContent = 
-`gcloud artifacts repositories create artifact-scanning-repo \\
+`# 1. Membuat Artifact Registry Docker repository
+gcloud artifacts repositories create artifact-scanning-repo \\
   --repository-format=docker \\
   --location=${region} \\
   --description="Docker repository"
 
+# 2. Konfigurasi autentikasi Docker untuk Google Artifact Registry
 gcloud auth configure-docker ${region}-docker.pkg.dev
 
-mkdir vuln-scan && cd vuln-scan
+# 3. Menyiapkan struktur aplikasi Flask sederhana & Dockerfile
+mkdir -p vuln-scan && cd vuln-scan
 
 cat > ./Dockerfile << EOF
 FROM python:3.8-alpine  
@@ -917,11 +922,13 @@ if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 EOF
 
+# 4. Build dan push sampel Docker image ke Artifact Registry via Cloud Build
 gcloud builds submit . -t ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image`;
 
       // Task 2
       document.getElementById('code-task-2').textContent = 
-`cat > ./vulnz_note.json << EOM
+`# 1. Membuat Container Analysis Note untuk otoritas vulnerabilitas kontainer
+cat > ./vulnz_note.json << EOM
 {
   "attestation": {
     "hint": {
@@ -933,6 +940,7 @@ EOM
 
 NOTE_ID=vulnz_note
 
+# 2. Mendaftarkan Note ke Container Analysis REST API
 curl -vvv -X POST \\
     -H "Content-Type: application/json" \\
     -H "Authorization: Bearer $(gcloud auth print-access-token)" \\
@@ -943,6 +951,7 @@ curl -vvv \\
     -H "Authorization: Bearer $(gcloud auth print-access-token)" \\
     "https://containeranalysis.googleapis.com/v1/projects/\${PROJECT_ID}/notes/\${NOTE_ID}"
 
+# 3. Membuat Attestor di Binary Authorization
 ATTESTOR_ID=vulnz-attestor
 
 gcloud container binauthz attestors create \$ATTESTOR_ID \\
@@ -951,6 +960,7 @@ gcloud container binauthz attestors create \$ATTESTOR_ID \\
 
 gcloud container binauthz attestors list
 
+# 4. Mengonfigurasi hak akses IAM Service Account Binary Authorization
 PROJECT_NUMBER=$(gcloud projects describe "\${PROJECT_ID}" --format="value(projectNumber)")
 BINAUTHZ_SA_EMAIL="service-\${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
 
@@ -978,11 +988,13 @@ curl -X POST \\
 
       // Task 3
       document.getElementById('code-task-3').textContent = 
-`KEY_LOCATION=global
+`# 1. Inisialisasi parameter KMS Keyring dan Key Name
+KEY_LOCATION=global
 KEYRING=binauthz-keys
 KEY_NAME=codelab-key
 KEY_VERSION=1
 
+# 2. Membuat KMS Keyring dan Asymmetric Signing Key
 gcloud kms keyrings create "\${KEYRING}" --location="\${KEY_LOCATION}"
 
 gcloud kms keys create "\${KEY_NAME}" \\
@@ -990,6 +1002,7 @@ gcloud kms keys create "\${KEY_NAME}" \\
     --purpose asymmetric-signing \\
     --default-algorithm="ec-sign-p256-sha256"
 
+# 3. Menautkan kunci publik KMS ke Attestor Binary Authorization
 gcloud beta container binauthz attestors public-keys add \\
     --attestor="\${ATTESTOR_ID}" \\
     --keyversion-project="\${PROJECT_ID}" \\
@@ -1002,11 +1015,13 @@ gcloud container binauthz attestors list`;
 
       // Task 4
       document.getElementById('code-task-4').textContent = 
-`CONTAINER_PATH=${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
+`# 1. Menentukan path kontainer & mengekstrak SHA256 digest dari image
+CONTAINER_PATH=${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe \${CONTAINER_PATH}:latest \\
     --format='get(image_summary.digest)')
 
+# 2. Menandatangani Attestation digital menggunakan kunci KMS
 gcloud beta container binauthz attestations sign-and-create \\
     --artifact-url="\${CONTAINER_PATH}@\${DIGEST}" \\
     --attestor="\${ATTESTOR_ID}" \\
@@ -1017,27 +1032,29 @@ gcloud beta container binauthz attestations sign-and-create \\
     --keyversion-key="\${KEY_NAME}" \\
     --keyversion="\${KEY_VERSION}"
 
+# 3. Verifikasi daftar Attestation yang terdaftar pada Attestor
 gcloud container binauthz attestations list \\
    --attestor=\$ATTESTOR_ID --attestor-project=\${PROJECT_ID}`;
 
       // Task 5
       document.getElementById('code-task-5').textContent = 
-`# [ESTIMASI TUNGGU: 3-5 MENIT SAAT PROSES CLUSTER CREATION]
+`# 1. Membuat GKE Cluster dengan Binary Authorization aktif (Proses 3-5 menit)
 gcloud beta container clusters create binauthz \\
     --zone ${zone} \\
     --binauthz-evaluation-mode=PROJECT_SINGLETON_POLICY_ENFORCE
 
+# 2. Memberikan akses IAM Container Developer ke Cloud Build
 gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
         --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
         --role="roles/container.developer"
 
-# Verifikasi Policy Awal (ALWAYS_ALLOW)
+# 3. Verifikasi Policy Awal (Default: ALWAYS_ALLOW)
 gcloud container binauthz policy export
 kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
 kubectl get pods
 kubectl delete pod hello-server
 
-# Uji Coba UBAH POLICY KE ALWAYS_DENY
+# 4. Pengujian UBAH POLICY KE ALWAYS_DENY
 cat > policy.yaml << EOF
 globalPolicyEvaluationMode: ENABLE
 defaultAdmissionRule:
@@ -1047,11 +1064,12 @@ name: projects/\${PROJECT_ID}/policy
 EOF
 
 gcloud container binauthz policy import policy.yaml
+sleep 15
 
-# Pengujian Deploy (Harus Gagal / Denied)
-kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
+# 5. Uji Coba Deploy (Harus Gagal / Denied oleh Binary Authorization)
+kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080 || true
 
-# Revert Policy Kembali ke ALWAYS_ALLOW
+# 6. Revert Policy Kembali ke ALWAYS_ALLOW
 cat > policy.yaml << EOF
 globalPolicyEvaluationMode: ENABLE
 defaultAdmissionRule:
@@ -1060,11 +1078,13 @@ defaultAdmissionRule:
 name: projects/\${PROJECT_ID}/policy
 EOF
 
-gcloud container binauthz policy import policy.yaml`;
+gcloud container binauthz policy import policy.yaml
+sleep 15`;
 
       // Task 6
       document.getElementById('code-task-6').textContent = 
-`gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+`# 1. Memberikan role IAM penandatanganan attestation ke Service Accounts
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
   --member serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \\
   --role roles/binaryauthorization.attestorsViewer
 
@@ -1088,12 +1108,14 @@ gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
         --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
         --role="roles/ondemandscanning.admin"
 
+# 2. Build Custom Cloud Builder penandatangan Attestation
 git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
 cd cloud-builders-community/binauthz-attestation
 gcloud builds submit . --config cloudbuild.yaml
 cd ../..
 rm -rf cloud-builders-community
 
+# 3. Membuat file otomatisasi CI/CD cloudbuild.yaml dengan Attestation Step
 cat > ./cloudbuild.yaml << EOF
 steps:
 - id: "build"
@@ -1120,11 +1142,13 @@ images:
   - '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:good'
 EOF
 
+# 4. Jalankan build & penandatanganan otomatis via Cloud Build
 gcloud builds submit`;
 
       // Task 7
       document.getElementById('code-task-7').textContent = 
-`COMPUTE_ZONE="${region}"
+`# 1. Membuat Kebijakan Binary Authorization yang Mewajibkan Attestor (REQUIRE_ATTESTATION)
+COMPUTE_ZONE="${region}"
 
 cat > binauth_policy.yaml << EOM
 defaultAdmissionRule:
@@ -1141,13 +1165,17 @@ clusterAdmissionRules:
     - projects/\${PROJECT_ID}/attestors/vulnz-attestor
 EOM
 
+# 2. Impor kebijakan baru dan beri jeda sinkronisasi
 gcloud beta container binauthz policy import binauth_policy.yaml
+sleep 15
 
+# 3. Mendapatkan digest dari image tertanda tangan (:good)
 CONTAINER_PATH=${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe \${CONTAINER_PATH}:good \\
     --format='get(image_summary.digest)')
 
+# 4. Deploy kontainer tertanda tangan ke GKE (Harus Berhasil / Allowed)
 cat > deploy.yaml << EOM
 apiVersion: v1
 kind: Service
