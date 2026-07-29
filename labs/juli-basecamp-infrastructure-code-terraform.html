@@ -265,11 +265,23 @@
                 <small>Project ID dari panel kiri informasi Qwiklabs.</small>
                 <input type="text" id="projectId" placeholder="qwiklabs-gcp-XX-XXXXXXX" oninput="updateCommands()">
             </div>
+
+            <div class="form-group">
+                <label for="region">Region</label>
+                <small>Region yang tertera pada petunjuk langkah pengerjaan Task 1 (misal: us-east1).</small>
+                <input type="text" id="region" placeholder="us-east1" oninput="updateCommands()">
+            </div>
+
+            <div class="form-group">
+                <label for="zone">Zone</label>
+                <small>Zone yang tertera pada petunjuk langkah pengerjaan Task 1 (misal: us-east1-c).</small>
+                <input type="text" id="zone" placeholder="us-east1-c" oninput="updateCommands()">
+            </div>
         </div>
 
         <!-- Warning Banner Dinamis -->
         <div id="warningBanner" class="warning-banner">
-            ⚠️ <strong>Perhatian:</strong> GCP Project ID belum diisi! Harap lengkapi form di atas agar skrip di bawah tidak berisi parameter kosong.
+            ⚠️ <strong>Perhatian:</strong> Masih ada variabel yang belum diisi! Harap lengkapi semua form di atas agar skrip di bawah tidak berisi parameter kosong.
         </div>
 
         <!-- Setup Task -->
@@ -445,15 +457,17 @@
         function updateCommands() {
             // Ambil input dari form
             const projectIdInput = document.getElementById('projectId').value.trim();
+            const regionInput = document.getElementById('region').value.trim();
+            const zoneInput = document.getElementById('zone').value.trim();
 
             // Tentukan nilai variabel (dengan fallback placeholder abu-abu)
             const projectId = projectIdInput || '<PROJECT_ID>';
-            const region = 'us-east1';
-            const zone = 'us-east1-b';
+            const region = regionInput || '<REGION>';
+            const zone = zoneInput || '<ZONE>';
 
             // Banner warning visibility
             const warningBanner = document.getElementById('warningBanner');
-            if (projectId === '<PROJECT_ID>') {
+            if (projectId === '<PROJECT_ID>' || region === '<REGION>' || zone === '<ZONE>') {
                 warningBanner.style.display = 'block';
             } else {
                 warningBanner.style.display = 'none';
