@@ -1,1 +1,13 @@
+# Folder Backup Lokal
 backup/
+
+# Berkas Temp & Log Windows / System
+*.tmp
+*.log
+*.bak
+Thumbs.db
+Desktop.ini
+
+# Konfigurasi Editor
+.vscode/
+.idea/
