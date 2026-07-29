@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Lab: Interact with Terraform Modules (GSP751)</title>
+  
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #202124;
+      --text-muted: #5f6368;
+      --border-color: #dadce0;
+      
+      --warning-bg: #fff5f5;
+      --warning-border: #e53e3e;
+      --warning-text: #c53030;
+      
+      --info-bg: #f0f7ff;
+      --info-border: #d0e5ff;
+      --info-text: #0c5460;
+      
+      --yellow-warning-bg: #fff8e1;
+      --yellow-warning-border: #ffe082;
+      --yellow-warning-text: #856404;
+
+      --code-bg: #1e1e1e;
+      --code-header-bg: #2d2d2d;
+      --code-text: #d4d4d4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Back Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s;
+    }
+    .back-btn:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    /* Header Card */
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .badge {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .ref-box {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: var(--info-text);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .ref-box a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .ref-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Input Card */
+    .input-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .input-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .form-group small {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .form-group input {
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: 'Fira Code', monospace;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+
+    /* Warning Banner Dinamis */
+    .warning-banner {
+      background-color: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Task Card */
+    .task-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .task-number {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .task-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* Video Embed Responsive */
+    .video-responsive {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      background-color: #000;
+    }
+
+    .video-responsive iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Code Container & Copy Button */
+    .code-container {
+      margin: 1.25rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+
+    .code-header {
+      background-color: var(--code-header-bg);
+      color: #aaa;
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid #555;
+      color: #ccc;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .copy-btn.copied {
+      background: #28a745;
+      border-color: #28a745;
+      color: #fff;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Kontras Inline Code */
+    :not(pre) > code {
+      font-family: 'Fira Code', monospace;
+      background-color: #f1f5f9;
+      color: #c53030;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Explain Box (<details>) */
+    .explain-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin: 1.25rem 0;
+      padding: 0.75rem 1rem;
+    }
+
+    .explain-box summary {
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .explain-box summary:hover {
+      color: var(--primary-hover);
+    }
+
+    .explain-content {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.925rem;
+      color: #334155;
+    }
+
+    .explain-content ul {
+      margin-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Informational Box (Blue & Yellow) */
+    .info-box {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: var(--info-text);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-size: 0.925rem;
+    }
+
+    .wait-banner {
+      background-color: var(--yellow-warning-bg);
+      border: 1px solid var(--yellow-warning-border);
+      color: var(--yellow-warning-text);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-size: 0.925rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Footer Docs Section */
+    .docs-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .docs-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .docs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .docs-list li a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.925rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .docs-list li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Report Card (<details>) */
+    .report-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .report-card summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .report-form {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .report-form textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .submit-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Navigation Back Button -->
+    <a href="#" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Kembali ke Daftar Lab
+    </a>
+
+    <!-- Header Card -->
+    <div class="header-card">
+      <div class="header-title-container">
+        <h1 class="header-title">Interact with Terraform Modules</h1>
+        <span class="badge">GSP751</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Panduan langkah-demi-langkah interaktif untuk mempelajari penggunaan modul Terraform dari Registry publik serta membangun modul kustom sendiri di Google Cloud.
+      </p>
+
+      <div class="ref-box">
+        <i class="fas fa-lightbulb" style="font-size: 1.2rem; color: #fbbc04;"></i>
+        <div>
+          <strong>Referensi & Pelajari Lebih Lanjut:</strong> 
+          <a href="https://www.skills.google/focuses/15836?parent=catalog" target="_blank" rel="noopener">
+            Interact with Terraform Modules (GSP751)
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Card -->
+    <div class="input-card">
+      <h2><i class="fas fa-sliders-h" style="color: var(--primary);"></i> Konfigurasi Parameter Lab</h2>
+      <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Masukkan variabel khusus dari halaman pengerjaan Qwiklabs Anda. Kode di seluruh panduan ini akan ter-update secara otomatis secara real-time.
+      </p>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="projectId">Project ID</label>
+          <small>Project ID dari panel kiri / kredensial Qwiklabs Anda</small>
+          <input type="text" id="projectId" placeholder="qwiklabs-gcp-01-xxxxxxxxxxxx" oninput="updateCommands()">
+        </div>
+
+        <div class="form-group">
+          <label for="region">Region</label>
+          <small>Region yang ditugaskan dalam petunjuk Task (contoh: europe-west1, us-west1)</small>
+          <input type="text" id="region" placeholder="europe-west1" oninput="updateCommands()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Warning Banner -->
+    <div class="warning-banner" id="warningBanner">
+      <i class="fas fa-exclamation-triangle" style="font-size: 1.2rem;"></i>
+      <span><strong>Perhatian:</strong> Beberapa kolom parameter belum diisi. Perintah di bawah masih menampilkan variabel standar seperti <code>&lt;PROJECT_ID&gt;</code> atau <code>&lt;REGION&gt;</code>. Lengkapi form di atas sebelum menyalin kode!</span>
+    </div>
+
+    <!-- Prerequisite Task -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-number">0</div>
+        <div class="task-title">Persiapan & Instalasi Terraform di Cloud Shell</div>
+      </div>
+      <p>
+        Secara bawaan, CLI Terraform belum terpasang secara permanen di lingkungan Cloud Shell. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong> untuk mengonfigurasi repositori HashiCorp dan memasang Terraform:
+      </p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codePrereq')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codePrereq">cat <<'EOF' > ~/.customize_environment
+# Set up HashiCorp repository and install Terraform
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install -y terraform
+EOF
+bash ~/.customize_environment</code></pre>
+      </div>
+
+      <p style="margin-top: 1rem;">Verifikasi bahwa instalasi Terraform telah berhasil dengan mengeksekusi perintah:</p>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeVerif')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeVerif">terraform --version</code></pre>
+      </div>
+    </div>
+
+    <!-- Task 1 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-number">1</div>
+        <div class="task-title">Task 1. Menggunakan Modul dari Terraform Registry</div>
+      </div>
+
+      <!-- YouTube Video Reference Embed -->
+      <div class="video-responsive">
+        <iframe src="https://www.youtube.com/embed/yVgfUcLmeVs" title="Tutorial Video Terraform Modules" allowfullscreen></iframe>
+      </div>
+
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i> <strong>Catatan Praktik Terbaik Video:</strong> Memanggil modul publik dari Registry mengharuskan argumen <code>source</code> dan disarankan menetapkan <code>version</code> secara eksplisit agar versi infrastruktur Anda stabil dan tidak pecah akibat pembaruan otomatis di kemudian hari.
+      </div>
+
+      <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong> untuk mengkloning repositori contoh VPC Network Google dan mengalihkan *branch* ke versi <code>v6.0.1</code>:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask1Clone')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask1Clone">git clone https://github.com/terraform-google-modules/terraform-google-network
+cd terraform-google-network
+git checkout tags/v6.0.1 -b v6.0.1</code></pre>
+      </div>
+
+      <p>Selanjutnya, perbarui berkas variabel <code>variables.tf</code> pada direktori contoh proyek dengan menyetel Project ID default Anda (<code class="valProjectId">&lt;PROJECT_ID&gt;</code>) dan nama jaringan <code>example-vpc</code>:</p>
+
+      <div class="warning-banner" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+        ⚠️ <strong>Penting:</strong> Sebelum menyalin kode di bawah, pastikan parameter <strong>Project ID</strong> dan <strong>Region</strong> di atas sudah Anda isi agar nilainya terisi secara dinamis (tidak lagi berupa placeholder <code>&lt;PROJECT_ID&gt;</code> dan <code>&lt;REGION&gt;</code>).
+      </div>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask1Vars')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask1Vars">cat <<'EOF' > ~/terraform-google-network/examples/simple_project/variables.tf
+variable "project_id" {
+  description = "The project ID to host the network in"
+  default     = "<PROJECT_ID>"
+}
+
+variable "network_name" {
+  description = "The name of the network to be created"
+  default     = "example-vpc"
+}
+EOF</code></pre>
+      </div>
+
+      <p>Perbarui konfigurasi utama <code>main.tf</code> pada direktori contoh proyek agar menggunakan variabel <code>var.network_name</code> serta menetapkan region subnet ke <code class="valRegion">&lt;REGION&gt;</code>:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask1Main')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask1Main">cat <<'EOF' > ~/terraform-google-network/examples/simple_project/main.tf
+module "test-vpc-module" {
+  source       = "terraform-google-modules/network/google"
+  version      = "~> 6.0"
+  project_id   = var.project_id
+  network_name = var.network_name
+  mtu          = 1460
+
+  subnets = [
+    {
+      subnet_name   = "subnet-01"
+      subnet_ip     = "10.10.10.0/24"
+      subnet_region = "<REGION>"
+    },
+    {
+      subnet_name           = "subnet-02"
+      subnet_ip             = "10.10.20.0/24"
+      subnet_region         = "<REGION>"
+      subnet_private_access = "true"
+      subnet_flow_logs      = "true"
+    },
+    {
+      subnet_name               = "subnet-03"
+      subnet_ip                 = "10.10.30.0/24"
+      subnet_region             = "<REGION>"
+      subnet_flow_logs          = "true"
+      subnet_flow_logs_interval = "INTERVAL_10_MIN"
+      subnet_flow_logs_sampling = 0.7
+      subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+      subnet_flow_logs_filter   = "false"
+    }
+  ]
+}
+EOF</code></pre>
+      </div>
+
+      <p>Jalankan inisialisasi Terraform dan terapkan konfigurasi pembuatan jaringan VPC tersebut:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask1Apply')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask1Apply">cd ~/terraform-google-network/examples/simple_project
+terraform init
+terraform apply -auto-approve</code></pre>
+      </div>
+
+      <details class="explain-box">
+        <summary><i class="fas fa-question-circle"></i> Penjelasan Konsep: Bagaimana Modul Registry Bekerja?</summary>
+        <div class="explain-content">
+          <p>Saat Anda menjalankan perintah <code>terraform init</code>, Terraform secara otomatis mengunduh modul eksternal yang didefinisikan dalam blok <code>module</code> dari Terraform Registry ke dalam direktori tersembunyi <code>.terraform/modules/</code>.</p>
+          <ul>
+            <li><strong>Root Module:</strong> Direktori tempat Anda mengeksekusi perintah Terraform (dalam hal ini <code>simple_project</code>).</li>
+            <li><strong>Child Module:</strong> Modul <code>terraform-google-modules/network/google</code> yang dipanggil dari luar.</li>
+            <li><strong>Outputs:</strong> Nilai seperti nama jaringan dan range IP subnet dikembalikan oleh modul dan dapat dibaca melalui berkas <code>outputs.tf</code>.</li>
+          </ul>
+        </div>
+      </details>
+
+      <p style="margin-top: 1rem;">Setelah progres Task 1 diverifikasi di Qwiklabs, bersihkan infrastruktur VPC ini sebelum melangkah ke Task 2:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask1Cleanup')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask1Cleanup">terraform destroy -auto-approve
+cd ~
+rm -rf terraform-google-network</code></pre>
+      </div>
+    </div>
+
+    <!-- Task 2 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-number">2</div>
+        <div class="task-title">Task 2. Membangun Modul Kustom Sendiri</div>
+      </div>
+
+      <p>Pada tugas ini, Anda akan membuat modul kustom Terraform lokal untuk mengelola bucket Cloud Storage yang siap digunakan sebagai host situs web statis.</p>
+
+      <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong> untuk menyiapkan struktur direktori modul lokal:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2Dir')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2Dir">cd ~
+touch main.tf outputs.tf variables.tf
+mkdir -p modules/gcs-static-website-bucket
+cd modules/gcs-static-website-bucket
+touch website.tf variables.tf outputs.tf</code></pre>
+      </div>
+
+      <p>Buat berkas dokumentasi <code>README.md</code> dan berkas lisensi <code>LICENSE</code> di dalam modul kustom:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2Docs')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2Docs">cat <<'EOF' > README.md
+# GCS static website bucket
+
+This module provisions Cloud Storage buckets configured for static website hosting.
+EOF
+
+cat <<'EOF' > LICENSE
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+EOF</code></pre>
+      </div>
+
+      <p>Isi konfigurasi resource Cloud Storage bucket pada <code>website.tf</code> di dalam direktori modul:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2Website')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2Website">cat <<'EOF' > website.tf
+resource "google_storage_bucket" "bucket" {
+  name               = var.name
+  project            = var.project_id
+  location           = var.location
+  storage_class      = var.storage_class
+  labels             = var.labels
+  force_destroy      = var.force_destroy
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = var.versioning
+  }
+
+  dynamic "retention_policy" {
+    for_each = var.retention_policy == null ? [] : [var.retention_policy]
+    content {
+      is_locked        = var.retention_policy.is_locked
+      retention_period = var.retention_policy.retention_period
+    }
+  }
+
+  dynamic "encryption" {
+    for_each = var.encryption == null ? [] : [var.encryption]
+    content {
+      default_kms_key_name = var.encryption.default_kms_key_name
+    }
+  }
+
+  dynamic "lifecycle_rule" {
+    for_each = var.lifecycle_rules
+    content {
+      action {
+        type          = lifecycle_rule.value.action.type
+        storage_class = lookup(lifecycle_rule.value.action, "storage_class", null)
+      }
+      condition {
+        age                   = lookup(lifecycle_rule.value.condition, "age", null)
+        created_before        = lookup(lifecycle_rule.value.condition, "created_before", null)
+        with_state            = lookup(lifecycle_rule.value.condition, "with_state", null)
+        matches_storage_class = lookup(lifecycle_rule.value.condition, "matches_storage_class", null)
+        num_newer_versions    = lookup(lifecycle_rule.value.condition, "num_newer_versions", null)
+      }
+    }
+  }
+}
+EOF</code></pre>
+      </div>
+
+      <p>Definisikan seluruh variabel input untuk modul pada berkas <code>variables.tf</code> di dalam direktori modul:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2SubVars')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2SubVars">cat <<'EOF' > variables.tf
+variable "name" {
+  description = "The name of the bucket."
+  type        = string
+}
+
+variable "project_id" {
+  description = "The ID of the project to create the bucket in."
+  type        = string
+}
+
+variable "location" {
+  description = "The location of the bucket."
+  type        = string
+}
+
+variable "storage_class" {
+  description = "The Storage Class of the new bucket."
+  type        = string
+  default     = null
+}
+
+variable "labels" {
+  description = "A set of key/value label pairs to assign to the bucket."
+  type        = map(string)
+  default     = null
+}
+
+variable "bucket_policy_only" {
+  description = "Enables Bucket Policy Only access to a bucket."
+  type        = bool
+  default     = true
+}
+
+variable "versioning" {
+  description = "While set to true, versioning is fully enabled for this bucket."
+  type        = bool
+  default     = true
+}
+
+variable "force_destroy" {
+  description = "When deleting a bucket, this boolean option will delete all contained objects. If false, Terraform will fail to delete buckets which contain objects."
+  type        = bool
+  default     = true
+}
+
+variable "iam_members" {
+  description = "The list of IAM members to grant permissions on the bucket."
+  type = list(object({
+    role   = string
+    member = string
+  }))
+  default = []
+}
+
+variable "retention_policy" {
+  description = "Configuration of the bucket's data retention policy for how long objects in the bucket should be retained."
+  type = object({
+    is_locked        = bool
+    retention_period = number
+  })
+  default = null
+}
+
+variable "encryption" {
+  description = "A Cloud KMS key that will be used to encrypt objects inserted into this bucket"
+  type = object({
+    default_kms_key_name = string
+  })
+  default = null
+}
+
+variable "lifecycle_rules" {
+  description = "The bucket's Lifecycle Rules configuration."
+  type = list(object({
+    action = any
+    condition = any
+  }))
+  default = []
+}
+EOF</code></pre>
+      </div>
+
+      <p>Definisikan output untuk modul pada <code>outputs.tf</code> di dalam direktori modul:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2SubOut')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2SubOut">cat <<'EOF' > outputs.tf
+output "bucket" {
+  description = "The created storage bucket"
+  value       = google_storage_bucket.bucket
+}
+EOF</code></pre>
+      </div>
+
+      <p>Sekarang, kembali ke *Root Module* (direktori Home) untuk mengaitkan modul lokal ini dalam berkas <code>main.tf</code> utama dengan mengarahkan lokasi ke <code class="valRegion">&lt;REGION&gt;</code>:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2RootMain')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2RootMain">cat <<'EOF' > ~/main.tf
+module "gcs-static-website-bucket" {
+  source = "./modules/gcs-static-website-bucket"
+
+  name       = var.name
+  project_id = var.project_id
+  location   = "<REGION>"
+
+  lifecycle_rules = [{
+    action = {
+      type = "Delete"
+    }
+    condition = {
+      age        = 365
+      with_state = "ANY"
+    }
+  }]
+}
+EOF</code></pre>
+      </div>
+
+      <p>Buat berkas <code>outputs.tf</code> dan <code>variables.tf</code> pada *Root Module* utama dengan menyertakan Project ID Anda (<code class="valProjectId">&lt;PROJECT_ID&gt;</code>):</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2RootVars')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2RootVars">cat <<'EOF' > ~/outputs.tf
+output "bucket-name" {
+  description = "Bucket names."
+  value       = "module.gcs-static-website-bucket.bucket"
+}
+EOF
+
+cat <<'EOF' > ~/variables.tf
+variable "project_id" {
+  description = "The ID of the project in which to provision resources."
+  type        = string
+  default     = "<PROJECT_ID>"
+}
+
+variable "name" {
+  description = "Name of the buckets to create."
+  type        = string
+  default     = "<PROJECT_ID>"
+}
+EOF</code></pre>
+      </div>
+
+      <p>Inisialisasi modul lokal baru tersebut dan eksekusi perintah <code>terraform apply</code> untuk membuat Cloud Storage bucket:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2InitApply')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2InitApply">cd ~
+terraform init
+terraform apply -auto-approve</code></pre>
+      </div>
+
+      <p>Unduh berkas sampel HTML dan unggah langsung ke Cloud Storage bucket <code class="valProjectId">&lt;PROJECT_ID&gt;</code> yang baru saja dibuat:</p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash (Cloud Shell)</span>
+          <button class="copy-btn" onclick="copyCode(this, 'codeTask2Upload')"><i class="fas fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="codeTask2Upload">cd ~
+curl -s -L https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/index.html -o index.html
+curl -s -L https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/error.html -o error.html
+
+gsutil cp *.html gs://<PROJECT_ID></code></pre>
+      </div>
+
+      <div class="info-box">
+        <i class="fas fa-globe"></i> Anda dapat memverifikasi situs statis dengan membuka URL berikut di browser:<br>
+        <code>https://storage.cloud.google.com/<span class="valProjectId">&lt;PROJECT_ID&gt;</span>/index.html</code>
+      </div>
+
+      <details class="explain-box">
+        <summary><i class="fas fa-question-circle"></i> Penjelasan Konsep: Penggunaan Modul Lokal & Blok Dynamic</summary>
+        <div class="explain-content">
+          <p>Dalam pembuatan modul kustom ini:</p>
+          <ul>
+            <li><strong>Local Source (<code>source = "./modules/..."</code>):</strong> Terraform membaca modul dari sistem berkas lokal. Setiap perubahan pada berkas modul lokal langsung berlaku saat dijalankan tanpa perlu mengunduh ulang.</li>
+            <li><strong>Dynamic Block:</strong> Konstruksi <code>dynamic "lifecycle_rule"</code> digunakan untuk membangun beberapa blok konfigurasi secara kondisional berdasarkan isi list input tanpa perlu menyalin kode secara berulang (*DRY - Don't Repeat Yourself*).</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- Documentation Section Footer -->
+    <div class="docs-section">
+      <h3><i class="fas fa-book" style="color: var(--primary);"></i> Dokumentasi Pendukung</h3>
+      <ul class="docs-list">
+        <li>
+          <a href="https://docs.cloud.google.com/docs?hl=id" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Dokumentasi Google Cloud
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Dokumentasi Google Cloud Shell
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank" rel="noopener">
+            <i class="fas fa-external-link-alt"></i> Dokumentasi Google Cloud CLI (gcloud)
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Report Variation Form -->
+    <div class="report-card">
+      <details class="report-box">
+        <summary>
+          <i class="fas fa-bug" style="color: #e53e3e;"></i> Lapor Variasi / Kendala Soal
+        </summary>
+        <form class="report-form" onsubmit="event.preventDefault(); alert('Laporan berhasil dikirim. Terima kasih atas masukan Anda!');">
+          <!-- Honeypot anti-spam -->
+          <input type="checkbox" name="botcheck" style="display: none;">
+          
+          <label for="reportText" style="font-size: 0.9rem; font-weight: 500;">
+            Temukan perbedaan instruksi atau kendala saat pengerjaan lab ini? Laporkan di bawah ini:
+          </label>
+          <textarea id="reportText" placeholder="Tuliskan kendala atau pesan error yang muncul..." required></textarea>
+          <button type="submit" class="submit-btn">Kirim Laporan</button>
+        </form>
+      </details>
+    </div>
+
+  </div>
+
+  <script>
+    // Logika Pembaruan Penjelasan & Perintah Dinamis (updateCommands)
+    function updateCommands() {
+      const projectIdInput = document.getElementById('projectId').value.trim();
+      const regionInput = document.getElementById('region').value.trim();
+
+      const projectId = projectIdInput || '<PROJECT_ID>';
+      const region = regionInput || '<REGION>';
+
+      // Tampilkan atau sembunyikan Warning Banner Dinamis
+      const warningBanner = document.getElementById('warningBanner');
+      if (!projectIdInput || !regionInput) {
+        warningBanner.style.display = 'flex';
+      } else {
+        warningBanner.style.display = 'none';
+      }
+
+      // Loop perulangan untuk memperbarui seluruh span kelas pemeta variabel
+      document.querySelectorAll('.valProjectId').forEach(el => {
+        el.innerText = projectId;
+      });
+      document.querySelectorAll('.valRegion').forEach(el => {
+        el.innerText = region;
+      });
+
+      // Update isi teks kode di dalam blok pre/code
+      const codeTask1Vars = `cat <<'EOF' > ~/terraform-google-network/examples/simple_project/variables.tf
+variable "project_id" {
+  description = "The project ID to host the network in"
+  default     = "${projectId}"
+}
+
+variable "network_name" {
+  description = "The name of the network to be created"
+  default     = "example-vpc"
+}
+EOF`;
+
+      const codeTask1Main = `cat <<'EOF' > ~/terraform-google-network/examples/simple_project/main.tf
+module "test-vpc-module" {
+  source       = "terraform-google-modules/network/google"
+  version      = "~> 6.0"
+  project_id   = var.project_id
+  network_name = var.network_name
+  mtu          = 1460
+
+  subnets = [
+    {
+      subnet_name   = "subnet-01"
+      subnet_ip     = "10.10.10.0/24"
+      subnet_region = "${region}"
+    },
+    {
+      subnet_name           = "subnet-02"
+      subnet_ip             = "10.10.20.0/24"
+      subnet_region         = "${region}"
+      subnet_private_access = "true"
+      subnet_flow_logs      = "true"
+    },
+    {
+      subnet_name               = "subnet-03"
+      subnet_ip                 = "10.10.30.0/24"
+      subnet_region             = "${region}"
+      subnet_flow_logs          = "true"
+      subnet_flow_logs_interval = "INTERVAL_10_MIN"
+      subnet_flow_logs_sampling = 0.7
+      subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+      subnet_flow_logs_filter   = "false"
+    }
+  ]
+}
+EOF`;
+
+      const codeTask2RootMain = `cat <<'EOF' > ~/main.tf
+module "gcs-static-website-bucket" {
+  source = "./modules/gcs-static-website-bucket"
+
+  name       = var.name
+  project_id = var.project_id
+  location   = "${region}"
+
+  lifecycle_rules = [{
+    action = {
+      type = "Delete"
+    }
+    condition = {
+      age        = 365
+      with_state = "ANY"
+    }
+  }]
+}
+EOF`;
+
+      const codeTask2RootVars = `cat <<'EOF' > ~/outputs.tf
+output "bucket-name" {
+  description = "Bucket names."
+  value       = "module.gcs-static-website-bucket.bucket"
+}
+EOF
+
+cat <<'EOF' > ~/variables.tf
+variable "project_id" {
+  description = "The ID of the project in which to provision resources."
+  type        = string
+  default     = "${projectId}"
+}
+
+variable "name" {
+  description = "Name of the buckets to create."
+  type        = string
+  default     = "${projectId}"
+}
+EOF`;
+
+      const codeTask2Upload = `cd ~
+curl -s -L https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/index.html -o index.html
+curl -s -L https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/error.html -o error.html
+
+gsutil cp *.html gs://${projectId}`;
+
+      // Injeksi teks baru ke elemen kode masing-masing
+      if (document.getElementById('codeTask1Vars')) document.getElementById('codeTask1Vars').textContent = codeTask1Vars;
+      if (document.getElementById('codeTask1Main')) document.getElementById('codeTask1Main').textContent = codeTask1Main;
+      if (document.getElementById('codeTask2RootMain')) document.getElementById('codeTask2RootMain').textContent = codeTask2RootMain;
+      if (document.getElementById('codeTask2RootVars')) document.getElementById('codeTask2RootVars').textContent = codeTask2RootVars;
+      if (document.getElementById('codeTask2Upload')) document.getElementById('codeTask2Upload').textContent = codeTask2Upload;
+    }
+
+    // Fungsi Salin Kode ke Clipboard
+    function copyCode(button, elementId) {
+      const codeText = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Gagal menyalin teks: ', err);
+      });
+    }
+
+    // Jalankan inisialisasi awal saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCommands();
+    });
+  </script>
+</body>
+</html>
