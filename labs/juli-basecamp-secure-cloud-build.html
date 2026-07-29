@@ -1019,7 +1019,7 @@ steps:
   - |
     (gcloud artifacts docker images scan \\
     ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image \\
-    --location ${region} \\
+    --location us \\
     --format="value(response.scan)") > /workspace/scan_id.txt
 # Analyze the result of the scan
 - id: severity check
