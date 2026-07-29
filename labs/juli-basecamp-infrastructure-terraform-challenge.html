@@ -867,7 +867,8 @@ terraform init`;
             const task2Code = `export ZONE="${renderZone}"
 export PROJECT_ID=$(gcloud config get-value project)
 
-instances_output=$(gcloud compute instances list --zone=\$ZONE --format="value(id)")
+mkdir -p modules/instances
+instances_output=$(gcloud compute instances list --zones=\$ZONE --format="value(id)")
 IFS=$'\\n' read -r -d '' INSTANCE_ID_1 INSTANCE_ID_2 <<< "\$instances_output"
 
 cat > modules/instances/instances.tf <<EOF
