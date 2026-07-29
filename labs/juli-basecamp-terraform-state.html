@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Lab: Manage Terraform State (GSP752)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #f8fafc;
+            --accent-green: #10b981;
+            --accent-green-bg: #ecfdf5;
+            --accent-amber: #f59e0b;
+            --accent-amber-bg: #fffbebfd;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Navigasi Kembali */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Header Card */
+        .header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .header-title {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1.25;
+        }
+
+        .header-description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .reference-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 14px 18px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-size: 0.9rem;
+        }
+
+        .reference-box a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .reference-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Kartu Task & Video */
+        .task-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            scroll-margin-top: 24px;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .task-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .task-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .check-progress-tag {
+            background: var(--accent-green-bg);
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .no-check-tag {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Embedded Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            background: #000;
+            margin-top: 12px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Form Input Parameter */
+        .parameter-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 2px solid var(--primary-light);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .parameter-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .form-group small {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.3;
+        }
+
+        .form-group input {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: 'Fira Code', monospace;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Animasi Pulsing untuk input kosong saat validasi salin gagal */
+        @keyframes pulse-glow {
+            0% {
+                border-color: #ef4444;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                border-color: #ef4444;
+                box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.2);
+            }
+            100% {
+                border-color: var(--border-color);
+                box-shadow: none;
+            }
+        }
+
+        .pulse-highlight {
+            animation: pulse-glow 1.5s ease-in-out 3;
+        }
+
+        /* Code Block Component */
+        .code-container {
+            margin: 16px 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid #334155;
+            background: var(--code-bg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .code-header {
+            background: #0f172a;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #334155;
+        }
+
+        .code-lang {
+            color: #94a3b8;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background: #334155;
+            color: #f8fafc;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        pre code {
+            color: var(--code-text);
+            background: none;
+            padding: 0;
+        }
+
+        /* Styling khusus untuk Inline Code (Di luar blok PRE) */
+        :not(pre) > code, code.inline-code {
+            background-color: #f1f5f9;
+            color: #c53030;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        /* Explanation Box & Callouts */
+        .explain-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+        }
+
+        .explain-box p {
+            margin-bottom: 8px;
+        }
+
+        .explain-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--primary);
+            padding: 14px 18px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+
+        .warning-box {
+            background: var(--accent-amber-bg);
+            border-left: 4px solid var(--accent-amber);
+            padding: 14px 18px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            color: #78350f;
+        }
+
+        /* Kartu Ucapan Selamat */
+        .congrats-card {
+            background: var(--accent-green-bg);
+            border: 2px solid var(--accent-green);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .congrats-icon {
+            font-size: 2.5rem;
+            color: var(--accent-green);
+            margin-bottom: 12px;
+        }
+
+        .congrats-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+
+        .congrats-desc {
+            color: #047857;
+            font-size: 0.95rem;
+        }
+
+        /* Collapsible Form Lapor Bug */
+        details.bug-report {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-top: 20px;
+        }
+
+        details.bug-report summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        details.bug-report summary:hover {
+            color: var(--text-main);
+        }
+
+        .bug-form {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bug-form textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .bug-form button {
+            align-self: flex-start;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Footer Resources */
+        .footer-resources {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .footer-resources h4 {
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Floating Sidebar Drawer & Action Buttons */
+        .floating-menu-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            z-index: 99;
+            border: none;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .floating-menu-trigger:hover {
+            transform: scale(1.08);
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .drawer-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .drawer-menu, .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .drawer-menu a, .sidebar-menu a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.92rem;
+            display: block;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            transition: background 0.2s;
+        }
+
+        .drawer-menu a:hover, .sidebar-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 99;
+            display: none;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
+        /* Floating Scroll Back Button */
+        .scroll-back-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-main);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            z-index: 90;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            .header-title {
+                font-size: 1.45rem;
+            }
+            .task-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Tombol Navigasi Kembali -->
+        <a href="../index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Kembali ke Daftar Lab
+        </a>
+
+        <!-- Header Card -->
+        <div class="header-card">
+            <div class="header-badge">
+                <i class="fas fa-cubes"></i> GSP752
+            </div>
+            <h1 class="header-title">Manage Terraform State</h1>
+            <p class="header-description">
+                Pelajari cara mengelola berkas status (state) Terraform, memindahkan status lokal ke Google Cloud Storage (GCS) backend, merefresh status dari infrastruktur nyata, dan mengimpor konfigurasi infrastruktur Docker yang ada ke dalam manajemen Terraform.
+            </p>
+            <div class="reference-box">
+                💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> 
+                <a href="https://www.skills.google/focuses/15845?parent=catalog" target="_blank" rel="noopener">
+                    Google Cloud Skills Boost - Manage Terraform State
+                </a>
+            </div>
+        </div>
+
+        <!-- Kartu Video Tutorial YouTube (Kondisional Mandiri) -->
+        <div class="task-card" id="video-tutorial">
+            <div class="task-header">
+                <div class="task-title-group">
+                    <i class="fab fa-youtube" style="color: #ef4444; font-size: 1.5rem;"></i>
+                    <h2 class="task-title">Video Tutorial Pengerjaan</h2>
+                </div>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">
+                Tonton panduan langkah-demi-langkah pengerjaan lab ini secara visual melalui video berikut:
+            </p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/9UT-h1e-3Aw" title="Video Tutorial Manage Terraform State" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Form Parameter Input -->
+        <div class="parameter-card" id="variables-form">
+            <div class="parameter-title">
+                <i class="fas fa-sliders"></i> Konfigurasi Parameter Lab
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="inputProjectId">Project ID</label>
+                    <small>Diambil dari panel kredensial sebelah kiri Qwiklabs</small>
+                    <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-03-c02ef41ad51e" oninput="updateCommands()">
+                </div>
+                <div class="form-group">
+                    <label for="inputRegion">Region</label>
+                    <small>Region default yang digunakan pada instruksi lab (misal: us-east1)</small>
+                    <input type="text" id="inputRegion" placeholder="us-east1" oninput="updateCommands()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TASK 1 -->
+        <div class="task-card" id="task-1">
+            <div class="task-header">
+                <div class="task-title-group">
+                    <div class="task-number">1</div>
+                    <h2 class="task-title">Work with Backends</h2>
+                </div>
+                <span class="check-progress-tag">
+                    <i class="fas fa-check-circle"></i> Check My Progress
+                </span>
+            </div>
+
+            <p>
+                Pada tugas ini, Anda akan menginstal Terraform, mengonfigurasi backend lokal, membuat bucket Cloud Storage untuk menyimpan state file secara terpusat (GCS backend), serta memigrasikan state tersebut.
+            </p>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> Eksekusi perintah-perintah berikut langsung di <strong>Cloud Shell</strong> secara berurutan.
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 18px; margin-bottom: 8px;">Langkah 1: Instalasi Terraform & Aktivasi API</h3>
+            <p style="font-size: 0.9rem;">
+                Atur repositori HashiCorp untuk menginstal Terraform secara permanen di Cloud Shell, serta aktifkan API Gemini Code Assist.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-install')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task1-install"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 2: Buat Konfigurasi `main.tf` dengan Local Backend</h3>
+            <p style="font-size: 0.9rem;">
+                Buat berkas <code class="inline-code">main.tf</code> dengan backend lokal dan resource Cloud Storage bucket menggunakan Project ID Anda.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-maintf-local')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task1-maintf-local"></code></pre>
+            </div>
+
+            <div class="explain-box">
+                <strong>Penjelasan:</strong> Perintah di atas secara otomatis membuat file <code>main.tf</code> yang mendefinisikan Cloud Storage bucket bernama <code class="valProjectId">qwiklabs-gcp-XX-XXXXXXX</code> serta backend penyimpanan status lokal pada direktori <code>terraform/state/terraform.tfstate</code>.
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 3: Inisialisasi & Apply State Lokal</h3>
+            <p style="font-size: 0.9rem;">
+                Jalankan inisialisasi backend lokal dan terapkan pembuatan resource bucket.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-init-apply')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task1-init-apply"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 4: Migrasi State ke Cloud Storage (GCS) Backend</h3>
+            <p style="font-size: 0.9rem;">
+                Ubah konfigurasi backend di <code class="inline-code">main.tf</code> dari <code class="inline-code">local</code> menjadi <code class="inline-code">gcs</code>, lalu migrasikan berkas state ke Cloud Storage.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-migrate-gcs')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task1-migrate-gcs"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 5: Refresh State & Pembersihan (Cleanup)</h3>
+            <p style="font-size: 0.9rem;">
+                Jalankan refresh state, kemudian kembalikan backend ke lokal dengan opsi <code class="inline-code">force_destroy = true</code> agar bucket dapat dihapus beserta konten di dalamnya.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-cleanup')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task1-cleanup"></code></pre>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-check-double"></i> Setelah menyelesaikan langkah-langkah di atas, klik tombol <strong>Check my progress</strong> pada Task 1 di halaman Qwiklabs Anda.
+            </div>
+        </div>
+
+        <!-- TASK 2 -->
+        <div class="task-card" id="task-2">
+            <div class="task-header">
+                <div class="task-title-group">
+                    <div class="task-number">2</div>
+                    <h2 class="task-title">Import a Terraform Configuration</h2>
+                </div>
+                <span class="no-check-tag">Tidak ada Check Progress</span>
+            </div>
+
+            <p>
+                Pada tugas ini, Anda akan mempelajari cara mengimpor container Docker dan image NGINX yang sudah ada ke dalam state file Terraform tanpa harus membuat infrastruktur dari awal.
+            </p>
+
+            <h3 style="font-size: 1rem; margin-top: 18px; margin-bottom: 8px;">Langkah 1: Jalankan Container Docker</h3>
+            <p style="font-size: 0.9rem;">
+                Buat container NGINX bernama <code class="inline-code">hashicorp-learn</code> menggunakan Docker CLI.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-docker-run')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-docker-run"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 2: Clone Repositori & Persiapan Impor</h3>
+            <p style="font-size: 0.9rem;">
+                Unduh repositori latihan, sesuaikan versi provider Docker, dan atur struktur berkas konfigurasi Terraform.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-clone-prep')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-clone-prep"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 3: Impor Container ke dalam State Terraform</h3>
+            <p style="font-size: 0.9rem;">
+                Definisikan resource kosong <code class="inline-code">docker_container.web</code> di <code class="inline-code">docker.tf</code> dan jalankan perintah <code class="inline-code">terraform import</code>.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-import-exec')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-import-exec"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 4: Buat Konfigurasi & Sinkronisasi Attribute</h3>
+            <p style="font-size: 0.9rem;">
+                Salin hasil impor state ke <code class="inline-code">docker.tf</code>, ringkas atribut yang wajib saja, lalu jalankan <code class="inline-code">terraform apply</code> agar ter-sinkronisasi penuh.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-sync-config')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-sync-config"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 5: Tambahkan Resource Image & Ubah Port Container</h3>
+            <p style="font-size: 0.9rem;">
+                Tambahkan deklarasi resource <code class="inline-code">docker_image.nginx</code>, tautkan ID image ke container, dan perbarui external port dari <code class="inline-code">8080</code> ke <code class="inline-code">8081</code>.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-update-port')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-update-port"></code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 6: Hapus Seluruh Infrastruktur</h3>
+            <p style="font-size: 0.9rem;">
+                Hapus semua resource yang dikelola oleh Terraform untuk mengakhiri tugas.
+            </p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-destroy')">
+                        <i class="far fa-copy"></i> Salin Perintah
+                    </button>
+                </div>
+                <pre><code id="code-task2-destroy"></code></pre>
+            </div>
+        </div>
+
+        <!-- Kartu Ucapan Selamat (Di bawah Task Terakhir) -->
+        <div class="congrats-card" id="congrats-card">
+            <div class="congrats-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2 class="congrats-title">🎉 Selamat, Kamu Berhasil Menyelesaikan Lab Ini!</h2>
+            <p class="congrats-desc">
+                Kamu telah menguasai manajemen Terraform State (Local & GCS Backend), state refresh, serta impor resource eksternal ke dalam Terraform secara praktis.
+            </p>
+        </div>
+
+        <!-- Footer Documentation -->
+        <div class="footer-resources">
+            <h4>📚 Dokumentasi Pendukung</h4>
+            <ul class="footer-links">
+                <li><a href="https://cloud.google.com/docs" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Dokumentasi Google Cloud</a></li>
+                <li><a href="https://cloud.google.com/shell/docs" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Google Cloud Shell</a></li>
+                <li><a href="https://cloud.google.com/sdk/gcloud" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Google Cloud CLI</a></li>
+                <li><a href="https://developer.hashicorp.com/terraform/docs" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Dokumentasi Terraform</a></li>
+            </ul>
+        </div>
+
+        <!-- Collapsible Bug Report -->
+        <details class="bug-report">
+            <summary><i class="fas fa-bug"></i> Temukan Kendala atau Bug pada Panduan Ini?</summary>
+            <form class="bug-form" onsubmit="event.preventDefault(); alert('Terima kasih atas laporan Anda!'); this.reset();">
+                <input type="checkbox" name="botcheck" style="display: none;">
+                <textarea placeholder="Tuliskan kendala atau error yang Anda alami saat menjalankan perintah..." required></textarea>
+                <button type="submit"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
+            </form>
+        </details>
+    </div>
+
+    <!-- Indicator Scroll Back Button -->
+    <div class="scroll-back-indicator" id="scrollBackBtn" onclick="scrollToCurrentTask()">
+        <i class="fas fa-arrow-down"></i> Kembali ke Task Pengerjaan
+    </div>
+
+    <!-- Floating Drawer Trigger & Drawer Sidebar -->
+    <button class="floating-menu-trigger" onclick="toggleDrawer()" title="Buka Daftar Isi">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        <div class="drawer-header">
+            <span class="drawer-title">Daftar Isi Lab</span>
+            <button class="drawer-close" onclick="toggleDrawer()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="drawer-menu sidebar-menu">
+            <li><a href="#video-tutorial" onclick="toggleDrawer()"><i class="fab fa-youtube"></i> Video Tutorial</a></li>
+            <li><a href="#variables-form" onclick="toggleDrawer()"><i class="fas fa-sliders"></i> Parameter Lab</a></li>
+            <li><a href="#task-1" onclick="toggleDrawer()"><i class="fas fa-tasks"></i> Task 1: Work with Backends</a></li>
+            <li><a href="#task-2" onclick="toggleDrawer()"><i class="fas fa-tasks"></i> Task 2: Import Configuration</a></li>
+        </ul>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function updateCommands() {
+            const projectId = document.getElementById('inputProjectId').value.trim() || '<PROJECT_ID>';
+            const region = document.getElementById('inputRegion').value.trim() || '<REGION>';
+
+            // Update Span Labels di Penjelasan
+            document.querySelectorAll('.valProjectId').forEach(el => el.innerText = projectId);
+            document.querySelectorAll('.valRegion').forEach(el => el.innerText = region);
+
+            // Task 1 Codes
+            document.getElementById('code-task1-install').innerText = 
+`cat <<'EOF' > ~/.customize_environment
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com \$(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install -y terraform
+EOF
+bash ~/.customize_environment
+gcloud services enable cloudaicompanion.googleapis.com`;
+
+            document.getElementById('code-task1-maintf-local').innerText = 
+`cat <<EOF > main.tf
+provider "google" {
+  project     = "${projectId}"
+  region      = "${region}"
+}
+
+resource "google_storage_bucket" "test-bucket-for-state" {
+  name        = "${projectId}"
+  location    = "US"
+  uniform_bucket_level_access = true
+}
+
+terraform {
+  backend "local" {
+    path = "terraform/state/terraform.tfstate"
+  }
+}
+EOF`;
+
+            document.getElementById('code-task1-init-apply').innerText = 
+`terraform init
+terraform apply -auto-approve
+terraform show`;
+
+            document.getElementById('code-task1-migrate-gcs').innerText = 
+`cat <<EOF > main.tf
+provider "google" {
+  project     = "${projectId}"
+  region      = "${region}"
+}
+
+resource "google_storage_bucket" "test-bucket-for-state" {
+  name        = "${projectId}"
+  location    = "US"
+  uniform_bucket_level_access = true
+}
+
+terraform {
+  backend "gcs" {
+    bucket  = "${projectId}"
+    prefix  = "terraform/state"
+  }
+}
+EOF
+
+terraform init -migrate-state -auto-approve`;
+
+            document.getElementById('code-task1-cleanup').innerText = 
+`terraform refresh
+terraform show
+
+cat <<EOF > main.tf
+provider "google" {
+  project     = "${projectId}"
+  region      = "${region}"
+}
+
+resource "google_storage_bucket" "test-bucket-for-state" {
+  name        = "${projectId}"
+  location    = "US"
+  uniform_bucket_level_access = true
+  force_destroy = true
+}
+
+terraform {
+  backend "local" {
+    path = "terraform/state/terraform.tfstate"
+  }
+}
+EOF
+
+terraform init -migrate-state -auto-approve
+terraform apply -auto-approve
+terraform destroy -auto-approve`;
+
+            // Task 2 Codes
+            document.getElementById('code-task2-docker-run').innerText = 
+`docker run --name hashicorp-learn --detach --publish 8080:80 nginx:latest
+docker ps`;
+
+            document.getElementById('code-task2-clone-prep').innerText = 
+`git clone https://github.com/hashicorp/learn-terraform-import.git
+cd learn-terraform-import
+sed -i 's/version = "~> 3.0.2"/version = ">= 3.5"/' terraform.tf
+terraform init --upgrade
+
+cat <<EOF > main.tf
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = ">= 3.5"
+    }
+  }
+}
+
+provider "docker" {}
+EOF`;
+
+            document.getElementById('code-task2-import-exec').innerText = 
+`cat <<EOF > docker.tf
+resource "docker_container" "web" {}
+EOF
+
+terraform import docker_container.web \$(docker inspect -f '{{.ID}}' hashicorp-learn)
+terraform show`;
+
+            document.getElementById('code-task2-sync-config').innerText = 
+`cat <<EOF > docker.tf
+resource "docker_container" "web" {
+    image = "nginx:latest"
+    name  = "hashicorp-learn"
+    ports {
+        external = 8080
+        internal = 80
+        ip       = "0.0.0.0"
+        protocol = "tcp"
+    }
+}
+EOF
+
+terraform plan
+terraform apply -auto-approve`;
+
+            document.getElementById('code-task2-update-port').innerText = 
+`cat <<EOF > docker.tf
+resource "docker_image" "nginx" {
+  name = "nginx:latest"
+}
+
+resource "docker_container" "web" {
+    image = docker_image.nginx.image_id
+    name  = "hashicorp-learn"
+    ports {
+        external = 8081
+        internal = 80
+        ip       = "0.0.0.0"
+        protocol = "tcp"
+    }
+}
+EOF
+
+terraform apply -auto-approve
+docker ps`;
+
+            document.getElementById('code-task2-destroy').innerText = 
+`terraform destroy -auto-approve
+docker ps --filter "name=hashicorp-learn"`;
+        }
+
+        // Copy Validation Function
+        function copyCode(button, codeId) {
+            const codeElement = document.getElementById(codeId);
+            const codeText = codeElement.innerText;
+
+            const projectId = document.getElementById('inputProjectId').value.trim();
+            const region = document.getElementById('inputRegion').value.trim();
+
+            if (codeText.includes('<PROJECT_ID>') || codeText.includes('<REGION>')) {
+                alert('Harap isi semua parameter (Project ID & Region) terlebih dahulu sebelum menyalin kode!');
+                
+                let targetInput = null;
+                if (!projectId && codeText.includes('<PROJECT_ID>')) {
+                    targetInput = document.getElementById('inputProjectId');
+                } else if (!region && codeText.includes('<REGION>')) {
+                    targetInput = document.getElementById('inputRegion');
+                }
+
+                if (targetInput) {
+                    targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetInput.classList.add('pulse-highlight');
+                    targetInput.focus();
+                    setTimeout(() => {
+                        targetInput.classList.remove('pulse-highlight');
+                    }, 4500);
+                }
+                return;
+            }
+
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin kode:', err);
+            });
+        }
+
+        // Drawer Sidebar Toggle
+        function toggleDrawer() {
+            const drawer = document.getElementById('sidebarDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // IntersectionObserver untuk Floating Scroll Indicator
+        let lastVisitedTask = null;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    lastVisitedTask = entry.target;
+                    document.getElementById('scrollBackBtn').style.display = 'none';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.task-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        window.addEventListener('scroll', () => {
+            if (lastVisitedTask) {
+                const rect = lastVisitedTask.getBoundingClientRect();
+                if (rect.bottom < 0 || rect.top > window.innerHeight) {
+                    setTimeout(() => {
+                        document.getElementById('scrollBackBtn').style.display = 'flex';
+                    }, 800);
+                }
+            }
+        });
+
+        function scrollToCurrentTask() {
+            if (lastVisitedTask) {
+                lastVisitedTask.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // On Load Initialization
+        window.onload = updateCommands;
+    </script>
+</body>
+</html>
