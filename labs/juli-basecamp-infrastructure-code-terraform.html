@@ -47,6 +47,23 @@
             max-width: 920px;
             margin: 0 auto;
         }
+
+        .back-btn {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #f1f5f9;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 14px;
+            transition: background 0.2s;
+            border: 1px solid var(--border-color);
+        }
+        .back-btn:hover {
+            background: #e2e8f0;
+        }
         
         .header-card, .input-card, .task-card, .report-card, .docs-section {
             background: var(--card-bg);
@@ -213,6 +230,9 @@
 </head>
 <body>
     <div class="container">
+        <!-- NAVIGASI KEMBALI -->
+        <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+        
         <!-- Header Section -->
         <div class="header-card">
             <h1>🚀 Panduan Qwiklabs: Infrastructure as Code with Terraform</h1>
@@ -245,23 +265,11 @@
                 <small>Project ID dari panel kiri informasi Qwiklabs.</small>
                 <input type="text" id="projectId" placeholder="qwiklabs-gcp-XX-XXXXXXX" oninput="updateCommands()">
             </div>
-
-            <div class="form-group">
-                <label for="region">Region</label>
-                <small>Region yang ditugaskan pada petunjuk lab (misal: us-east1).</small>
-                <input type="text" id="region" placeholder="us-east1" oninput="updateCommands()">
-            </div>
-
-            <div class="form-group">
-                <label for="zone">Zone</label>
-                <small>Zone yang ditugaskan pada petunjuk lab (misal: us-east1-c).</small>
-                <input type="text" id="zone" placeholder="us-east1-c" oninput="updateCommands()">
-            </div>
         </div>
 
         <!-- Warning Banner Dinamis -->
         <div id="warningBanner" class="warning-banner">
-            ⚠️ <strong>Perhatian:</strong> Masih ada variabel yang belum diisi! Harap lengkapi semua form di atas agar skrip di bawah tidak berisi parameter kosong.
+            ⚠️ <strong>Perhatian:</strong> GCP Project ID belum diisi! Harap lengkapi form di atas agar skrip di bawah tidak berisi parameter kosong.
         </div>
 
         <!-- Setup Task -->
@@ -437,17 +445,15 @@
         function updateCommands() {
             // Ambil input dari form
             const projectIdInput = document.getElementById('projectId').value.trim();
-            const regionInput = document.getElementById('region').value.trim();
-            const zoneInput = document.getElementById('zone').value.trim();
 
             // Tentukan nilai variabel (dengan fallback placeholder abu-abu)
             const projectId = projectIdInput || '<PROJECT_ID>';
-            const region = regionInput || '<REGION>';
-            const zone = zoneInput || '<ZONE>';
+            const region = 'us-east1';
+            const zone = 'us-east1-b';
 
             // Banner warning visibility
             const warningBanner = document.getElementById('warningBanner');
-            if (projectId === '<PROJECT_ID>' || region === '<REGION>' || zone === '<ZONE>') {
+            if (projectId === '<PROJECT_ID>') {
                 warningBanner.style.display = 'block';
             } else {
                 warningBanner.style.display = 'none';
