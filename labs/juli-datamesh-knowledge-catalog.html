@@ -1004,7 +1004,7 @@
       const user2 = user2Val || '<EMAIL_USER_2>';
 
       // --- TASK 1 ---
-      document.getElementById('code1').innerText = 
+      document.getElementById('code1').textContent = 
 `# 1. Aktifkan API GCP yang dibutuhkan
 gcloud services enable dataplex.googleapis.com datacatalog.googleapis.com dataproc.googleapis.com
 
@@ -1060,7 +1060,7 @@ gcloud dataplex assets create customer-orders \\
       document.getElementById('task2RegionText').innerText = region;
 
       // --- TASK 3 ---
-      document.getElementById('code3').innerText = 
+      document.getElementById('code3').textContent = 
 `export PROJECT_ID=$(gcloud config get-value project)
 export REGION=${region}
 export USER_2="${user2}"
@@ -1074,7 +1074,7 @@ gcloud dataplex assets add-iam-policy-binding customer-engagements \\
   --role=roles/dataplex.dataWriter`;
 
       // --- TASK 4 ---
-      document.getElementById('code4').innerText = 
+      document.getElementById('code4').textContent = 
 `export PROJECT_ID=$(gcloud config get-value project)
 
 # 1. Buat file konfigurasi YAML Data Quality
@@ -1099,7 +1099,7 @@ EOF
 gsutil cp dq-customer-orders.yaml gs://$PROJECT_ID-dq-config/`;
 
       // --- TASK 5 ---
-      document.getElementById('code5').innerText = 
+      document.getElementById('code5').textContent = 
 `export PROJECT_ID=$(gcloud config get-value project)
 export REGION=${region}
 

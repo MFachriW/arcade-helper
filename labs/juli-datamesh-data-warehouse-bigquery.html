@@ -934,7 +934,7 @@
       const ds2 = ds2Val || '<DATASET_2>';
 
       // --- TASK 1 ---
-      document.getElementById('code1').innerText = 
+      document.getElementById('code1').textContent = 
 `# 1. Membuat dataset target baru lokal
 bq mk --dataset $DEVSHELL_PROJECT_ID:${ds1}
 
@@ -960,7 +960,7 @@ WHERE
       const t2Val = document.getElementById('selTask2').value;
       if (t2Val === 'A') {
         document.getElementById('descTask2').innerHTML = "Membuat tabel 'country_area_data' dari data Census Bureau International. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code2').innerText = 
+        document.getElementById('code2').textContent = 
 `# Menduplikasi data nama dan luas area negara dari Census Bureau public dataset ke dataset lokal Anda
 bq query --use_legacy_sql=false \\
 "
@@ -975,7 +975,7 @@ FROM \\\`bigquery-public-data.census_bureau_international.country_names_area\\\`
 </ul>`;
       } else {
         document.getElementById('descTask2').innerHTML = "Menambahkan kolom population, country_area, dan mobility STRUCT pada tabel global_mobility_tracker_data. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code2').innerText = 
+        document.getElementById('code2').textContent = 
 `# Memodifikasi skema tabel yang sudah ada untuk menambahkan kolom baru serta tipe objek bersarang (STRUCT)
 bq query --use_legacy_sql=false \\
 "
@@ -1005,7 +1005,7 @@ ADD COLUMN mobility STRUCT<
       const t3Val = document.getElementById('selTask3').value;
       if (t3Val === 'A') {
         document.getElementById('descTask3').innerHTML = "Membuat tabel 'mobility_data' dari dataset publik Google COVID-19 Mobility Report. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code3').innerText = 
+        document.getElementById('code3').textContent = 
 `# Menduplikasi data mobilitas Google ke dalam tabel lokal dataset Anda
 bq query --use_legacy_sql=false \\
 "
@@ -1019,7 +1019,7 @@ FROM \\\`bigquery-public-data.covid19_google_mobility.mobility_report\\\`
 </ul>`;
       } else {
         document.getElementById('descTask3').innerHTML = "Membuat tabel bantu populasi ECDC 2019 dan meng-update kolom populasi pada tabel konsolidasi. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code3').innerText = 
+        document.getElementById('code3').textContent = 
 `# 1. Membuat tabel duplikat mentah dari data ECDC global
 bq query --use_legacy_sql=false \\
 "
@@ -1049,7 +1049,7 @@ WHERE TRIM(t0.alpha_3_code) = TRIM(t1.country_territory_code);
       const t4Val = document.getElementById('selTask4').value;
       if (t4Val === 'A') {
         document.getElementById('descTask4').innerHTML = "Membersihkan baris data bertipe NULL pada tabel oxford_policy_tracker_by_countries. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code4').innerText = 
+        document.getElementById('code4').textContent = 
 `# Menghapus baris data yang cacat / tidak lengkap nilainya demi menjaga integritas data analisis
 bq query --use_legacy_sql=false \\
 "
@@ -1062,7 +1062,7 @@ WHERE population IS NULL OR country_area IS NULL
 </ul>`;
       } else {
         document.getElementById('descTask4').innerHTML = "Meng-update data country_area dari Census Bureau dan mengisi nilai agregat mobility STRUCT ke tabel konsolidasi. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
-        document.getElementById('code4').innerText = 
+        document.getElementById('code4').textContent = 
 `# 1. Update data luas area negara (country_area) pada tabel konsolidasi (t0) dengan mencocokkan nama negara dari data Census Bureau (t1)
 bq query --use_legacy_sql=false \\
 "

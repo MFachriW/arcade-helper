@@ -885,7 +885,7 @@
       const httpName = httpNameVal || '<HTTP_FUNCTION_NAME>';
 
       // Code 1: Setup IAM & API
-      document.getElementById('code1').innerText = 
+      document.getElementById('code1').textContent = 
 `PROJECT_ID=$(gcloud config get-value project)
 PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
 
@@ -895,12 +895,12 @@ GCS_SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GCS_SERVICE_ACCOUNT" --role="roles/pubsub.publisher"`;
 
       // Code 2: Task 1 Bucket
-      document.getElementById('code2').innerText = 
+      document.getElementById('code2').textContent = 
 `PROJECT_ID=$(gcloud config get-value project)
 gsutil mb -l ${region} gs://$PROJECT_ID`;
 
       // Code 3a: Task 2 Storage Function - Source Code
-      document.getElementById('code3a').innerText = 
+      document.getElementById('code3a').textContent = 
 `mkdir -p ~/hello-storage && cd ~/hello-storage
 
 cat > index.js <<EOF
@@ -923,7 +923,7 @@ cat > package.json <<EOF
 EOF`;
 
       // Code 3b: Task 2 Storage Function - Deploy
-      document.getElementById('code3b').innerText = 
+      document.getElementById('code3b').textContent = 
 `cd ~/hello-storage
 PROJECT_ID=$(gcloud config get-value project)
 gcloud functions deploy ${csName} \\
@@ -938,7 +938,7 @@ gcloud functions deploy ${csName} \\
   --quiet`;
 
       // Code 4a: Task 3 HTTP Function - Source Code
-      document.getElementById('code4a').innerText = 
+      document.getElementById('code4a').textContent = 
 `mkdir -p ~/hello-http && cd ~/hello-http
 
 cat > index.js <<EOF
@@ -960,7 +960,7 @@ cat > package.json <<EOF
 EOF`;
 
       // Code 4b: Task 3 HTTP Function - Deploy
-      document.getElementById('code4b').innerText = 
+      document.getElementById('code4b').textContent = 
 `cd ~/hello-http
 gcloud functions deploy ${httpName} \\
   --gen2 \\

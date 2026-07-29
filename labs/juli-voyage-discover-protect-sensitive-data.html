@@ -1021,7 +1021,7 @@
       document.getElementById('task2ProjectText').innerText = projectId;
 
       // Update Script Command Task 1 - Langkah 2 (Cloud Shell)
-      document.getElementById('code1a').innerText = 
+      document.getElementById('code1a').textContent = 
 `export DEVSHELL_PROJECT_ID="${projectId}"
 export PROJECT_NUMBER=$(gcloud projects describe $DEVSHELL_PROJECT_ID --format="value(projectNumber)")
 
@@ -1066,7 +1066,7 @@ curl -X POST -s \\
   "https://dlp.googleapis.com/v2/projects/$DEVSHELL_PROJECT_ID/locations/global/deidentifyTemplates"`;
 
       // Update Script Command Task 1 - Langkah 3 (Cloud Shell)
-      document.getElementById('code1b').innerText = 
+      document.getElementById('code1b').textContent = 
 `export DEVSHELL_PROJECT_ID="${projectId}"
 
 # 3. Dapatkan Full Template Resource Path
@@ -1134,7 +1134,7 @@ curl -s \\
   -d @job-configuration.json`;
 
       // Update Script Command Task 2 (Cloud Shell)
-      document.getElementById('code2').innerText = 
+      document.getElementById('code2').textContent = 
 `export PROJECT_ID="${projectId}"
 export PROJECT_NUMBER=$(gcloud projects describe ${projectId} --format="value(projectNumber)")
 
@@ -1156,7 +1156,7 @@ gcloud resource-manager tags values create No \\
     --description="Does not contain sensitive personally identifiable information (SPII)"`;
 
       // Update Python Snippets Task 3
-      document.getElementById('code3a').innerText = 
+      document.getElementById('code3a').textContent = 
 `# Redefine original function to inspect and deidentify output with Sensitive Data Protection
 import google.cloud.dlp  
 from typing import List 
@@ -1227,7 +1227,7 @@ def deidentify_with_replace_infotype(
     # Print results
     print(return_payload)`;
 
-      document.getElementById('code3b').innerText = 
+      document.getElementById('code3b').textContent = 
 `from google.genai import types
 
 # Create prompt that contains a US VIN
@@ -1248,7 +1248,7 @@ response_vin = client.models.generate_content(
 # Print response without blocking it
 print(response_vin.text)`;
 
-      document.getElementById('code3c').innerText = 
+      document.getElementById('code3c').textContent = 
 `# Block model response that includes US Vehicle Identification Number (VIN)
 deidentify_with_replace_infotype(
     PROJECT_ID,

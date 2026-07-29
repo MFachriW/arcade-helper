@@ -990,11 +990,11 @@
             const region = document.getElementById('inputRegion').value.trim() || '<REGION>';
 
             // Update Span Labels di Penjelasan
-            document.querySelectorAll('.valProjectId').forEach(el => el.innerText = projectId);
-            document.querySelectorAll('.valRegion').forEach(el => el.innerText = region);
+            document.querySelectorAll('.valProjectId').forEach(el => el.textContent = projectId);
+            document.querySelectorAll('.valRegion').forEach(el => el.textContent = region);
 
             // Task 1 Codes
-            document.getElementById('code-task1-install').innerText = 
+            document.getElementById('code-task1-install').textContent = 
 `cat <<'EOF' > ~/.customize_environment
 wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com \$(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
@@ -1003,7 +1003,7 @@ EOF
 bash ~/.customize_environment
 gcloud services enable cloudaicompanion.googleapis.com`;
 
-            document.getElementById('code-task1-maintf-local').innerText = 
+            document.getElementById('code-task1-maintf-local').textContent = 
 `cat <<EOF > main.tf
 provider "google" {
   project     = "${projectId}"
@@ -1023,12 +1023,12 @@ terraform {
 }
 EOF`;
 
-            document.getElementById('code-task1-init-apply').innerText = 
+            document.getElementById('code-task1-init-apply').textContent = 
 `terraform init
 terraform apply -auto-approve
 terraform show`;
 
-            document.getElementById('code-task1-migrate-gcs').innerText = 
+            document.getElementById('code-task1-migrate-gcs').textContent = 
 `cat <<EOF > main.tf
 provider "google" {
   project     = "${projectId}"
@@ -1051,7 +1051,7 @@ EOF
 
 terraform init -migrate-state -force-copy`;
 
-            document.getElementById('code-task1-cleanup').innerText = 
+            document.getElementById('code-task1-cleanup').textContent = 
 `terraform refresh
 terraform show
 
@@ -1080,11 +1080,11 @@ terraform apply -auto-approve
 terraform destroy -auto-approve`;
 
             // Task 2 Codes
-            document.getElementById('code-task2-docker-run').innerText = 
+            document.getElementById('code-task2-docker-run').textContent = 
 `docker run --name hashicorp-learn --detach --publish 8080:80 nginx:latest
 docker ps`;
 
-            document.getElementById('code-task2-clone-prep').innerText = 
+            document.getElementById('code-task2-clone-prep').textContent = 
 `git clone https://github.com/hashicorp/learn-terraform-import.git
 cd learn-terraform-import
 sed -i 's/version = "~> 3.0.2"/version = ">= 3.5"/' terraform.tf
@@ -1103,7 +1103,7 @@ terraform {
 provider "docker" {}
 EOF`;
 
-            document.getElementById('code-task2-import-exec').innerText = 
+            document.getElementById('code-task2-import-exec').textContent = 
 `cat <<EOF > docker.tf
 resource "docker_container" "web" {}
 EOF
@@ -1111,7 +1111,7 @@ EOF
 terraform import docker_container.web \$(docker inspect -f '{{.ID}}' hashicorp-learn)
 terraform show`;
 
-            document.getElementById('code-task2-sync-config').innerText = 
+            document.getElementById('code-task2-sync-config').textContent = 
 `cat <<EOF > docker.tf
 resource "docker_container" "web" {
     image = "nginx:latest"
@@ -1128,7 +1128,7 @@ EOF
 terraform plan
 terraform apply -auto-approve`;
 
-            document.getElementById('code-task2-update-port').innerText = 
+            document.getElementById('code-task2-update-port').textContent = 
 `cat <<EOF > docker.tf
 resource "docker_image" "nginx" {
   name = "nginx:latest"
@@ -1149,7 +1149,7 @@ EOF
 terraform apply -auto-approve
 docker ps`;
 
-            document.getElementById('code-task2-destroy').innerText = 
+            document.getElementById('code-task2-destroy').textContent = 
 `terraform destroy -auto-approve
 docker ps --filter "name=hashicorp-learn"`;
         }

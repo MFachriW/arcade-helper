@@ -1125,7 +1125,7 @@
       document.getElementById('task4ProjectText').innerText = projectId;
 
       // Update Command Task 2 (Cloud Shell)
-      document.getElementById('code2').innerText = 
+      document.getElementById('code2').textContent = 
 `export PROJECT_ID="${projectId}"
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="get(projectNumber)")
 
