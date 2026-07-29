@@ -4,300 +4,797 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab: Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
-    h1, h2, h3 { color: #0366d6; }
-    
-    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
-    .back-btn:hover { background: #dbeeff; }
-    
-    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
-    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
-    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
-    
-    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
-    .code-container { position: relative; margin: 8px 0 12px 0; }
-    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
-    
-    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
-    .copy-btn:hover { background: #2c974b; }
-    
-    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
-    .submit-btn:hover { background: #024ea4; }
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #202124;
+      --text-muted: #5f6368;
+      --border: #dadce0;
+      --code-bg: #1e1e1e;
+      --code-text: #d4d4d4;
+      --danger-bg: #fff5f5;
+      --danger-border: #e53e3e;
+      --danger-text: #c53030;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffe082;
+      --warning-text: #b78103;
+      --info-bg: #f0f7ff;
+      --info-border: #d0e5ff;
+      --info-text: #1a73e8;
+      --success-bg: #e6f4ea;
+      --success-border: #a8dab5;
+      --success-text: #137333;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    }
 
-    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
-    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
-    .report-card[open] { padding: 18px; }
-    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
-    .report-card summary::-webkit-details-marker { display: none; }
-    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
-    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    .explain-box {
-      background: #fafbfc;
-      border: 1px solid #e1e4e8;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: var(--info-bg);
+      color: var(--primary);
+      text-decoration: none;
       border-radius: 6px;
-      padding: 12px 16px;
-      margin-top: 12px;
-      font-size: 13.5px;
-    }
-    .explain-box summary {
-      cursor: pointer;
       font-weight: bold;
-      color: #0366d6;
+      margin-bottom: 20px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #dbeeff;
+    }
+
+    .header-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title i {
+      color: var(--primary);
+    }
+
+    .header-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Course Link Callout Box */
+    .reference-box {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .reference-box i {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .reference-box a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .reference-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Input Controls */
+    .input-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .input-group input {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: 'Fira Code', monospace;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
       outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
     }
-    .explain-box ul, .explain-box ol {
-      margin: 8px 0 0 0;
+
+    /* Warning Banner */
+    .warning-banner {
+      background-color: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .warning-banner i {
+      font-size: 1.2rem;
+    }
+
+    /* Task Cards */
+    .task-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f3f4;
+      padding-bottom: 10px;
+    }
+
+    .task-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-badge {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .task-desc {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .code-explain {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    /* Code Snippet Box */
+    .code-container {
+      position: relative;
+      background-color: var(--code-bg);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2d2d2d;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      color: #b5b5b5;
+      border-bottom: 1px solid #3c3c3c;
+    }
+
+    .code-header span {
+      font-weight: 500;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid #555;
+      color: #d4d4d4;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #3c3c3c;
+      color: #ffffff;
+      border-color: #888;
+    }
+
+    .copy-btn.copied {
+      background: var(--success-bg) !important;
+      color: var(--success-text) !important;
+      border-color: var(--success-border) !important;
+    }
+
+    pre {
+      padding: 16px;
+      margin: 0;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: var(--code-text);
+    }
+
+    /* Details / Collapsible Box */
+    .explain-box {
+      background-color: #fafbfc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .explain-box summary {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #f1f3f4;
+    }
+
+    .explain-box summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .explain-content {
+      padding: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .explain-content ul, .explain-content ol {
       padding-left: 20px;
-      color: #444;
     }
-    .explain-box li {
-      margin-bottom: 6px;
+
+    .explain-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Docs Section */
+    .docs-section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .docs-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .docs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .docs-list a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .docs-list a:hover {
+      text-decoration: underline;
+    }
+
+    /* Report Card Form */
+    .report-card {
+      background: #fff5f5;
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .report-card summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--danger-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      outline: none;
+      user-select: none;
+      font-size: 0.95rem;
+    }
+
+    .report-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .report-content {
+      margin-top: 16px;
+      border-top: 1px solid var(--danger-border);
+      padding-top: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .form-group input, .form-group textarea {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .btn-submit {
+      background-color: var(--danger-text);
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #9b2c2c;
+    }
+
+    .callout {
+      background: var(--info-bg);
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 4px 4px 0;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <!-- NAVIGASI KEMBALI -->
-  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
-  
-  <h1>🛡️ Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</h1>
-  <div class="callout">
-    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/1177" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Discover and Protect Sensitive Data Across Your Ecosystem</a>.
-  </div>
-  <p>Silakan masukkan <strong>Project ID</strong>, <strong>Email Username 2</strong>, dan <strong>Region/Location</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
-  
-  <!-- FORM INPUT INTERAKTIF UTAMA -->
-  <div class="config-card">
-    <h3>⚙️ Parameter Dinamis Lab</h3>
-    <div class="config-grid">
-      <div class="form-group">
-        <label>1. GCP Project ID:</label>
-        <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+  <div class="container">
+    <!-- NAVIGASI KEMBALI -->
+    <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+    
+    <!-- HEADER CARD -->
+    <div class="header-card">
+      <div class="header-title">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</span>
       </div>
-      <div class="form-group">
-        <label>2. Email Username 2:</label>
-        <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
+      <div class="header-subtitle">
+        Panduan interaktif untuk mendeteksi dan melindungi data sensitif di ekosistem cloud Anda.
+      </div>
+      <div class="reference-box">
+        <i class="fa-solid fa-lightbulb"></i>
+        <span><strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/1177" target="_blank">Discover and Protect Sensitive Data Across Your Ecosystem</a>.</span>
       </div>
     </div>
-  </div>
 
-  <!-- REMINDER WARNING PARAMETER -->
-  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
-    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong> dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
-  </div>
-
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
-
-  <!-- TASK 1 -->
-  <div class="task-card">
-    <h2>☁️ Task 1. Enable sensitive data protection for Cloud Storage</h2>
-    <p class="code-explain">Membuat Discovery scan harian untuk Cloud Storage bucket, membuat De-identify template untuk nomor kartu kredit, dan menjalankan De-identify job.</p>
-
-    <!-- Subtask A: Console Step -->
-    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
-      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 1: Buat & Jadwalkan Discovery Scan Configuration di Console</h3>
-      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
-        <li>Buka Google Cloud Console, lalu navigasi ke <strong>Navigation menu (☰)</strong> > <strong>Security</strong> > <strong>Sensitive Data Protection</strong>.</li>
-        <li>Buka tab <strong>Discovery</strong>. Pada bagian Cloud Storage, klik <strong>Enable</strong>.</li>
-        <li>Untuk <i>Select scope</i>, biarkan opsi <strong>Scan selected project</strong>, lalu klik <strong>Continue</strong>.</li>
-        <li>Pada <i>Managed schedules</i>, klik <strong>Edit Default schedule</strong>, sesuaikan:
-          <ul>
-            <li>On a schedule: <strong>Reprofile Daily</strong></li>
-            <li>When inspect template changes: <strong>Reprofile Daily</strong></li>
-            <li>Klik <strong>Done</strong>, lalu klik <strong>Continue</strong>.</li>
-          </ul>
-        </li>
-        <li>Untuk <i>Select inspection template</i>, biarkan opsi <strong>Create a new inspection template</strong> tercentang, lalu klik <strong>Continue</strong>.</li>
-        <li>Pada bagian <i>Add actions</i>:
-          <ul>
-            <li>Aktifkan <strong>Save data profile copies to BigQuery</strong>.</li>
-            <li>Dataset ID: <code>cs_discovery</code></li>
-            <li>Table ID: <code>cs_data_profiles</code></li>
-          </ul>
-        </li>
-        <li>Klik <strong>Continue</strong> pada bagian pemrosesan fallback.</li>
-        <li>Untuk <i>Set location to store configuration</i>, pilih <strong>Multi_region > us (multiple regions in United States)</strong>, lalu klik <strong>Continue</strong>.</li>
-        <li>Isikan Display name: <code>Cloud Storage Daily Discovery</code></li>
-        <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Create configuration</strong>.</li>
-      </ol>
-    </div>
-
-    <!-- Subtask B: CLI Template Creation -->
-    <p class="code-explain" style="margin-top: 18px;">🛠️ <strong>Langkah 2: Buat De-identify Template via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code1a', this)">📋 Copy Template Command</button>
-      <pre><code id="code1a"></code></pre>
-    </div>
-
-    <!-- Subtask C: CLI Job Execution -->
-    <p class="code-explain" style="margin-top: 18px;">🛠️ <strong>Langkah 3: Jalankan De-identify Job via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code1b', this)">📋 Copy Job Command</button>
-      <pre><code id="code1b"></code></pre>
-    </div>
-
-    <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037; font-size: 13.5px; margin-top: 14px;">
-      ⏳ <strong>Proses Pemindaian Latar Belakang:</strong> Eksekusi DLP Job memerlukan waktu sekitar 1–2 menit hingga statusnya berubah menjadi <i>Done</i>. Kamu bisa melanjutkan ke Task 2 selagi job memproses berkas CSV.
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
-      <ul>
-        <li><strong>Discovery Scan Configuration:</strong> Fitur pemindaian otomatis Sensitive Data Protection yang memantau penambahan berkas baru secara harian di Cloud Storage bucket <code style="color: #0366d6;">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-car-owners</code>.</li>
-        <li><strong>Record Transformation & Replace with infoType:</strong> Mengubah kolom data terstruktur (kolom <code>message</code>) dan menggantikan string sensitif Credit Card Number dengan nama kategori infoType-nya.</li>
-        <li><strong>De-identified Output Storage:</strong> Menyimpan berkas CSV yang telah dibersihkan secara otomatis ke bucket tujuan baru <code style="color: #0366d6;">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-car-owners-transformed</code>.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 2 -->
-  <div class="task-card">
-    <h2>📊 Task 2. Enable sensitive data protection for BigQuery</h2>
-    <p class="code-explain">Membuat Resource Tag <code>SPII</code> di IAM, memberikan conditional access berbasis Tag untuk Username 2, serta melabeli dataset <code>orders</code>.</p>
-
-    <!-- Subtask A: CLI Tag Creation -->
-    <p class="code-explain">🛠️ <strong>Langkah 1: Buat IAM Tag Key & Tag Values (SPII)</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy Task 2 Tag Command</button>
-      <pre><code id="code2"></code></pre>
-    </div>
-
-    <!-- Subtask B & C: Console Guidance -->
-    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 16px;">
-      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Langkah 2: Berikan Conditional Access pada Username 2 & Tag Dataset</h3>
-      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
-        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>IAM & Admin</strong> > <strong>IAM</strong>.</li>
-        <li>Cari baris untuk Username 2: <strong style="color: #0366d6;"><span id="task2User2Text">&lt;EMAIL_USER_2&gt;</span></strong>, lalu klik ikon pensil (<strong>Edit principal</strong>).</li>
-        <li>Ganti peran <strong>Viewer</strong> menjadi <strong>Browser</strong> (Klik ikon tempat sampah pada Viewer, lalu tambahkan role <i>Basic > Browser</i>).</li>
-        <li>Pertahankan peran <strong>BigQuery Data Viewer</strong>, lalu klik tombol <strong>Add IAM condition</strong>.</li>
-        <li>Isikan konfigurasi Condition:
-          <ul>
-            <li>Title: <code>No SPII Access Only</code></li>
-            <li>Condition builder: Pilih <strong>Tag</strong> untuk Condition type 1, dan pilih <strong>has value</strong> untuk Operator.</li>
-            <li>Value path: <strong style="color: #0366d6;"><span id="task2ValuePath">&lt;PROJECT_ID&gt;/SPII/No</span></strong></li>
-          </ul>
-        </li>
-        <li>Klik <strong>Save</strong>, lalu klik <strong>Save</strong> lagi pada panel IAM utama.</li>
-        <li>Buka <strong>Navigation menu (☰)</strong> > <strong>BigQuery</strong>.</li>
-        <li>Di panel Explorer sebelah kiri, luaskan ID Project: <strong style="color: #0366d6;"><span id="task2ProjectText">&lt;PROJECT_ID&gt;</span></strong>.</li>
-        <li>Klik dataset bernama <code>orders</code>.</li>
-        <li>Di panel sebelah kanan, klik <strong>Edit details</strong> (ikon pensil).</li>
-        <li>Pada bagian <strong>Tags</strong>, klik <strong>Select scope</strong> > <strong>Select current project</strong>, lalu pilih:
-          <ul>
-            <li>Tag key: <code>SPII</code></li>
-            <li>Tag value: <code>No</code></li>
-          </ul>
-        </li>
-        <li>Klik <strong>Save</strong>.</li>
-      </ol>
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
-      <ul>
-        <li><strong>Attribute-Based Access Control (ABAC):</strong> Pendekatan keamanan granular yang membatasi hak akses Username 2 hanya pada dataset BigQuery yang bertag <code>SPII/No</code>, sementara dataset sensitif seperti <code>car_owners</code> tersembunyi secara otomatis.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 3 -->
-  <div class="task-card">
-    <h2>🤖 Task 3. Protect sensitive data in Gen AI model responses</h2>
-    <p class="code-explain">Mengupdate kode Python pada Jupyter Notebook di Workbench Agent Platform untuk memblokir respon model Gemini yang mengandung US Vehicle Identification Number (VIN).</p>
-
-    <div class="explain-box" style="background: #f0f7ff; border-color: #d0e5ff; margin-top: 10px;">
-      <h3 style="color: #0366d6; margin-top: 0; font-size: 15px;">🛠️ Panduan Langkah Kerja di Workbench JupyterLab:</h3>
-      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.6; margin-bottom: 0;">
-        <li>Buka Console GCP, navigasi ke <strong>Agent Platform</strong> (atau Vertex AI) > <strong>Notebooks</strong> > <strong>Workbench</strong>.</li>
-        <li>Cari instance bernama <code>workbench-notebook</code>, lalu klik tombol <strong>Open JupyterLab</strong>.</li>
-        <li>Buka file notebook bernama <code>deidentify-model-response-challenge-lab.ipynb</code>.</li>
-        <li>Jika muncul pop-up <i>Select Kernel</i>, pilih <strong>Python 3 (Local)</strong>.</li>
-        <li>Jalankan sel-sel awal pada bagian <i>Getting started with this notebook</i> secara berurutan.</li>
-        <li>Pada sel <strong>Set your project ID and region</strong>, sesuaikan variabelnya (Gunakan location <code style="color: #0366d6;">global</code> untuk Gemini API):
-          <br><code style="color: #0366d6;">PROJECT_ID = "<span class="valProjectId">&lt;PROJECT_ID&gt;</span>"</code>
-          <br><code style="color: #0366d6;">LOCATION = "global"</code>
-        </li>
-      </ol>
-    </div>
-
-    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Update Fungsi Python untuk Memblokir US VIN:</strong><br>Gantikan/isikan kode pada sel fungsi <code>deidentify_with_replace_infotype</code> dengan blok berikut lalu jalankan selnya:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code3a', this)">📋 Copy Updated Python Function</button>
-      <pre><code id="code3a"></code></pre>
-    </div>
-
-    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Generate & Uji Prompt dengan Temperature = 0:</strong><br>Pada sel pengetesan pertama (di bawah bagian <i>Generate an example with VIN...</i>), masukkan dan jalankan kode berikut:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code3b', this)">📋 Copy Prompt Test Cell</button>
-      <pre><code id="code3b"></code></pre>
-    </div>
-
-    <p class="code-explain" style="margin-top: 16px;">🛠️ <strong>Eksekusi Pemblokiran Output Respon VIN:</strong><br>Pada sel terakhir notebook, masukkan dan jalankan kode berikut:</p>
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code3c', this)">📋 Copy Block Execution Cell</button>
-      <pre><code id="code3c"></code></pre>
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
-      <ul>
-        <li><strong>Generative AI Redaction Guardrails:</strong> Mengintegrasikan Cloud Data Loss Prevention (DLP) API sebagai guardrail pasca-generasi untuk memeriksa respon teks model Gen AI secara real-time sebelum disajikan ke pengguna.</li>
-        <li><strong>infoType US_VEHICLE_IDENTIFICATION_NUMBER:</strong> Kategori infoType bawaan DLP API yang mengenali format 17 digit kode unik kendaraan bermotor standar Amerika Utara.</li>
-        <li><strong>Temperature = 0:</strong> Mengatur tingkat deterministik output model Gen AI ke nilai 0 untuk memastikan hasil probabilitas tertinggi yang stabil saat pengujian validasi sistem.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
-  <details class="report-card">
-    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
-    <div style="margin-top: 16px;">
-      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
-      
-      <form action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
-        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: Discover & Protect Sensitive Data Challenge Lab">
-        
-        <!-- Anti-spam Honeypot Checkbox -->
-        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-        
-        <div class="form-group">
-          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
-          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+    <p style="margin-bottom: 20px;">Silakan masukkan <strong>Project ID</strong> dan <strong>Email Username 2</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
+    
+    <!-- FORM INPUT INTERAKTIF UTAMA -->
+    <div class="input-card">
+      <h3 style="margin-bottom: 14px;"><i class="fa-solid fa-sliders"></i> Parameter Dinamis Lab</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="inputProjectId">1. GCP Project ID:</label>
+          <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
         </div>
-        
-        <div class="form-group">
-          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
-          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Update python function with..." required></textarea>
+        <div class="input-group">
+          <label for="inputUser2">2. Email Username 2:</label>
+          <input type="text" id="inputUser2" placeholder="student-XX-xxxxxxx@qwiklabs.net" oninput="updateCommands()">
         </div>
-        
-        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
-      </form>
+      </div>
     </div>
-  </details>
 
-  <!-- DOKUMENTASI PENDUKUNG -->
-  <div class="callout" style="background: #f6f8fa; border-left: 4px solid #718096; color: #24292e; font-size: 13.5px; margin: 24px 0 16px 0;">
-    📚 <strong>Dokumentasi Pendukung:</strong>
-    <ul style="margin: 6px 0 0 0; padding-left: 20px;">
-      <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Dokumentasi Google Cloud</a></li>
-      <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud Shell</a></li>
-      <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud CLI</a></li>
-    </ul>
-  </div>
+    <!-- REMINDER WARNING PARAMETER -->
+    <div id="paramWarning" class="warning-banner" style="display: none;">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span><strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong> dan/atau <strong>Email Username 2</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!</span>
+    </div>
 
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+    <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
 
-  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
-    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
-    <br><br>
-    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
-    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    <!-- TASK 1 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Task 1. Enable sensitive data protection for Cloud Storage</span>
+        </div>
+        <span class="task-badge">Task 1</span>
+      </div>
+      <p class="task-desc">Membuat Discovery scan harian untuk Cloud Storage bucket, membuat De-identify template untuk nomor kartu kredit, dan menjalankan De-identify job.</p>
+
+      <!-- Subtask A: Console Step -->
+      <details class="explain-box" open style="border-color: var(--info-border); margin-top: 10px;">
+        <summary style="background-color: var(--info-bg); color: var(--primary);">
+          <i class="fa-solid fa-gears"></i> Langkah 1: Buat & Jadwalkan Discovery Scan Configuration di Console
+        </summary>
+        <div class="explain-content">
+          <ol>
+            <li>Buka Google Cloud Console, lalu navigasi ke <strong>Navigation menu (☰)</strong> > <strong>Security</strong> > <strong>Sensitive Data Protection</strong>.</li>
+            <li>Buka tab <strong>Discovery</strong>. Pada bagian Cloud Storage, klik <strong>Enable</strong>.</li>
+            <li>Untuk <i>Select scope</i>, biarkan opsi <strong>Scan selected project</strong>, lalu klik <strong>Continue</strong>.</li>
+            <li>Pada <i>Managed schedules</i>, klik <strong>Edit Default schedule</strong>, sesuaikan:
+              <ul>
+                <li>On a schedule: <strong>Reprofile Daily</strong></li>
+                <li>When inspect template changes: <strong>Reprofile Daily</strong></li>
+                <li>Klik <strong>Done</strong>, lalu klik <strong>Continue</strong>.</li>
+              </ul>
+            </li>
+            <li>Untuk <i>Select inspection template</i>, biarkan opsi <strong>Create a new inspection template</strong> tercentang, lalu klik <strong>Continue</strong>.</li>
+            <li>Pada bagian <i>Add actions</i>:
+              <ul>
+                <li>Aktifkan <strong>Save data profile copies to BigQuery</strong>.</li>
+                <li>Dataset ID: <code>cs_discovery</code></li>
+                <li>Table ID: <code>cs_data_profiles</code></li>
+              </ul>
+            </li>
+            <li>Klik <strong>Continue</strong> pada bagian pemrosesan fallback.</li>
+            <li>Untuk <i>Set location to store configuration</i>, pilih <strong>Multi_region > us (multiple regions in United States)</strong>, lalu klik <strong>Continue</strong>.</li>
+            <li>Isikan Display name: <code>Cloud Storage Daily Discovery</code></li>
+            <li>Klik <strong>Create</strong>, lalu konfirmasi dengan mengklik <strong>Create configuration</strong>.</li>
+          </ol>
+        </div>
+      </details>
+
+      <!-- Subtask B: CLI Template Creation -->
+      <p class="code-explain" style="margin-top: 18px;">🛠&nbsp;<strong>Langkah 2: Buat De-identify Template via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Create De-identify Template</span>
+          <button class="copy-btn" onclick="copyCode('code1a', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code1a"></code></pre>
+      </div>
+
+      <!-- Subtask C: CLI Job Execution -->
+      <p class="code-explain" style="margin-top: 18px;">🛠&nbsp;<strong>Langkah 3: Jalankan De-identify Job via Cloud Shell</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Run De-identify Job</span>
+          <button class="copy-btn" onclick="copyCode('code1b', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code1b"></code></pre>
+      </div>
+
+      <div class="callout" style="background: var(--warning-bg); border-left: 4px solid var(--warning-border); color: var(--warning-text); font-size: 13.5px; margin-top: 14px;">
+        ⏳ <strong>Proses Pemindaian Latar Belakang:</strong> Eksekusi DLP Job memerlukan waktu sekitar 1–2 menit hingga statusnya berubah menjadi <i>Done</i>. Kamu bisa melanjutkan ke Task 2 selagi job memproses berkas CSV.
+      </div>
+
+      <details class="explain-box" open style="margin-top: 16px;">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 1)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>Discovery Scan Configuration:</strong> Fitur pemindaian otomatis Sensitive Data Protection yang memantau penambahan berkas baru secara harian di Cloud Storage bucket <code style="color: var(--primary);">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-car-owners</code>.</li>
+            <li><strong>Record Transformation & Replace with infoType:</strong> Mengubah kolom data terstruktur (kolom <code>message</code>) dan menggantikan string sensitif Credit Card Number dengan nama kategori infoType-nya.</li>
+            <li><strong>De-identified Output Storage:</strong> Menyimpan berkas CSV yang telah dibersihkan secara otomatis ke bucket tujuan baru <code style="color: var(--primary);">gs://<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-car-owners-transformed</code>.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-database"></i>
+          <span>Task 2. Enable sensitive data protection for BigQuery</span>
+        </div>
+        <span class="task-badge">Task 2</span>
+      </div>
+      <p class="task-desc">Membuat Resource Tag <code>SPII</code> di IAM, memberikan conditional access berbasis Tag untuk Username 2, serta melabeli dataset <code>orders</code>.</p>
+
+      <!-- Subtask A: CLI Tag Creation -->
+      <p class="code-explain">🛠&nbsp;<strong>Langkah 1: Buat IAM Tag Key & Tag Values (SPII)</strong><br>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Create IAM Tags</span>
+          <button class="copy-btn" onclick="copyCode('code2', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code2"></code></pre>
+      </div>
+
+      <!-- Subtask B & C: Console Guidance -->
+      <details class="explain-box" open style="border-color: var(--info-border); margin-top: 16px;">
+        <summary style="background-color: var(--info-bg); color: var(--primary);">
+          <i class="fa-solid fa-gears"></i> Langkah 2: Berikan Conditional Access pada Username 2 & Tag Dataset
+        </summary>
+        <div class="explain-content">
+          <ol>
+            <li>Buka <strong>Navigation menu (☰)</strong> > <strong>IAM & Admin</strong> > <strong>IAM</strong>.</li>
+            <li>Cari baris untuk Username 2: <strong style="color: var(--primary);"><span id="task2User2Text">&lt;EMAIL_USER_2&gt;</span></strong>, lalu klik ikon pensil (<strong>Edit principal</strong>).</li>
+            <li>Ganti peran <strong>Viewer</strong> menjadi <strong>Browser</strong> (Klik ikon tempat sampah pada Viewer, lalu tambahkan role <i>Basic > Browser</i>).</li>
+            <li>Pertahankan peran <strong>BigQuery Data Viewer</strong>, lalu klik tombol <strong>Add IAM condition</strong>.</li>
+            <li>Isikan konfigurasi Condition:
+              <ul>
+                <li>Title: <code>No SPII Access Only</code></li>
+                <li>Condition builder: Pilih <strong>Tag</strong> untuk Condition type 1, dan pilih <strong>has value</strong> untuk Operator.</li>
+                <li>Value path: <strong style="color: var(--primary);"><span id="task2ValuePath">&lt;PROJECT_ID&gt;/SPII/No</span></strong></li>
+              </ul>
+            </li>
+            <li>Klik <strong>Save</strong>, lalu klik <strong>Save</strong> lagi pada panel IAM utama.</li>
+            <li>Buka <strong>Navigation menu (☰)</strong> > <strong>BigQuery</strong>.</li>
+            <li>Di panel Explorer sebelah kiri, luaskan ID Project: <strong style="color: var(--primary);"><span id="task2ProjectText">&lt;PROJECT_ID&gt;</span></strong>.</li>
+            <li>Klik dataset bernama <code>orders</code>.</li>
+            <li>Di panel sebelah kanan, klik <strong>Edit details</strong> (ikon pensil).</li>
+            <li>Pada bagian <strong>Tags</strong>, klik <strong>Select scope</strong> > <strong>Select current project</strong>, lalu pilih:
+              <ul>
+                <li>Tag key: <code>SPII</code></li>
+                <li>Tag value: <code>No</code></li>
+              </ul>
+            </li>
+            <li>Klik <strong>Save</strong>.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="explain-box" open style="margin-top: 16px;">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 2)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>Attribute-Based Access Control (ABAC):</strong> Pendekatan keamanan granular yang membatasi hak akses Username 2 hanya pada dataset BigQuery yang bertag <code>SPII/No</code>, sementara dataset sensitif seperti <code>car_owners</code> tersembunyi secara otomatis.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-robot"></i>
+          <span>Task 3. Protect sensitive data in Gen AI model responses</span>
+        </div>
+        <span class="task-badge">Task 3</span>
+      </div>
+      <p class="task-desc">Mengupdate kode Python pada Jupyter Notebook di Workbench Agent Platform untuk memblokir respon model Gemini yang mengandung US Vehicle Identification Number (VIN).</p>
+
+      <details class="explain-box" open style="border-color: var(--info-border); margin-top: 10px;">
+        <summary style="background-color: var(--info-bg); color: var(--primary);">
+          <i class="fa-solid fa-gears"></i> Panduan Langkah Kerja di Workbench JupyterLab:
+        </summary>
+        <div class="explain-content">
+          <ol>
+            <li>Buka Console GCP, navigasi ke <strong>Agent Platform</strong> (atau Vertex AI) > <strong>Notebooks</strong> > <strong>Workbench</strong>.</li>
+            <li>Cari instance bernama <code>workbench-notebook</code>, lalu klik tombol <strong>Open JupyterLab</strong>.</li>
+            <li>Buka file notebook bernama <code>deidentify-model-response-challenge-lab.ipynb</code>.</li>
+            <li>Jika muncul pop-up <i>Select Kernel</i>, pilih <strong>Python 3 (Local)</strong>.</li>
+            <li>Jalankan sel-sel awal pada bagian <i>Getting started with this notebook</i> secara berurutan.</li>
+            <li>Pada sel <strong>Set your project ID and region</strong>, sesuaikan variabelnya (Gunakan location <code style="color: var(--primary);">global</code> untuk Gemini API):
+              <br><code style="color: var(--primary);">PROJECT_ID = "<span class="valProjectId">&lt;PROJECT_ID&gt;</span>"</code>
+              <br><code style="color: var(--primary);">LOCATION = "global"</code>
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <p class="code-explain" style="margin-top: 16px;">🛠&nbsp;<strong>Update Fungsi Python untuk Memblokir US VIN:</strong><br>Gantikan/isikan kode pada sel fungsi <code>deidentify_with_replace_infotype</code> dengan blok berikut lalu jalankan selnya:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Python - Update Redaction Function</span>
+          <button class="copy-btn" onclick="copyCode('code3a', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code3a"></code></pre>
+      </div>
+
+      <p class="code-explain" style="margin-top: 16px;">🛠&nbsp;<strong>Generate & Uji Prompt dengan Temperature = 0:</strong><br>Pada sel pengetesan pertama (di bawah bagian <i>Generate an example with VIN...</i>), masukkan dan jalankan kode berikut:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Python - Generate Prompt Test</span>
+          <button class="copy-btn" onclick="copyCode('code3b', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code3b"></code></pre>
+      </div>
+
+      <p class="code-explain" style="margin-top: 16px;">🛠&nbsp;<strong>Eksekusi Pemblokiran Output Respon VIN:</strong><br>Pada sel terakhir notebook, masukkan dan jalankan kode berikut:</p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Python - Execute Redaction Block</span>
+          <button class="copy-btn" onclick="copyCode('code3c', this)">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </div>
+        <pre><code id="code3c"></code></pre>
+      </div>
+
+      <details class="explain-box" open style="margin-top: 16px;">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 3)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>Generative AI Redaction Guardrails:</strong> Mengintegrasikan Cloud Data Loss Prevention (DLP) API sebagai guardrail pasca-generasi untuk memeriksa respon teks model Gen AI secara real-time sebelum disajikan ke pengguna.</li>
+            <li><strong>infoType US_VEHICLE_IDENTIFICATION_NUMBER:</strong> Kategori infoType bawaan DLP API yang mengenali format 17 digit kode unik kendaraan bermotor standar Amerika Utara.</li>
+            <li><strong>Temperature = 0:</strong> Mengatur tingkat deterministik output model Gen AI ke nilai 0 untuk memastikan hasil probabilitas tertinggi yang stabil saat pengujian validasi sistem.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- KARTU LAPOR SOAL BARU (COLLAPSIBLE & SECURED) -->
+    <div class="report-card">
+      <details>
+        <summary>
+          <span><i class="fa-solid fa-bug"></i> Variasi soalmu tidak ada di daftar atas? Laporkan di Sini</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </summary>
+        <div class="report-content">
+          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+          
+          <form action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+            <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: Discover & Protect Sensitive Data Challenge Lab">
+            
+            <!-- Anti-spam Honeypot Checkbox -->
+            <input type="checkbox" name="botcheck" style="display: none;">
+            
+            <div class="form-group">
+              <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+              <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+            </div>
+            
+            <div class="form-group">
+              <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+              <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Update python function with..." required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-submit">🚀 Kirimkan Soal</button>
+          </form>
+        </div>
+      </details>
+    </div>
+
+    <!-- DOKUMENTASI PENDUKUNG -->
+    <div class="docs-section">
+      <div class="docs-title">
+        <i class="fa-solid fa-book-bookmark"></i>
+        <span>📚 Dokumentasi Pendukung</span>
+      </div>
+      <ul class="docs-list">
+        <li>
+          <a href="https://docs.cloud.google.com/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Dokumentasi Google Cloud
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud Shell
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud CLI
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SUCCESS BANNER -->
+    <div class="callout" style="background: var(--success-bg); border-left: 4px solid var(--success-border); color: var(--success-text); padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+      🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+      <br><br>
+      Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+      Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    </div>
   </div>
 
   <script>
@@ -308,7 +805,7 @@
       // Tampilkan warning jika salah satu parameter kosong
       const warningEl = document.getElementById('paramWarning');
       if (!projectIdInput || !user2Input) {
-        warningEl.style.display = 'block';
+        warningEl.style.display = 'flex';
       } else {
         warningEl.style.display = 'none';
       }
@@ -565,20 +1062,21 @@ deidentify_with_replace_infotype(
 
     function copyCode(elementId, btnElement) {
       const codeText = document.getElementById(elementId).innerText;
-      navigator.clipboard.writeText(codeText);
-      
-      const originalText = btnElement.innerHTML;
-      btnElement.innerHTML = 'Copied! ✔️';
-      btnElement.style.background = '#0366d6';
-      
-      setTimeout(() => {
-        btnElement.innerHTML = originalText;
-        btnElement.style.background = '#2ea44f';
-      }, 1500);
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalHTML = btnElement.innerHTML;
+        btnElement.classList.add('copied');
+        btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
+        setTimeout(() => {
+          btnElement.classList.remove('copied');
+          btnElement.innerHTML = originalHTML;
+        }, 1500);
+      });
     }
 
     // Jalankan update awal saat halaman dibuka
-    updateCommands();
+    window.onload = function() {
+      updateCommands();
+    };
   </script>
 </body>
 </html>

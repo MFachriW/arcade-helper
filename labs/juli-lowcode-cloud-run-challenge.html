@@ -3,140 +3,665 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab: Build Serverless Applications with Cloud Run Functions</title>
+  <title>Lab: Build Serverless Applications with Cloud Run Functions: Challenge Lab</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
-    h1, h2, h3 { color: #0366d6; }
-    
-    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
-    .back-btn:hover { background: #dbeeff; }
-    
-    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
-    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
-    .form-group input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-    
-    .code-explain { font-size: 14px; color: #444; margin-bottom: 8px; font-weight: 500; }
-    .code-container { position: relative; margin: 8px 0 24px 0; }
-    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
-    
-    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
-    .copy-btn:hover { background: #2c974b; }
-    
-    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #202124;
+      --text-muted: #5f6368;
+      --border: #dadce0;
+      --code-bg: #1e1e1e;
+      --code-text: #d4d4d4;
+      --danger-bg: #fff5f5;
+      --danger-border: #e53e3e;
+      --danger-text: #c53030;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffe082;
+      --warning-text: #b78103;
+      --info-bg: #f0f7ff;
+      --info-border: #d0e5ff;
+      --info-text: #1a73e8;
+      --success-bg: #e6f4ea;
+      --success-border: #a8dab5;
+      --success-text: #137333;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: var(--info-bg);
+      color: var(--primary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #dbeeff;
+    }
+
+    .header-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title i {
+      color: var(--primary);
+    }
+
+    .header-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Course Link Callout Box */
+    .reference-box {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .reference-box i {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .reference-box a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .reference-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Input Controls */
+    .input-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .input-group input {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: 'Fira Code', monospace;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    }
+
+    /* Warning Banner */
+    .warning-banner {
+      background-color: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .warning-banner i {
+      font-size: 1.2rem;
+    }
+
+    /* Task Cards */
+    .task-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f3f4;
+      padding-bottom: 10px;
+    }
+
+    .task-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-badge {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .task-desc {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    /* Code Snippet Box */
+    .code-container {
+      position: relative;
+      background-color: var(--code-bg);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2d2d2d;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      color: #b5b5b5;
+      border-bottom: 1px solid #3c3c3c;
+    }
+
+    .code-header span {
+      font-weight: 500;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid #555;
+      color: #d4d4d4;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #3c3c3c;
+      color: #ffffff;
+      border-color: #888;
+    }
+
+    .copy-btn.copied {
+      background: var(--success-bg) !important;
+      color: var(--success-text) !important;
+      border-color: var(--success-border) !important;
+    }
+
+    pre {
+      padding: 16px;
+      margin: 0;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: var(--code-text);
+    }
+
+    /* Details / Collapsible Box */
+    .explain-box {
+      background-color: #fafbfc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .explain-box summary {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #f1f3f4;
+    }
+
+    .explain-box summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .explain-content {
+      padding: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .explain-content ul, .explain-content ol {
+      padding-left: 20px;
+    }
+
+    .explain-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Docs Section */
+    .docs-section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .docs-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .docs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .docs-list a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .docs-list a:hover {
+      text-decoration: underline;
+    }
+
+    /* Report Card Form */
+    .report-card {
+      background: #fff5f5;
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .report-card summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--danger-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      outline: none;
+      user-select: none;
+      font-size: 0.95rem;
+    }
+
+    .report-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .report-content {
+      margin-top: 16px;
+      border-top: 1px solid var(--danger-border);
+      padding-top: 16px;
+    }
+
+    .btn-submit {
+      background-color: var(--danger-text);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #9b2c2c;
+    }
   </style>
 </head>
 <body>
 
-  <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
-  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
- 
-  <h1>🚀 Build Serverless Applications with Cloud Run Functions: Challenge Lab</h1>
-  <div class="callout">
-    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi kode dan instruksi resmi lab ini diambil dari <a href="https://www.skills.google/games/7314/labs/45054" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Google Cloud Skills Boost (Lab 45054)</a>.
-  </div>
-  <p>Silakan isi parameter lab sesuai dengan instruksi yang kamu dapatkan di halaman Google Skills. Seluruh skrip di bawah akan otomatis menyesuaikan nilainya!</p>
- 
-  <!-- FORM INPUT INTERAKTIF -->
-  <div class="config-card">
-    <h3>⚙️ Parameter Lab Kamu</h3>
-    <div class="config-grid">
-      <div class="form-group">
-        <label>1. Region Target:</label>
-        <input type="text" id="inputRegion" placeholder="us-west1, us-east1, europe-west2, dll" oninput="updateCommands()">
+  <div class="container">
+    <!-- NAVIGASI KEMBALI KE LANDING PAGE -->
+    <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+   
+    <!-- HEADER CARD -->
+    <div class="header-card">
+      <div class="header-title">
+        <i class="fa-solid fa-rocket"></i>
+        <span>Build Serverless Applications with Cloud Run Functions: Challenge Lab</span>
       </div>
-      <div class="form-group">
-        <label>2. Storage Function Name:</label>
-        <input type="text" id="inputCS" placeholder="cs-monitor, cs-logger, cs-tracker, dll" oninput="updateCommands()">
+      <div class="header-subtitle">
+        Silakan isi parameter lab sesuai dengan instruksi yang kamu dapatkan di halaman Google Skills. Seluruh skrip di bawah akan otomatis menyesuaikan nilainya!
       </div>
-      <div class="form-group">
-        <label>3. HTTP Function Name:</label>
-        <input type="text" id="inputHTTP" placeholder="http-messenger, hello-http, dll" oninput="updateCommands()">
+      <div class="reference-box">
+        <i class="fa-solid fa-lightbulb"></i>
+        <span><strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi kode dan instruksi resmi lab ini diambil dari <a href="https://www.skills.google/games/7314/labs/45054" target="_blank">Google Cloud Skills Boost (Lab 45054)</a>.</span>
       </div>
     </div>
-  </div>
+   
+    <!-- FORM INPUT INTERAKTIF -->
+    <div class="input-card">
+      <h3 style="margin-bottom: 14px;"><i class="fa-solid fa-sliders"></i> Parameter Lab Kamu</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="inputRegion">1. Region Target:</label>
+          <input type="text" id="inputRegion" placeholder="us-west1, us-east1, europe-west2, dll" oninput="updateCommands()">
+        </div>
+        <div class="input-group">
+          <label for="inputCS">2. Storage Function Name:</label>
+          <input type="text" id="inputCS" placeholder="cs-monitor, cs-logger, cs-tracker, dll" oninput="updateCommands()">
+        </div>
+        <div class="input-group">
+          <label for="inputHTTP">3. HTTP Function Name:</label>
+          <input type="text" id="inputHTTP" placeholder="http-messenger, hello-http, dll" oninput="updateCommands()">
+        </div>
+      </div>
+    </div>
 
-  <!-- REMINDER WARNING PARAMETER -->
-  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
-    ⚠️ <strong>Penting:</strong> Kamu belum mengisi salah satu parameter di atas. Harap lengkapi form terlebih dahulu agar variabel perintah yang di-copy di bawah tidak salah!
-  </div>
+    <!-- REMINDER WARNING PARAMETER -->
+    <div id="warningBanner" class="warning-banner" style="display: none;">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span><strong>Penting:</strong> Kamu belum mengisi salah satu parameter di atas. Harap lengkapi form terlebih dahulu agar variabel perintah yang di-copy di bawah tidak salah!</span>
+    </div>
 
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
+    <!-- LANGKAH 1 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Langkah 1: Aktifkan API & Set IAM (Wajib Pertama)</span>
+        </div>
+        <span class="task-badge">Persiapan</span>
+      </div>
+      <div class="task-desc">
+        Mengaktifkan seluruh API Google Cloud Service yang dibutuhkan serta memberikan akses Pub/Sub Publisher pada Service Account Cloud Storage untuk mencegah error <i>permission denied</i>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - API & IAM Setup</span>
+          <button class="copy-btn" onclick="copyToClipboard('code1', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code1"></code></pre>
+      </div>
+    </div>
 
-  <h2>📌 Langkah 1: Aktifkan API & Set IAM (Wajib Pertama)</h2>
-  <p class="code-explain">Mengaktifkan seluruh API Google Cloud Service yang dibutuhkan serta memberikan akses Pub/Sub Publisher pada Service Account Cloud Storage untuk mencegah error <i>permission denied</i>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy</button>
-    <pre><code id="code1"></code></pre>
-  </div>
+    <!-- TASK 1 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-bucket"></i>
+          <span>Task 1: Create Storage Bucket</span>
+        </div>
+        <span class="task-badge">Task 1</span>
+      </div>
+      <div class="task-desc">
+        Mengambil Project ID aktif di Cloud Shell dan membuat satu bucket Cloud Storage baru di region pilihanmu. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Create Storage Bucket</span>
+          <button class="copy-btn" onclick="copyToClipboard('code2', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code2"></code></pre>
+      </div>
+    </div>
 
-  <h2>📦 Task 1: Create Storage Bucket</h2>
-  <p class="code-explain">Mengambil Project ID aktif di Cloud Shell dan membuat satu bucket Cloud Storage baru di region pilihanmu. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy</button>
-    <pre><code id="code2"></code></pre>
-  </div>
+    <!-- TASK 2 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Task 2: Storage Function</span>
+        </div>
+        <span class="task-badge">Task 2</span>
+      </div>
+      
+      <div class="task-desc" style="font-weight: 600; margin-bottom: 8px;">A. Tulis Source Code</div>
+      <div class="task-desc">
+        Membuat folder project <code>~/hello-storage</code> dan menyusun file source code <code>index.js</code> & <code>package.json</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Write Storage Function Code</span>
+          <button class="copy-btn" onclick="copyToClipboard('code3a', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code3a"></code></pre>
+      </div>
 
-  <h2>⚡ Task 2: Storage Function</h2>
-  
-  <h3>A. Tulis Source Code</h3>
-  <p class="code-explain">Membuat folder project <code>~/hello-storage</code> dan menyusun file source code <code>index.js</code> & <code>package.json</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code3a', this)">📋 Copy</button>
-    <pre><code id="code3a"></code></pre>
-  </div>
+      <div class="task-desc" style="font-weight: 600; margin-top: 20px; margin-bottom: 8px;">B. Deploy Cloud Function</div>
+      <div class="task-desc">
+        Men-deploy Event-Driven Cloud Function Gen 2 yang terhubung ke Cloud Storage bucket yang telah dibuat sebelumnya. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Deploy Storage Function</span>
+          <button class="copy-btn" onclick="copyToClipboard('code3b', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code3b"></code></pre>
+      </div>
 
-  <h3>B. Deploy Cloud Function</h3>
-  <p class="code-explain">Men-deploy Event-Driven Cloud Function Gen 2 yang terhubung ke Cloud Storage bucket yang telah dibuat sebelumnya. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code3b', this)">📋 Copy</button>
-    <pre><code id="code3b"></code></pre>
-  </div>
+      <div class="explain-box" style="background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); margin-top: 16px;">
+        <summary style="background: #fff8e1; color: var(--warning-text);"><i class="fa-solid fa-circle-exclamation"></i> PENTING (Mengatasi Error 403 / Permission Denied)</summary>
+        <div class="explain-content" style="border-color: var(--warning-border); color: #5d4037;">
+          Jika kamu mendapatkan error seperti:<br>
+          <code style="background: #ffe082; padding: 2px 6px; border-radius: 4px; font-size: 12px; display: block; margin: 6px 0; overflow-x: auto;">
+            ERROR: (gcloud.functions.deploy) ResponseError: status=[403], ... Permission "storage.buckets.get" denied on "Bucket ... could not be validated ...
+          </code>
+          <strong>Alasan:</strong> Error ini terjadi karena kebijakan akses IAM (IAM Policy Binding) yang kita daftarkan di Langkah 1 atau pembuatan Storage Bucket baru membutuhkan waktu sinkronisasi (eventual consistency/propagation delay) agar dapat dikenali sepenuhnya oleh sistem Eventarc Google Cloud.<br>
+          <strong>Solusi:</strong> Jangan panik! Cukup <strong>tunggu sekitar 1 - 2 menit</strong> agar permission menyebar sempurna, lalu jalankan kembali perintah <strong>Deploy Cloud Function (Bagian B)</strong> di atas.
+        </div>
+      </div>
+    </div>
 
-  <div class="callout" style="background: #fff8e1; border-left: 4px solid #ffb300; color: #5d4037;">
-    ⚠️ <strong>PENTING (Mengatasi Error 403 / Permission Denied):</strong><br>
-    Jika kamu mendapatkan error seperti:<br>
-    <code style="background: #ffe082; padding: 2px 6px; border-radius: 4px; font-size: 12px; display: block; margin: 6px 0; overflow-x: auto;">
-      ERROR: (gcloud.functions.deploy) ResponseError: status=[403], ... Permission "storage.buckets.get" denied on "Bucket ... could not be validated ...
-    </code>
-    <strong>Alasan:</strong> Error ini terjadi karena kebijakan akses IAM (IAM Policy Binding) yang kita daftarkan di Langkah 1 atau pembuatan Storage Bucket baru membutuhkan waktu sinkronisasi (eventual consistency/propagation delay) agar dapat dikenali sepenuhnya oleh sistem Eventarc Google Cloud.<br>
-    <strong>Solusi:</strong> Jangan panik! Cukup <strong>tunggu sekitar 1 - 2 menit</strong> agar permission menyebar sempurna, lalu jalankan kembali perintah <strong>Deploy Cloud Function (Bagian B)</strong> di atas.
-  </div>
+    <!-- TASK 3 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-globe"></i>
+          <span>Task 3: HTTP Function</span>
+        </div>
+        <span class="task-badge">Task 3</span>
+      </div>
+      
+      <div class="task-desc" style="font-weight: 600; margin-bottom: 8px;">A. Tulis Source Code</div>
+      <div class="task-desc">
+        Membuat folder project baru <code>~/hello-http</code> dan menyusun file source code aplikasi HTTP <code>index.js</code> & <code>package.json</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Write HTTP Function Code</span>
+          <button class="copy-btn" onclick="copyToClipboard('code4a', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code4a"></code></pre>
+      </div>
 
-  <h2>🌐 Task 3: HTTP Function</h2>
-  
-  <h3>A. Tulis Source Code</h3>
-  <p class="code-explain">Membuat folder project baru <code>~/hello-http</code> dan menyusun file source code aplikasi HTTP <code>index.js</code> & <code>package.json</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code4a', this)">📋 Copy</button>
-    <pre><code id="code4a"></code></pre>
-  </div>
+      <div class="task-desc" style="font-weight: 600; margin-top: 20px; margin-bottom: 8px;">B. Deploy Cloud Function</div>
+      <div class="task-desc">
+        Men-deploy Cloud Function Gen 2 bertipe HTTP trigger dengan konfigurasi penanganan instance secara otomatis. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:
+      </div>
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Deploy HTTP Function</span>
+          <button class="copy-btn" onclick="copyToClipboard('code4b', this)">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre><code id="code4b"></code></pre>
+      </div>
+    </div>
 
-  <h3>B. Deploy Cloud Function</h3>
-  <p class="code-explain">Men-deploy Cloud Function Gen 2 bertipe HTTP trigger dengan konfigurasi penanganan instance secara otomatis. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-  <div class="code-container">
-    <button class="copy-btn" onclick="copyCode('code4b', this)">📋 Copy</button>
-    <pre><code id="code4b"></code></pre>
-  </div>
+    <!-- DOKUMENTASI PENDUKUNG -->
+    <div class="docs-section">
+      <div class="docs-title">
+        <i class="fa-solid fa-book-bookmark"></i>
+        <span>📚 Dokumentasi Pendukung</span>
+      </div>
+      <ul class="docs-list">
+        <li>
+          <a href="https://docs.cloud.google.com/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Dokumentasi Google Cloud
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud Shell
+          </a>
+        </li>
+        <li>
+          <a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud CLI
+          </a>
+        </li>
+      </ul>
+    </div>
 
-  <!-- DOKUMENTASI PENDUKUNG -->
-  <div class="callout" style="background: #f6f8fa; border-left: 4px solid #718096; color: #24292e; font-size: 13.5px; margin: 24px 0 16px 0;">
-    📚 <strong>Dokumentasi Pendukung:</strong>
-    <ul style="margin: 6px 0 0 0; padding-left: 20px;">
-      <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Dokumentasi Google Cloud</a></li>
-      <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud Shell</a></li>
-      <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud CLI</a></li>
-    </ul>
-  </div>
+    <!-- LAPOR EVALUASI KENDALA -->
+    <div class="report-card">
+      <details>
+        <summary>
+          <span><i class="fa-solid fa-bug"></i> Ada Perbedaan Soal / Error pada Lab ini? Laporkan di Sini</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </summary>
+        <div class="report-content">
+          <form onsubmit="handleFormSubmit(event)">
+            <input type="checkbox" name="botcheck" style="display: none;">
+            <div class="form-group">
+              <label for="repProject">GCP Project ID / Kode Variasi</label>
+              <input type="text" id="repProject" placeholder="Contoh: qwiklabs-gcp-01-xxxx" required>
+            </div>
+            <div class="form-group">
+              <label for="repDetail">Detail Masalah / Kendala Error</label>
+              <textarea id="repDetail" rows="3" placeholder="Jelaskan pesan error atau perbedaan instruksi yang Anda temukan..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Kirim Laporan</button>
+          </form>
+        </div>
+      </details>
+    </div>
 
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
-
-  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
-    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
-    <br><br>
-    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
-    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    <!-- SUCCESS BANNER -->
+    <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
+      🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+      <br><br>
+      Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+      Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    </div>
   </div>
 
   <script>
@@ -145,12 +670,11 @@
       const csNameVal = document.getElementById('inputCS').value.trim();
       const httpNameVal = document.getElementById('inputHTTP').value.trim();
 
-      // Tampilkan warning jika salah satu parameter kosong
-      const warningEl = document.getElementById('paramWarning');
+      const warningBanner = document.getElementById('warningBanner');
       if (!regionVal || !csNameVal || !httpNameVal) {
-        warningEl.style.display = 'block';
+        warningBanner.style.display = 'flex';
       } else {
-        warningEl.style.display = 'none';
+        warningBanner.style.display = 'none';
       }
 
       const region = regionVal || '<REGION>';
@@ -247,23 +771,29 @@ gcloud functions deploy ${httpName} \\
   --quiet`;
     }
 
-    function copyCode(elementId, btnElement) {
-      const codeText = document.getElementById(elementId).innerText;
-      navigator.clipboard.writeText(codeText);
-      
-      // Feedback UI saat berhasil di-copy
-      const originalText = btnElement.innerHTML;
-      btnElement.innerHTML = 'Copied! ✔️';
-      btnElement.style.background = '#0366d6';
-      
-      setTimeout(() => {
-        btnElement.innerHTML = originalText;
-        btnElement.style.background = '#2ea44f';
-      }, 1500);
+    function copyToClipboard(elementId, btnElement) {
+      const textToCopy = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnElement.innerHTML;
+        btnElement.classList.add('copied');
+        btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Tersalin!`;
+        setTimeout(() => {
+          btnElement.classList.remove('copied');
+          btnElement.innerHTML = originalHTML;
+        }, 1500);
+      });
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      alert('Laporan berhasil dikirim!');
+      event.target.reset();
     }
 
     // Jalankan otomatis saat halaman pertama dibuka
-    updateCommands();
+    window.onload = function() {
+      updateCommands();
+    };
   </script>
 </body>
 </html>
