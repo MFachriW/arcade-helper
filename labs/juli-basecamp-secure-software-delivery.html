@@ -851,7 +851,7 @@ gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
   --role="roles/ondemandscanning.admin"
 
 # 2. Create Initial cloudbuild.yaml File
-cat > cloudbuild.yaml <<EOF
+cat <<'EOF' > cloudbuild.yaml
 steps:
 - id: "build"
   name: 'gcr.io/cloud-builders/docker'
@@ -980,7 +980,7 @@ cd ../..
 rm -rf cloud-builders-community
 
 # 3. Create Complete Pipeline cloudbuild.yaml
-cat <<EOF > cloudbuild.yaml
+cat <<'EOF' > cloudbuild.yaml
 steps:
 - id: "build"
   name: 'gcr.io/cloud-builders/docker'
@@ -1053,7 +1053,7 @@ gcloud builds submit`;
       // Task 5 Code
       document.getElementById('codeTask5').textContent = `# 1. Update Dockerfile to Patch Dependencies
 cat > ./Dockerfile << EOF
-FROM python:3.8-alpine
+FROM python:3.12-alpine
 
 # App
 WORKDIR /app

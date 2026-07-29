@@ -922,7 +922,7 @@ if __name__ == "__main__":
 EOF
 
 # 5. Buat file pipeline cloudbuild.yaml
-cat > ./cloudbuild.yaml << EOF
+cat > ./cloudbuild.yaml << 'EOF'
 steps:
 # build
 - id: "build"
@@ -946,7 +946,7 @@ gcloud artifacts repositories create artifact-scanning-repo \\
 gcloud auth configure-docker ${region}-docker.pkg.dev
 
 # 3. Perbarui cloudbuild.yaml untuk push image ke Artifact Registry
-cat > ./cloudbuild.yaml << EOF
+cat > ./cloudbuild.yaml << 'EOF'
 steps:
 # build
 - id: "build"
@@ -1001,7 +1001,7 @@ echo "Menunggu propagasi hak akses IAM..."
 sleep 10
 
 # 2. Update cloudbuild.yaml dengan Security Gate Pemindaian
-cat > ./cloudbuild.yaml << EOF
+cat > ./cloudbuild.yaml << 'EOF'
 steps:
 # build
 - id: "build"
