@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Lab: Secure Builds with Cloud Build</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-green: #059669;
+      --accent-yellow: #d97706;
+      --accent-red: #dc2626;
+      --border-color: #e2e8f0;
+      --code-bg: #1e1e2e;
+      --code-color: #f8f8f2;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    /* Back Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s ease;
+    }
+    .back-btn:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Header Card */
+    .header-card {
+      border-top: 5px solid var(--primary);
+    }
+    .header-card h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+    .header-card p.subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Reference Box */
+    .ref-box {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.925rem;
+      color: #1e40af;
+    }
+    .ref-box a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* Form Section */
+    .form-card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-group {
+      margin-top: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .form-group small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.825rem;
+      margin-bottom: 0.5rem;
+    }
+    .input-control {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    .input-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Pulse Glow Animation for Error Focus */
+    @keyframes pulse-glow {
+      0% { border-color: var(--accent-red); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      50% { border-color: var(--accent-red); box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.1); }
+      100% { border-color: var(--border-color); box-shadow: none; }
+    }
+    .pulse-highlight {
+      animation: pulse-glow 1.5s ease-in-out 3;
+    }
+
+    /* Task Card */
+    .task-card {
+      position: relative;
+    }
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .task-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .task-badge {
+      background-color: #e0e7ff;
+      color: #3730a3;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    /* Progress Check Tag */
+    .progress-check-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background-color: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      font-size: 0.825rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+
+    /* Banners */
+    .banner {
+      padding: 0.85rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .banner-info {
+      background-color: #f0f9ff;
+      border: 1px solid #bae6fd;
+      color: #0369a1;
+    }
+    .banner-warning {
+      background-color: #fff8e1;
+      border: 1px solid #ffe082;
+      color: #b45309;
+    }
+
+    /* Code Container */
+    .code-container {
+      position: relative;
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #181825;
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #a6adc8;
+      border-bottom: 1px solid #313244;
+    }
+    .copy-btn {
+      background-color: #313244;
+      color: #cdd6f4;
+      border: none;
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+    pre {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 0;
+    }
+    pre code {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--code-color);
+      white-space: pre;
+    }
+
+    /* Inline Code Contrast Fix */
+    :not(pre) > code {
+      color: #c53030;
+      background-color: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Explanation Accordion */
+    .explain-box {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .explain-box summary {
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #334155;
+      cursor: pointer;
+      background-color: #f1f5f9;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .explain-box summary:hover {
+      background-color: #e2e8f0;
+    }
+    .explain-content {
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+    .explain-content ul, .explain-content ol {
+      margin-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .explain-content li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* Success Card */
+    .success-card {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1px solid #a7f3d0;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+    }
+    .success-card h2 {
+      color: #065f46;
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .success-card p {
+      color: #047857;
+      font-size: 1rem;
+    }
+
+    /* Floating Drawer Navigation */
+    .floating-menu-trigger {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--primary);
+      color: white;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      z-index: 99;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .floating-menu-trigger:hover {
+      transform: scale(1.08);
+      background-color: var(--primary-hover);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100vh;
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-lg);
+      z-index: 101;
+      padding: 1.75rem 1.25rem;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-drawer.active {
+      right: 0;
+    }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .drawer-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .close-drawer-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .drawer-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .drawer-menu a {
+      display: block;
+      padding: 0.6rem 0.85rem;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+    .drawer-menu a:hover {
+      background-color: #f1f5f9;
+      color: var(--primary);
+    }
+
+    /* Scroll Indicator */
+    .scroll-back-indicator {
+      position: fixed;
+      top: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #1e293b;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      z-index: 90;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    /* Footer Section */
+    .footer-doc {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .footer-doc h4 {
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+    .footer-doc ul {
+      margin-left: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .footer-doc a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Bug Form Collapsible */
+    .bug-report-details {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem;
+    }
+    .bug-report-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.5rem;
+    }
+    .bug-form {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .bug-form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: var(--font-sans);
+    }
+    .bug-form button {
+      align-self: flex-start;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Back Button -->
+    <a href="#" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab
+    </a>
+
+    <!-- Header Card -->
+    <div class="card header-card">
+      <h1>Secure Builds with Cloud Build</h1>
+      <p class="subtitle">Panduan langkah demi langkah membangun kontainer aman, integrasi Artifact Registry, On-Demand Vulnerability Scanning, serta penerapan Security Gate dalam pipeline CI/CD.</p>
+      
+      <div class="ref-box">
+        <i class="fa-solid fa-lightbulb"></i> <strong>Referensi & Pelajari Lebih Lanjut:</strong> 
+        Materi resmi lab ini diambil dari Google Cloud Skills Boost: 
+        <a href="https://www.skills.google/course_templates/1164/labs/610920" target="_blank" rel="noopener noreferrer">Secure Builds with Cloud Build (Lab Official)</a>.
+      </div>
+    </div>
+
+    <!-- Parameter Input Form -->
+    <div class="card form-card" id="form-parameters">
+      <h2><i class="fa-solid fa-sliders"></i> Konfigurasi Parameter Lab</h2>
+      <p style="font-size: 0.875rem; color: var(--text-muted);">Masukkan parameter dari panel kredensial Qwiklabs Anda. Nilai perintah di bawah akan otomatis diperbarui secara dinamis.</p>
+
+      <div class="form-group">
+        <label for="inputRegion">GCP Region</label>
+        <small><i class="fa-solid fa-circle-info"></i> Region GCP dari panel kredensial Qwiklabs sebelah kiri (Contoh: us-central1, us-east1)</small>
+        <input type="text" id="inputRegion" class="input-control" placeholder="us-central1" value="us-central1" oninput="updateCommands()">
+      </div>
+    </div>
+
+    <!-- Environment Setup -->
+    <div class="card task-card" id="task-setup">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-terminal"></i> Persiapan Awal & Environment Setup
+        </div>
+        <span class="task-badge">Persiapan</span>
+      </div>
+
+      <p>Buka Cloud Shell dan jalankan perintah berikut untuk mengonfigurasi variabel proyek serta mengaktifkan seluruh API Google Cloud Service yang dibutuhkan.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-question"></i> Mengapa langkah ini diperlukan?</summary>
+        <div class="explain-content">
+          <p>Langkah ini menetapkan variabel <code>PROJECT_ID</code> dan <code>PROJECT_NUMBER</code> di lingkungan bash Anda, lalu mengaktifkan API utama seperti <strong>Artifact Registry</strong>, <strong>Cloud Build</strong>, dan <strong>On-Demand Scanning API</strong> agar Cloud Build dapat melakukan pemindaian keamanan kontainer.</p>
+        </div>
+      </details>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command</span>
+          <button class="copy-btn" onclick="copyCode('code-setup')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-setup">Loading...</code></pre>
+      </div>
+
+      <div class="banner banner-info">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <div><strong>Info Waktu:</strong> Mengaktifkan API Service memerlukan waktu sekitar 30-60 detik. Pastikan proses selesai hingga muncul respon sukses sebelum mengeksekusi perintah berikutnya.</div>
+      </div>
+
+      <div class="progress-check-tag">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Enable the required APIs</strong>
+      </div>
+    </div>
+
+    <!-- Task 1 -->
+    <div class="card task-card" id="task-1">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-cubes"></i> Task 1. Build images with Cloud Build
+        </div>
+        <span class="task-badge">Task 1</span>
+      </div>
+
+      <p>Pada tugas ini, Anda akan memberikan hak akses Service Account Cloud Build, membuat direktori kerja, menyiapkan file aplikasi Python Flask sederhana beserta Dockerfile, dan menjalankan build pertama.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-question"></i> Penjelasan Teknis & Arsitektur</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>IAM Binding:</strong> Memberikan peran <code>roles/ondemandscanning.admin</code> ke Service Account Cloud Build agar pipeline otomatis dapat melakukan pemindaian kerentanan On-Demand.</li>
+            <li><strong>Debian 11 Base Image:</strong> Dockerfile sengaja menggunakan base image lama (<code>debian11</code>) dan versi Flask 1.1.4 yang diketahui memiliki kerentanan tingkat tinggi/kritis untuk keperluan simulasi keamanan.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command</span>
+          <button class="copy-btn" onclick="copyCode('code-task1')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-task1">Loading...</code></pre>
+      </div>
+
+      <div class="banner banner-warning">
+        <i class="fa-solid fa-clock"></i>
+        <div><strong>Perhatian:</strong> Perintah <code>gcloud builds submit</code> membutuhkan waktu sekitar 1-2 menit. Disertakan pula perintah <code>sleep 10</code> untuk memastikan propagasi izin IAM berjalan sempurna sebelum build dimulai.</div>
+      </div>
+
+      <div class="progress-check-tag">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Build the images with Cloud Build</strong>
+      </div>
+    </div>
+
+    <!-- Task 2 -->
+    <div class="card task-card" id="task-2">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-box-archive"></i> Task 2. Use Artifact Registry for Containers
+        </div>
+        <span class="task-badge">Task 2</span>
+      </div>
+
+      <p>Buat repositori Docker di Artifact Registry region <span class="valRegion">us-central1</span>, konfigurasi otentikasi Docker CLI, lalu perbarui file pipeline <code>cloudbuild.yaml</code> untuk melakukan push image hasil build ke repositori tersebut.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-question"></i> Penjelasan Teknis</summary>
+        <div class="explain-content">
+          <p><strong>Artifact Registry</strong> merupakan repositori manajemen package dan image modern Google Cloud yang menggantikan Container Registry (gcr.io). Repositori ini memiliki fitur integrasi pemindaian kerentanan otomatis secara bawaan saat image di-push.</p>
+        </div>
+      </details>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command</span>
+          <button class="copy-btn" onclick="copyCode('code-task2')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-task2">Loading...</code></pre>
+      </div>
+
+      <div class="progress-check-tag">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Create Artifact Registry repository</strong>
+      </div>
+    </div>
+
+    <!-- Task 3 -->
+    <div class="card task-card" id="task-3">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-shield-halved"></i> Task 3. Automated Vulnerability Scanning
+        </div>
+        <span class="task-badge">Task 3</span>
+      </div>
+
+      <p>Pemindaian kerentanan otomatis (Automatic Scanning) diaktifkan secara default saat image di-push ke Artifact Registry.</p>
+
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-compass"></i> Langkah Peninjauan di Google Cloud Console (Langkah Manual UI)</summary>
+        <div class="explain-content">
+          <ol>
+            <li>Buka menu <strong>Artifact Registry</strong> di Google Cloud Console.</li>
+            <li>Klik repositori <code>artifact-scanning-repo</code>.</li>
+            <li>Klik nama image <code>sample-image</code> lalu pilih digest/tag terbaru.</li>
+            <li>Buka tab <strong>Vulnerabilities</strong> untuk melihat daftar kerentanan yang terdeteksi secara otomatis oleh sistem.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <!-- Task 4 -->
+    <div class="card task-card" id="task-4">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-magnifying-glass-chart"></i> Task 4. On Demand Scanning
+        </div>
+        <span class="task-badge">Task 4</span>
+      </div>
+
+      <p>Lakukan pemindaian kerentanan secara lokal/on-demand sebelum melakukan push image ke repositori pusat. Perintah ini akan menganalisis image dan mengevaluasi apakah ditemukan kerentanan tingkat <code>CRITICAL</code>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-question"></i> Penjelasan Teknis On-Demand Scanning</summary>
+        <div class="explain-content">
+          <p>On-Demand Scanning memungkinkan pengembang memeriksa keamanan container image secara lokal di mesin pengembangan atau Cloud Shell sebelum dipublikasikan. Hasil pemindaian disimpan sementara di server metadata Google Cloud.</p>
+        </div>
+      </details>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command</span>
+          <button class="copy-btn" onclick="copyCode('code-task4')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-task4">Loading...</code></pre>
+      </div>
+
+      <div class="banner banner-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <div><strong>Ekspektasi Output:</strong> Output perintah di atas akan menampilkan tulisan <code>Failed vulnerability check for CRITICAL level</code> karena image debian11 mengandung paket yang sudah tidak aman.</div>
+      </div>
+
+      <div class="progress-check-tag">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Scan the images using On Demand Scanning</strong>
+      </div>
+    </div>
+
+    <!-- Task 5 -->
+    <div class="card task-card" id="task-5">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-user-shield"></i> Task 5. Use Artifact Scanning in CI/CD & Fix Vulnerability
+        </div>
+        <span class="task-badge">Task 5</span>
+      </div>
+
+      <p>Integrasikan pemindaian kerentanan sebagai Quality Gate di pipeline CI/CD Cloud Build. Jika kerentanan tingkat <code>CRITICAL</code> terdeteksi, build akan dibatalkan otomatis (Failed). Setelah itu, perbaiki Dockerfile agar build berhasil.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-question"></i> Penjelasan Integrasi CI/CD & Security Gate</summary>
+        <div class="explain-content">
+          <p>Langkah ini mensimulasikan praktik terbaik DevSecOps (Shift-Left Security):</p>
+          <ul>
+            <li><strong>Langkah A (Simulasi Failure):</strong> Pipeline melakukan build, scan, dan memeriksa severity. Karena ditemukan kerentanan CRITICAL, perintah <code>exit 1</code> dipanggil sehingga Cloud Build bernilai <em>FAILED</em>.</li>
+            <li><strong>Langkah B (Remediasi):</strong> Kita memperbarui Dockerfile menggunakan base image ringan dan aman (<code>python:3.12-alpine</code>) serta pustaka versi terbaru, sehingga build ulang menghasilkan status <em>SUCCESS</em>.</li>
+          </ul>
+        </div>
+      </details>
+
+      <p><strong>Langkah A: Uji Coba Security Gate (Ekspektasi: Build Failed)</strong></p>
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command (Simulasi Failure)</span>
+          <button class="copy-btn" onclick="copyCode('code-task5a')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-task5a">Loading...</code></pre>
+      </div>
+
+      <div class="banner banner-warning">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div><strong>Catatan Penting:</strong> Build pada Langkah A ini <strong>DIHARAPKAN GAGAL (BUILD FAILED)</strong>. Ini adalah bukti bahwa Security Gate pipeline berfungsi memblokir image berbahaya. Silakan klik tombol <em>Check My Progress</em> pertama di Qwiklabs.</div>
+      </div>
+
+      <div class="progress-check-tag" style="margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Verify that the build breaks when a CRITICAL severity vulnerability is found</strong>
+      </div>
+
+      <p><strong>Langkah B: Perbaiki Kerentanan & Re-deploy (Ekspektasi: Build Success)</strong></p>
+      <div class="code-container">
+        <div class="code-header">
+          <span><i class="fa-solid fa-code"></i> Cloud Shell Command (Remediasi)</span>
+          <button class="copy-btn" onclick="copyCode('code-task5b')"><i class="fa-regular fa-copy"></i> Salin Kode</button>
+        </div>
+        <pre><code id="code-task5b">Loading...</code></pre>
+      </div>
+
+      <div class="banner banner-info">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>Setelah menggunakan <code>python:3.12-alpine</code>, proses scanning tidak menemukan kerentanan kritis dan build berhasil diselesaikan dengan status SUCCESS.</div>
+      </div>
+
+      <div class="progress-check-tag">
+        <i class="fa-solid fa-circle-check"></i> Klaim Poin: <strong>Fix the Vulnerability</strong>
+      </div>
+    </div>
+
+    <!-- Success Card -->
+    <div class="card success-card">
+      <h2>🎉 Selamat, kamu udah menyelesaikan labnya!</h2>
+      <p>Kamu telah berhasil menguasai pembuatan kontainer aman, On-Demand Scanning, dan penerapan Security Gate pada pipeline CI/CD Cloud Build!</p>
+    </div>
+
+    <!-- Footer Documentation -->
+    <div class="footer-doc">
+      <h4>📚 Dokumentasi Pendukung</h4>
+      <ul>
+        <li><a href="https://cloud.google.com/build/docs" target="_blank" rel="noopener noreferrer">Dokumentasi Google Cloud Build</a></li>
+        <li><a href="https://cloud.google.com/artifact-registry/docs" target="_blank" rel="noopener noreferrer">Dokumentasi Artifact Registry</a></li>
+        <li><a href="https://cloud.google.com/artifact-registry/docs/vulnerabilities/scanning-overview" target="_blank" rel="noopener noreferrer">Overview On-Demand Scanning Google Cloud</a></li>
+        <li><a href="https://cloud.google.com/shell/docs" target="_blank" rel="noopener noreferrer">Google Cloud Shell Guide</a></li>
+      </ul>
+
+      <!-- Bug Report Form -->
+      <details class="bug-report-details">
+        <summary><i class="fa-solid fa-bug"></i> 🚨 Lapor Bug / Ada Kendala pada Panduan?</summary>
+        <form class="bug-form" onsubmit="event.preventDefault(); alert('Terima kasih atas laporan Anda! Tim kami akan segera meninjau.'); this.reset();">
+          <input type="checkbox" name="botcheck" style="display: none;">
+          <label for="bug-desc" style="font-size: 0.85rem; font-weight: 600;">Deskripsi Kendala:</label>
+          <textarea id="bug-desc" rows="3" placeholder="Tuliskan jika ada error perintah atau perbedaan pada tampilan Qwiklabs..." required></textarea>
+          <button type="submit">Kirim Laporan</button>
+        </form>
+      </details>
+    </div>
+  </div>
+
+  <!-- Floating Menu Button & Sidebar Drawer -->
+  <button class="floating-menu-trigger" onclick="toggleDrawer()" title="Daftar Isi Navigation">
+    <i class="fa-solid fa-list-ul"></i>
+  </button>
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+
+  <div class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+      <h3>Daftar Navigasi</h3>
+      <button class="close-drawer-btn" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="drawer-menu">
+      <li><a href="#form-parameters" onclick="toggleDrawer()">⚙️ Parameter Input</a></li>
+      <li><a href="#task-setup" onclick="toggleDrawer()">⚡ Persiapan Environment</a></li>
+      <li><a href="#task-1" onclick="toggleDrawer()">📦 Task 1. Build Cloud Build</a></li>
+      <li><a href="#task-2" onclick="toggleDrawer()">📂 Task 2. Artifact Registry</a></li>
+      <li><a href="#task-3" onclick="toggleDrawer()">🛡️ Task 3. Auto Scanning</a></li>
+      <li><a href="#task-4" onclick="toggleDrawer()">🔍 Task 4. On-Demand Scanning</a></li>
+      <li><a href="#task-5" onclick="toggleDrawer()">🔒 Task 5. CI/CD & Fix Vulnerability</a></li>
+    </ul>
+  </div>
+
+  <!-- Scroll Back Indicator -->
+  <div class="scroll-back-indicator" id="scrollIndicator" onclick="scrollToTask()">
+    <i class="fa-solid fa-arrow-up"></i> Kembali ke Form Parameter
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Global variable tracking current scroll target
+    let activeTaskElement = null;
+
+    // Toggle Sidebar Drawer Navigation
+    function toggleDrawer() {
+      const drawer = document.getElementById('sidebarDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+
+    // Scroll back to parameter form
+    function scrollToTask() {
+      const formEl = document.getElementById('form-parameters');
+      formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Main Function: Update All Dynamic Code Snippets & Explanations
+    function updateCommands() {
+      const regionInput = document.getElementById('inputRegion').value.trim();
+      const region = regionInput !== '' ? regionInput : 'us-central1';
+
+      // Update all inline HTML span values with class valRegion
+      document.querySelectorAll('.valRegion').forEach(el => {
+        el.textContent = region;
+      });
+
+      // Update Setup Code
+      document.getElementById('code-setup').textContent = 
+`# 1. Set Variabel Environment Project ID & Project Number
+export PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_NUMBER=$(gcloud projects describe \$PROJECT_ID --format='value(projectNumber)')
+
+# 2. Mengaktifkan seluruh API Service yang dibutuhkan
+gcloud services enable \\
+  cloudkms.googleapis.com \\
+  cloudbuild.googleapis.com \\
+  container.googleapis.com \\
+  containerregistry.googleapis.com \\
+  artifactregistry.googleapis.com \\
+  containerscanning.googleapis.com \\
+  ondemandscanning.googleapis.com \\
+  binaryauthorization.googleapis.com`;
+
+      // Update Task 1 Code
+      document.getElementById('code-task1').textContent = 
+`# 1. Berikan IAM Permission ke Service Account Cloud Build
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+        --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+        --role="roles/iam.serviceAccountUser"
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+        --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+        --role="roles/ondemandscanning.admin"
+
+# Beri jeda agar propagasi izin IAM selesai sepenuhnya
+echo "Menunggu propagasi hak akses IAM..."
+sleep 10
+
+# 2. Buat direktori kerja
+mkdir -p vuln-scan && cd vuln-scan
+
+# 3. Buat file Dockerfile dengan base image debian11
+cat > ./Dockerfile << 'EOF'
+FROM gcr.io/google-appengine/debian11
+# System
+RUN apt update && apt install python3-pip -y
+# App
+WORKDIR /app
+COPY . ./
+RUN pip3 install Flask==1.1.4  
+RUN pip3 install gunicorn==20.1.0  
+CMD exec gunicorn --bind :\$PORT --workers 1 --threads 8 --timeout 0 main:app
+EOF
+
+# 4. Buat file aplikasi main.py
+cat > ./main.py << 'EOF'
+import os
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello_world():
+    name = os.environ.get("NAME", "Worlds")
+    return "Hello {}!".format(name)
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+EOF
+
+# 5. Buat file pipeline cloudbuild.yaml
+cat > ./cloudbuild.yaml << EOF
+steps:
+# build
+- id: "build"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image', '.']
+  waitFor: ['-']
+EOF
+
+# 6. Submit Cloud Build
+gcloud builds submit`;
+
+      // Update Task 2 Code
+      document.getElementById('code-task2').textContent = 
+`# 1. Buat Artifact Registry Repository khusus format Docker
+gcloud artifacts repositories create artifact-scanning-repo \\
+  --repository-format=docker \\
+  --location=${region} \\
+  --description="Docker repository"
+
+# 2. Konfigurasi kredensial Docker
+gcloud auth configure-docker ${region}-docker.pkg.dev
+
+# 3. Perbarui cloudbuild.yaml untuk push image ke Artifact Registry
+cat > ./cloudbuild.yaml << EOF
+steps:
+# build
+- id: "build"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image', '.']
+  waitFor: ['-']
+# push to artifact registry
+- id: "push"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image']
+
+images:
+  - ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
+EOF
+
+# 4. Submit Cloud Build
+gcloud builds submit`;
+
+      // Update Task 4 Code
+      document.getElementById('code-task4').textContent = 
+`# 1. Build image secara lokal di Cloud Shell
+docker build -t ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image .
+
+# 2. Minta pemindaian On-Demand
+gcloud artifacts docker images scan \\
+    ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image \\
+    --format="value(response.scan)" > scan_id.txt
+
+# 3. Tampilkan ID Laporan Pemindaian
+cat scan_id.txt
+
+# 4. Tampilkan daftar kerentanan yang terdeteksi
+gcloud artifacts docker images list-vulnerabilities \$(cat scan_id.txt)
+
+# 5. Evaluasi kerentanan tingkat CRITICAL
+export SEVERITY=CRITICAL
+gcloud artifacts docker images list-vulnerabilities \$(cat scan_id.txt) --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq \${SEVERITY}; then echo "Failed vulnerability check for \${SEVERITY} level"; else echo "No \${SEVERITY} Vulnerabilities found"; fi`;
+
+      // Update Task 5a Code (Fail Test)
+      document.getElementById('code-task5a').textContent = 
+`# 1. Pastikan IAM Policy Binding untuk On-Demand Scanning aktif
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+        --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+        --role="roles/iam.serviceAccountUser"
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+        --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+        --role="roles/ondemandscanning.admin"
+
+# Beri jeda propagasi hak akses IAM
+echo "Menunggu propagasi hak akses IAM..."
+sleep 10
+
+# 2. Update cloudbuild.yaml dengan Security Gate Pemindaian
+cat > ./cloudbuild.yaml << EOF
+steps:
+# build
+- id: "build"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image', '.']
+  waitFor: ['-']
+# Run a vulnerability scan at SECURITY level
+- id: scan
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    (gcloud artifacts docker images scan \\
+    ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image \\
+    --location ${region} \\
+    --format="value(response.scan)") > /workspace/scan_id.txt
+# Analyze the result of the scan
+- id: severity check
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+      gcloud artifacts docker images list-vulnerabilities \\\$(cat /workspace/scan_id.txt) \\
+      --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq CRITICAL; \\
+      then echo "Failed vulnerability check for CRITICAL level" && exit 1; else echo "No CRITICAL vulnerability found, congrats !" && exit 0; fi
+# Retag
+- id: "retag"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:good']
+# Pushing to artifact registry
+- id: "push"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:good']
+
+images:
+  - ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
+EOF
+
+# 3. Submit build untuk membuktikan Security Gate membatalkan build jika ada kerentanan CRITICAL
+gcloud builds submit`;
+
+      // Update Task 5b Code (Fix Remediation)
+      document.getElementById('code-task5b').textContent = 
+`# 1. Perbarui Dockerfile menggunakan base image aman (python:3.12-alpine)
+cat > ./Dockerfile << 'EOF'
+FROM python:3.12-alpine
+# App
+WORKDIR /app
+COPY . ./
+RUN pip3 install Flask==3.0.3
+RUN pip3 install gunicorn==22.0.0
+RUN pip3 install Werkzeug==3.0.3
+CMD exec gunicorn --bind :\$PORT --workers 1 --threads 8 main:app
+EOF
+
+# 2. Submit ulang build (Ekspektasi: BUILD SUCCESS)
+gcloud builds submit`;
+    }
+
+    // Function to Copy Code with Dynamic Input Validation
+    function copyCode(elementId) {
+      const codeElement = document.getElementById(elementId);
+      const textToCopy = codeElement.textContent;
+
+      // Check if code contains unconfigured placeholders
+      if (textToCopy.includes('<REGION>') || textToCopy.includes('<PROJECT_ID>')) {
+        alert('Harap isi parameter Region terlebih dahulu di bagian atas halaman!');
+        
+        const inputEl = document.getElementById('inputRegion');
+        inputEl.classList.remove('pulse-highlight');
+        void inputEl.offsetWidth; // Trigger reflow
+        inputEl.classList.add('pulse-highlight');
+        
+        document.getElementById('form-parameters').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        inputEl.focus();
+        return;
+      }
+
+      // Execute Clipboard Copy
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = codeElement.parentElement.previousElementSibling.querySelector('.copy-btn') || 
+                    codeElement.parentElement.parentElement.querySelector('.copy-btn');
+        if (btn) {
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
+          btn.style.backgroundColor = '#059669';
+          btn.style.color = '#ffffff';
+
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+          }, 2000);
+        }
+      }).catch(err => {
+        console.error('Gagal menyalin teks: ', err);
+      });
+    }
+
+    // Initialize Page Content on Load
+    window.onload = function() {
+      updateCommands();
+    };
+  </script>
+</body>
+</html>
