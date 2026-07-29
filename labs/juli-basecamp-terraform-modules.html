@@ -653,6 +653,9 @@
           <a href="#variables-form" class="sidebar-link active" onclick="toggleDrawer()"><i class="fas fa-cog"></i> Parameter Lab</a>
         </li>
         <li class="sidebar-item">
+          <a href="#video-tutorial" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-video"></i> Video Tutorial</a>
+        </li>
+        <li class="sidebar-item">
           <a href="#prep-installation" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-tools"></i> Persiapan & Instalasi</a>
         </li>
         <li class="sidebar-item">
@@ -694,6 +697,18 @@
             Interact with Terraform Modules (GSP751)
           </a>
         </div>
+      </div>
+    </div>
+
+    <!-- Video Pendukung -->
+    <div class="task-card" id="video-tutorial">
+      <h2><i class="fas fa-video" style="color: var(--primary);"></i> Video Tutorial Referensi</h2>
+      <p style="margin-bottom: 16px;">Saksikan video panduan di bawah ini untuk melihat demonstrasi visual lengkap langkah-demi-langkah:</p>
+      <div class="video-responsive">
+        <iframe src="https://www.youtube.com/embed/yVgfUcLmeVs" title="Tutorial Video Terraform Modules" allowfullscreen></iframe>
+      </div>
+      <div class="info-box" style="margin-top: 16px;">
+        <i class="fas fa-info-circle"></i> <strong>Catatan Praktik Terbaik Video:</strong> Memanggil modul publik dari Registry mengharuskan argumen <code>source</code> dan disarankan menetapkan <code>version</code> secara eksplisit agar versi infrastruktur Anda stabil dan tidak pecah akibat pembaruan otomatis di kemudian hari.
       </div>
     </div>
 
@@ -765,15 +780,6 @@ bash ~/.customize_environment</code></pre>
       <div class="task-header">
         <div class="task-number">1</div>
         <div class="task-title">Task 1. Menggunakan Modul dari Terraform Registry</div>
-      </div>
-
-      <!-- YouTube Video Reference Embed -->
-      <div class="video-responsive">
-        <iframe src="https://www.youtube.com/embed/yVgfUcLmeVs" title="Tutorial Video Terraform Modules" allowfullscreen></iframe>
-      </div>
-
-      <div class="info-box">
-        <i class="fas fa-info-circle"></i> <strong>Catatan Praktik Terbaik Video:</strong> Memanggil modul publik dari Registry mengharuskan argumen <code>source</code> dan disarankan menetapkan <code>version</code> secara eksplisit agar versi infrastruktur Anda stabil dan tidak pecah akibat pembaruan otomatis di kemudian hari.
       </div>
 
       <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong> untuk mengkloning repositori contoh VPC Network Google dan mengalihkan *branch* ke versi <code>v6.0.1</code>:</p>
