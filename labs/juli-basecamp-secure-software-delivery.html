@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Lab: Secure Software Delivery: Challenge Lab</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #202124;
+      --text-muted: #5f6368;
+      --border-color: #dadce0;
+      --code-bg: #1e1e1e;
+      --code-text: #d4d4d4;
+      --success-bg: #e6f4ea;
+      --success-text: #137333;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffe082;
+      --warning-text: #b26a00;
+      --info-bg: #f0f7ff;
+      --info-border: #d0e5ff;
+      --info-text: #0d47a1;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding-bottom: 60px;
+    }
+
+    /* Back Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    /* Header Card */
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .header-card h1 {
+      font-size: 1.8rem;
+      color: var(--text-color);
+      margin-bottom: 12px;
+    }
+
+    .header-card p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .reference-box {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      color: var(--info-text);
+    }
+
+    .reference-box a {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .reference-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Form Input Section */
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .form-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group small {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .form-group input {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    }
+
+    /* Task Card */
+    .task-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .task-number {
+      background: var(--primary-color);
+      color: #fff;
+      font-weight: 700;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .task-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .task-desc {
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* Code Container */
+    .code-container {
+      position: relative;
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 18px;
+      overflow-x: auto;
+    }
+
+    .code-container pre {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--code-text);
+      white-space: pre;
+      line-height: 1.5;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Inline Code Styling */
+    :not(pre) > code {
+      background-color: #f1f5f9;
+      color: #c53030;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Explanation Box */
+    .explain-box {
+      background: #fdfdfd;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .explain-box summary {
+      font-weight: 600;
+      color: var(--primary-color);
+      cursor: pointer;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explain-box summary:hover {
+      text-decoration: underline;
+    }
+
+    .explain-content {
+      margin-top: 12px;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .explain-content ul {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+
+    /* Alert Banners */
+    .banner-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    /* Success Banner */
+    .congrats-card {
+      background: var(--success-bg);
+      border: 1px solid #a8dab5;
+      color: var(--success-text);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .congrats-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    /* Floating Navigation Drawer */
+    .floating-menu-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary-color);
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      border: none;
+      z-index: 99;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .floating-menu-trigger:hover {
+      transform: scale(1.08);
+      background: var(--primary-hover);
+    }
+
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: var(--card-bg);
+      box-shadow: -4px 0 16px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: right 0.3s ease;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-drawer.open {
+      right: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .drawer-header h3 {
+      font-size: 1.1rem;
+    }
+
+    .close-drawer {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drawer-nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 0.92rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .drawer-nav a:hover {
+      background: var(--bg-color);
+      color: var(--primary-color);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      z-index: 99;
+      display: none;
+    }
+
+    .drawer-overlay.active {
+      display: block;
+    }
+
+    /* Scroll Indicator Floating Button */
+    .scroll-back-indicator {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-color);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 98;
+    }
+
+    /* Highlighting Animation */
+    @keyframes pulse-glow {
+      0%, 100% { border-color: var(--border-color); box-shadow: none; }
+      50% { border-color: #1a73e8; box-shadow: 0 0 12px rgba(26, 115, 232, 0.5); }
+    }
+
+    .pulse-highlight {
+      animation: pulse-glow 1.5s ease-in-out 3;
+    }
+
+    /* Footer & Bug Report */
+    .footer-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+      font-size: 0.9rem;
+    }
+
+    .footer-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    .footer-links {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .bug-report summary {
+      color: #d93025;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .bug-report-form {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bug-report-form textarea {
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: var(--font-family);
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .bug-report-form button {
+      align-self: flex-start;
+      background: #d93025;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+      .header-card, .task-card, .form-card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Tombol Navigasi Kembali (Eksplisit) -->
+    <a href="../index.html" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab
+    </a>
+
+    <!-- Header Card -->
+    <header class="header-card">
+      <h1>Secure Software Delivery: Challenge Lab</h1>
+      <p>Bangun CI/CD pipeline yang aman di Google Cloud menggunakan Artifact Registry, Vulnerability Scanning, Binary Authorization, dan Cloud Build.</p>
+      
+      <div class="reference-box">
+        💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> 
+        Course Resmi Google Cloud — <a href="https://www.skills.google/course_templates/1164" target="_blank" rel="noopener noreferrer">Secure Software Delivery</a>
+      </div>
+    </header>
+
+    <!-- Form Input Parameter Dynamic -->
+    <section class="form-card" id="parameter-form">
+      <h2><i class="fa-solid fa-sliders"></i> Konfigurasi Parameter Lab</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="inputRegion">GCP Region</label>
+          <small>Tekan Ctrl+F lalu cari <code>REGION</code> di paragraf deskripsi Task 2/4 atau panel kredensial sebelah kiri Qwiklabs.</small>
+          <input type="text" id="inputRegion" placeholder="us-east1" oninput="updateCommands()">
+        </div>
+        <div class="form-group">
+          <label for="inputProjectId">GCP Project ID</label>
+          <small>Project ID resmi dari panel kredensial sebelah kiri Qwiklabs.</small>
+          <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+        </div>
+      </div>
+    </section>
+
+    <!-- TASK 1 -->
+    <section class="task-card" id="task-1">
+      <div class="task-header">
+        <div class="task-number">1</div>
+        <div class="task-title">Enable APIs and Set Up the Environment</div>
+      </div>
+      <p class="task-desc">
+        Langkah pertama adalah mengaktifkan seluruh API Google Cloud Service yang dibutuhkan serta membuat dua repository Artifact Registry: satu untuk pemindaian kerentanan (<code>artifact-scanning-repo</code>) dan satu untuk produksi (<code>artifact-prod-repo</code>).
+      </p>
+
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('codeTask1')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
+        <pre><code id="codeTask1"></code></pre>
+      </div>
+
+      <p class="task-desc">Untuk menyelesaikannya, jalankan perintah di atas pada <strong>Cloud Shell</strong>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Konsep Task 1</summary>
+        <div class="explain-content">
+          <p>Pada langkah ini, kita mengonfigurasi fondasi lingkungan kerja:</p>
+          <ul>
+            <li><strong>Google Cloud APIs:</strong> Mengaktifkan KMS (enkripsi), Container Scanning, On-Demand Scanning, dan Binary Authorization.</li>
+            <li><strong>Artifact Registry Isolation:</strong> Memisahkan repository image menjadi <code>artifact-scanning-repo</code> (stage pengujian awal) dan <code>artifact-prod-repo</code> (hanya untuk image terverifikasi & ter-attest).</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- TASK 2 -->
+    <section class="task-card" id="task-2">
+      <div class="task-header">
+        <div class="task-number">2</div>
+        <div class="task-title">Create the Cloud Build Pipeline</div>
+      </div>
+      <p class="task-desc">
+        Di task ini, kita memberikan hak akses IAM ke Cloud Build Service Account dan membuat pipeline awal <code>cloudbuild.yaml</code> untuk build dan push Docker image awal ke scanning repository.
+      </p>
+
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('codeTask2')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
+        <pre><code id="codeTask2"></code></pre>
+      </div>
+
+      <p class="task-desc">Untuk menyelesaikannya, jalankan perintah di atas pada <strong>Cloud Shell</strong>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Konsep Task 2</summary>
+        <div class="explain-content">
+          <p>Langkah ini menetapkan izin dasar IAM:</p>
+          <ul>
+            <li><code>roles/iam.serviceAccountUser</code> & <code>roles/ondemandscanning.admin</code>: Memungkinkan Service Account Cloud Build melakukan pemindaian keamanan atas nama akun terkait.</li>
+            <li>Mengirimkan image awal ke region <span class="valRegion">us-east1</span> pada repository <code>artifact-scanning-repo</code>.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- TASK 3 -->
+    <section class="task-card" id="task-3">
+      <div class="task-header">
+        <div class="task-number">3</div>
+        <div class="task-title">Set up Binary Authorization</div>
+      </div>
+      <p class="task-desc">
+        Atur kebijakan Binary Authorization untuk memastikan hanya kontainer yang telah ditandatangani oleh Attestor resmi yang diizinkan untuk dideploy.
+      </p>
+
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('codeTask3')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
+        <pre><code id="codeTask3"></code></pre>
+      </div>
+
+      <p class="task-desc">Untuk menyelesaikannya, jalankan perintah di atas pada <strong>Cloud Shell</strong>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Konsep Task 3</summary>
+        <div class="explain-content">
+          <p>Komponen penting dalam Binary Authorization:</p>
+          <ul>
+            <li><strong>Container Analysis Note:</strong> Bertindak sebagai metadata anchor untuk menyimpan bukti attestasi keamanan.</li>
+            <li><strong>Attestor & KMS Key Pair:</strong> Asymmetric key (<code>ec-sign-p256-sha256</code>) digunakan untuk menandatangani attestation bukti bahwa image bebas dari celah bahaya.</li>
+            <li><strong>Policy Enforcement:</strong> Mengubah rule default menjadi <code>REQUIRE_ATTESTATION</code>. Semua deployment tanpa signature dari <code>vulnerability-attestor</code> akan ditolak secara mutlak.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- TASK 4 -->
+    <section class="task-card" id="task-4">
+      <div class="task-header">
+        <div class="task-number">4</div>
+        <div class="task-title">Create a Secure CI/CD Pipeline with Scanning</div>
+      </div>
+      
+      <div class="banner-warning">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div>
+          <strong>Informasi Penting (Ekspektasi Failure):</strong>
+          Pada Task ini, eksekusi Cloud Build <strong>DIPASTIKAN GAGAL</strong> pada langkah <code>severity check</code> karena ditemukannya kerentanan keritical (<code>CRITICAL</code>) pada image sampel awal. Ini adalah perilaku yang diharapkan dalam simulasi lab!
+        </div>
+      </div>
+
+      <div class="banner-warning" style="background-color: #fff8e1; border: 1px solid #ffe082; color: #8c6b00; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+        <i class="fa-solid fa-hourglass-half" style="font-size: 1.2rem; color: #d97706;"></i>
+        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> pada Task 4 memerlukan waktu sekitar <strong>2 hingga 3 menit</strong> saat menjalankan scanner & severity check. Harap bersabar tunggu hingga proses di terminal selesai!</span>
+      </div>
+
+      <p class="task-desc">
+        Integrasikan skrip scanning kerentanan otomatis, pengecekan tingkat bahaya (severity check), penandatanganan image (attestation), dan penandaan ulang ke repository produksi.
+      </p>
+
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('codeTask4')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
+        <pre><code id="codeTask4"></code></pre>
+      </div>
+
+      <p class="task-desc">Untuk menyelesaikannya, jalankan perintah di atas pada <strong>Cloud Shell</strong>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Konsep Task 4</summary>
+        <div class="explain-content">
+          <p>Alur Otomasi Keamanan Pipeline:</p>
+          <ul>
+            <li><strong>On-Demand Scanning API:</strong> Melakukan analisis CVE secara real-time tepat setelah image berhasil dibangun.</li>
+            <li><strong>Severity Check Gate:</strong> Jika ditemukan vulnerability level <code>CRITICAL</code>, build akan dihentikan paksa (exit code 1) sehingga image berbahaya tidak akan pernah ditandatangani maupun dideploy.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- TASK 5 -->
+    <section class="task-card" id="task-5">
+      <div class="task-header">
+        <div class="task-number">5</div>
+        <div class="task-title">Fix Vulnerabilities & Deploy to Cloud Run</div>
+      </div>
+      <p class="task-desc">
+        Perbaiki kerentanan pada aplikasi dengan memperbarui base image Dockerfile ke versi <code>python:3.8-alpine</code> serta meng-upgrade versi library <code>Flask</code>, <code>Gunicorn</code>, dan <code>Werkzeug</code>. Lalu jalankan kembali pipeline hingga berhasil dideploy ke Cloud Run.
+      </p>
+
+      <div class="banner-warning" style="background-color: #fff8e1; border: 1px solid #ffe082; color: #8c6b00; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+        <i class="fa-solid fa-hourglass-half" style="font-size: 1.2rem; color: #d97706;"></i>
+        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> dan deploy ke Cloud Run pada Task 5 membutuhkan waktu sekitar <strong>2 hingga 4 menit</strong>. Harap tunggu hingga terminal kembali ke prompt Cloud Shell!</span>
+      </div>
+
+      <div class="code-container">
+        <button class="copy-btn" onclick="copyCode('codeTask5')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
+        <pre><code id="codeTask5"></code></pre>
+      </div>
+
+      <p class="task-desc">Untuk menyelesaikannya, jalankan perintah di atas pada <strong>Cloud Shell</strong>.</p>
+
+      <details class="explain-box">
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Konsep Task 5</summary>
+        <div class="explain-content">
+          <p>Solusi Remediasi Kerentanan:</p>
+          <ul>
+            <li>Memperbarui dependency paket ke versi aman (Flask 3.0.3, Gunicorn 23.0.0, Werkzeug 3.0.4) menghilangkan seluruh temuan level <code>CRITICAL</code>.</li>
+            <li>Setelah lolos pengecekan, Cloud Build secara otomatis menambahkan signature digital (KMS attestation), memindahkan image ke <code>artifact-prod-repo</code>, dan melakukan deployment ke Cloud Run secara sukses.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- Kartu Ucapan Selamat -->
+    <div class="congrats-card">
+      <h2>🎉 Selamat, Kamu Berhasil Menyelesaikan Lab Ini!</h2>
+      <p>Seluruh konfigurasi Binary Authorization, KMS Attestor, dan CI/CD Vulnerability Scanning Pipeline telah berhasil diimplementasikan dengan sempurna.</p>
+    </div>
+
+    <!-- Footer Documentation & Bug Report -->
+    <footer class="footer-section" id="documentation-section">
+      <h3>📚 Dokumentasi Pendukung</h3>
+      <ul class="footer-links">
+        <li><a href="https://cloud.google.com/binary-authorization/docs" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book"></i> Dokumentasi Google Cloud Binary Authorization</a></li>
+        <li><a href="https://cloud.google.com/artifact-registry/docs" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book"></i> Dokumentasi Google Cloud Artifact Registry</a></li>
+        <li><a href="https://cloud.google.com/cloud-build/docs" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book"></i> Dokumentasi Google Cloud Build</a></li>
+      </ul>
+
+      <details class="bug-report">
+        <summary><i class="fa-solid fa-bug"></i> Lapor Bug / Isu Panduan</summary>
+        <form class="bug-report-form" onsubmit="event.preventDefault(); alert('Terima kasih! Laporan Anda telah terkirim.');">
+          <input type="checkbox" name="botcheck" style="display: none;">
+          <textarea placeholder="Jelaskan bagian langkah atau perintah yang mengalami kendala..." required></textarea>
+          <button type="submit">Kirim Laporan</button>
+        </form>
+      </details>
+    </footer>
+
+  </div>
+
+  <!-- Floating Navigation Button -->
+  <button class="floating-menu-trigger" onclick="toggleDrawer()">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <!-- Sidebar Navigation Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+  <div class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+      <h3>Daftar Isi Lab</h3>
+      <button class="close-drawer" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="#parameter-form" onclick="toggleDrawer()">⚙️ Konfigurasi Parameter</a>
+      <a href="#task-1" onclick="scrollToTask('task-1'); toggleDrawer();">1. Enable APIs & Environment</a>
+      <a href="#task-2" onclick="scrollToTask('task-2'); toggleDrawer();">2. Initial Cloud Build Pipeline</a>
+      <a href="#task-3" onclick="scrollToTask('task-3'); toggleDrawer();">3. Binary Authorization Setup</a>
+      <a href="#task-4" onclick="scrollToTask('task-4'); toggleDrawer();">4. Scan & Attestation Pipeline</a>
+      <a href="#task-5" onclick="scrollToTask('task-5'); toggleDrawer();">5. Fix & Deploy to Cloud Run</a>
+      <a href="#documentation-section" onclick="toggleDrawer()">📚 Dokumentasi & Bug</a>
+    </nav>
+  </div>
+
+  <!-- Scroll Back Indicator -->
+  <div class="scroll-back-indicator" id="scroll-indicator">
+    <i class="fa-solid fa-arrow-up"></i> Kembali ke Task yang Aktif
+  </div>
+
+  <script>
+    function updateCommands() {
+      const region = document.getElementById('inputRegion').value.trim() || '<REGION>';
+      const projectId = document.getElementById('inputProjectId').value.trim() || '<PROJECT_ID>';
+
+      // Update Spans
+      document.querySelectorAll('.valRegion').forEach(el => el.textContent = region);
+      document.querySelectorAll('.valProjectId').forEach(el => el.textContent = projectId);
+
+      // Task 1 Code
+      document.getElementById('codeTask1').textContent = `# 1. Set Environment Variables
+export PROJECT_ID=\$(gcloud config get-value project)
+export PROJECT_NUMBER=\$(gcloud projects describe \$PROJECT_ID --format='value(projectNumber)')
+export REGION="${region}"
+
+# 2. Enable Required Google Cloud Services
+gcloud services enable \\
+  cloudkms.googleapis.com \\
+  run.googleapis.com \\
+  cloudbuild.googleapis.com \\
+  container.googleapis.com \\
+  containerregistry.googleapis.com \\
+  artifactregistry.googleapis.com \\
+  containerscanning.googleapis.com \\
+  ondemandscanning.googleapis.com \\
+  binaryauthorization.googleapis.com
+
+# 3. Download Sample Application
+mkdir -p sample-app && cd sample-app
+gcloud storage cp gs://spls/gsp521/* .
+
+# 4. Create Artifact Registry Repositories
+gcloud artifacts repositories create artifact-scanning-repo \\
+  --repository-format=docker \\
+  --location=\$REGION \\
+  --description="Scanning repository"
+
+gcloud artifacts repositories create artifact-prod-repo \\
+  --repository-format=docker \\
+  --location=\$REGION \\
+  --description="Production repository"
+
+# 5. Configure Docker Authentication
+gcloud auth configure-docker \${REGION}-docker.pkg.dev`;
+
+      // Task 2 Code
+      document.getElementById('codeTask2').textContent = `# 1. Grant IAM Roles to Cloud Build Service Account
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+  --role="roles/iam.serviceAccountUser"
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member="serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \\
+  --role="roles/ondemandscanning.admin"
+
+# 2. Create Initial cloudbuild.yaml File
+cat > cloudbuild.yaml <<EOF
+steps:
+- id: "build"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image', '.']
+  waitFor: ['-']
+
+- id: "push"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image']
+
+images:
+  - ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image
+EOF
+
+# 3. Submit Initial Build
+gcloud builds submit`;
+
+      // Task 3 Code
+      document.getElementById('codeTask3').textContent = `# 1. Create Vulnerability Note
+cat > ./vulnerability_note.json << EOM
+{
+  "attestation": {
+    "hint": {
+      "human_readable_name": "Container Vulnerabilities attestation authority"
+    }
+  }
+}
+EOM
+
+NOTE_ID=vulnerability_note
+curl -s -L -X POST \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer \$(gcloud auth print-access-token)" \\
+  --data-binary @./vulnerability_note.json \\
+  "https://containeranalysis.googleapis.com/v1/projects/\${PROJECT_ID}/notes/?noteId=\${NOTE_ID}"
+
+# 2. Create Attestor
+ATTESTOR_ID=vulnerability-attestor
+gcloud container binauthz attestors create \$ATTESTOR_ID \\
+  --attestation-authority-note=\$NOTE_ID \\
+  --attestation-authority-note-project=\${PROJECT_ID}
+
+# 3. Configure IAM Permissions for Attestor Note
+BINAUTHZ_SA_EMAIL="service-\${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
+cat > ./iam_request.json << EOM
+{
+  "resource": "projects/\${PROJECT_ID}/notes/\${NOTE_ID}",
+  "policy": {
+    "bindings": [
+      {
+        "role": "roles/containeranalysis.notes.occurrences.viewer",
+        "members": [
+          "serviceAccount:\${BINAUTHZ_SA_EMAIL}"
+        ]
+      }
+    ]
+  }
+}
+EOM
+
+curl -s -L -X POST \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer \$(gcloud auth print-access-token)" \\
+  --data-binary @./iam_request.json \\
+  "https://containeranalysis.googleapis.com/v1/projects/\${PROJECT_ID}/notes/\${NOTE_ID}:setIamPolicy"
+
+# 4. Generate KMS Keyring and Key Pair
+KEY_LOCATION=global
+KEYRING=binauthz-keys
+KEY_NAME=lab-key
+KEY_VERSION=1
+
+gcloud kms keyrings create "\${KEYRING}" --location="\${KEY_LOCATION}"
+
+gcloud kms keys create "\${KEY_NAME}" \\
+  --keyring="\${KEYRING}" \\
+  --location="\${KEY_LOCATION}" \\
+  --purpose asymmetric-signing \\
+  --default-algorithm="ec-sign-p256-sha256"
+
+# 5. Link Key to Attestor
+gcloud beta container binauthz attestors public-keys add \\
+  --attestor="\${ATTESTOR_ID}" \\
+  --keyversion-project="\${PROJECT_ID}" \\
+  --keyversion-location="\${KEY_LOCATION}" \\
+  --keyversion-keyring="\${KEYRING}" \\
+  --keyversion-key="\${KEY_NAME}" \\
+  --keyversion="\${KEY_VERSION}"
+
+# 6. Import Binary Authorization Policy
+cat > my_policy.yaml << EOM
+defaultAdmissionRule:
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+  evaluationMode: REQUIRE_ATTESTATION
+  requireAttestationsBy:
+    - projects/\${PROJECT_ID}/attestors/vulnerability-attestor
+globalPolicyEvaluationMode: ENABLE
+name: projects/\${PROJECT_ID}/policy
+EOM
+
+gcloud container binauthz policy import my_policy.yaml`;
+
+      // Task 4 Code
+      document.getElementById('codeTask4').textContent = `# 1. Add Additional IAM Permissions
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \\
+  --role roles/binaryauthorization.attestorsViewer
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \\
+  --role roles/cloudkms.signerVerifier
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member serviceAccount:\${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \\
+  --role roles/cloudkms.signerVerifier
+
+gcloud projects add-iam-policy-binding \${PROJECT_ID} \\
+  --member serviceAccount:\${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \\
+  --role roles/containeranalysis.notes.attacher
+
+# 2. Build and Install Custom Binauthz Attestation Step
+git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
+cd cloud-builders-community/binauthz-attestation
+gcloud builds submit . --config cloudbuild.yaml
+cd ../..
+rm -rf cloud-builders-community
+
+# 3. Create Complete Pipeline cloudbuild.yaml
+cat <<EOF > cloudbuild.yaml
+steps:
+- id: "build"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest', '.']
+  waitFor: ['-']
+
+- id: "push"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest']
+
+- id: scan
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+      (gcloud artifacts docker images scan \\
+      ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest \\
+      --location us \\
+      --format="value(response.scan)") > /workspace/scan_id.txt
+
+- id: severity check
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) \\
+      --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq CRITICAL; \\
+      then echo "Failed vulnerability check for CRITICAL level" && exit 1; else echo \\
+      "No CRITICAL vulnerability found, congrats !" && exit 0; fi
+
+- id: 'create-attestation'
+  name: 'gcr.io/\${PROJECT_ID}/binauthz-attestation:latest'
+  args:
+    - '--artifact-url'
+    - '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest'
+    - '--attestor'
+    - 'projects/\${PROJECT_ID}/attestors/vulnerability-attestor'
+    - '--keyversion'
+    - 'projects/\${PROJECT_ID}/locations/global/keyRings/binauthz-keys/cryptoKeys/lab-key/cryptoKeyVersions/1'
+
+- id: "push-to-prod"
+  name: 'gcr.io/cloud-builders/docker'
+  args: 
+    - 'tag' 
+    - '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest'
+    - '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-prod-repo/sample-image:latest'
+
+- id: "push-to-prod-final"
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-prod-repo/sample-image:latest']
+
+- id: 'deploy-to-cloud-run'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    gcloud run deploy auth-service --image=${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest \\
+    --binary-authorization=default --region=${region} --allow-unauthenticated
+
+images:
+  - ${region}-docker.pkg.dev/\${PROJECT_ID}/artifact-scanning-repo/sample-image:latest
+EOF
+
+# 4. Trigger Pipeline (Note: Expected to fail on severity check due to initial vulnerabilities)
+gcloud builds submit`;
+
+      // Task 5 Code
+      document.getElementById('codeTask5').textContent = `# 1. Update Dockerfile to Patch Dependencies
+cat > ./Dockerfile << EOF
+FROM python:3.8-alpine
+
+# App
+WORKDIR /app
+COPY . ./
+
+RUN pip3 install Flask==3.0.3
+RUN pip3 install gunicorn==23.0.0
+RUN pip3 install Werkzeug==3.0.4
+
+CMD exec gunicorn --bind :\$PORT --workers 1 --threads 8 main:app
+EOF
+
+# 2. Re-trigger Build Pipeline (Should succeed now)
+gcloud builds submit
+
+# 3. Configure Cloud Run Permissions for Validation
+gcloud beta run services add-iam-policy-binding \\
+  --region=${region} \\
+  --member=allUsers \\
+  --role=roles/run.invoker \\
+  auth-service`;
+    }
+
+    // Validasi Tombol Copy
+    function copyCode(elementId) {
+      const codeEl = document.getElementById(elementId);
+      if (!codeEl) return;
+      const text = codeEl.textContent;
+
+      if (text.includes('<REGION>') || text.includes('<PROJECT_ID>')) {
+        alert('Silakan isi parameter input terlebih dahulu di bagian atas!');
+        const formCard = document.getElementById('parameter-form');
+        if (formCard) {
+          formCard.scrollIntoView({ behavior: 'smooth' });
+          const inputs = formCard.querySelectorAll('input');
+          inputs.forEach(inp => {
+            if (inp.value.trim() === '') {
+              inp.classList.add('pulse-highlight');
+              setTimeout(() => inp.classList.remove('pulse-highlight'), 4500);
+            }
+          });
+          if (inputs.length > 0) inputs[0].focus();
+        }
+        return;
+      }
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = codeEl.parentElement.querySelector('.copy-btn');
+        if (btn) {
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
+          setTimeout(() => btn.innerHTML = originalHTML, 2000);
+        }
+      });
+    }
+
+    // Drawer Menu Toggle
+    function toggleDrawer() {
+      const drawer = document.getElementById('sidebarDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    // Scroll Observer
+    let activeTaskObserver = null;
+    function scrollToTask(taskId) {
+      const target = document.getElementById(taskId);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth' });
+
+      const indicator = document.getElementById('scroll-indicator');
+      if (indicator) {
+        indicator.style.display = 'flex';
+        indicator.onclick = () => {
+          target.scrollIntoView({ behavior: 'smooth' });
+        };
+      }
+
+      if (activeTaskObserver) activeTaskObserver.disconnect();
+
+      setTimeout(() => {
+        activeTaskObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && indicator) {
+              indicator.style.display = 'none';
+              activeTaskObserver.disconnect();
+            }
+          });
+        }, { threshold: 0.3 });
+        activeTaskObserver.observe(target);
+      }, 800);
+    }
+
+    window.onload = updateCommands;
+  </script>
+</body>
+</html>
