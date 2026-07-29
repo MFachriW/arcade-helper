@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Qwiklabs: Infrastructure as Code with Terraform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 24px 16px;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+        
+        .header-card, .input-card, .task-card, .report-card, .docs-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 { color: #0f172a; font-size: 1.6rem; margin-bottom: 12px; font-weight: 700; }
+        h2 { color: #0f172a; font-size: 1.3rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-weight: 600; }
+        h3 { color: #0f172a; font-size: 1.1rem; margin-bottom: 12px; font-weight: 600; }
+
+        .reference-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.95rem;
+        }
+        .reference-box ul { margin-left: 20px; margin-top: 8px; }
+        .reference-box a { color: #166534; text-decoration: none; font-weight: 600; }
+        .reference-box a:hover { text-decoration: underline; }
+
+        .video-responsive {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            background-color: #000;
+        }
+        .video-responsive iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: #1e293b; }
+        .form-group small { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+
+        .warning-banner {
+            background: #fff5f5;
+            border-left: 4px solid var(--accent-red);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            color: #991b1b;
+            margin-bottom: 24px;
+            font-weight: 500;
+            display: block;
+        }
+        
+        .warning-yellow {
+            background: #fff8e1;
+            border-left: 4px solid var(--accent-yellow);
+            color: #b45309;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            color: #1e40af;
+            font-size: 0.95rem;
+        }
+
+        .code-container {
+            background: var(--code-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        .code-header {
+            background: #1e293b;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+        }
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .copy-btn.copied { background: var(--accent-green); color: white; }
+        
+        pre { padding: 16px; overflow-x: auto; margin: 0; }
+        pre code { font-family: var(--font-mono); color: var(--code-text); font-size: 0.88rem; white-space: pre; }
+        :not(pre) > code { font-family: var(--font-mono); color: #c53030; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; font-weight: 500; }
+
+        .explain-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin: 16px 0;
+        }
+        .explain-box summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--accent-blue);
+            outline: none;
+            user-select: none;
+        }
+        .explain-box summary:hover { text-decoration: underline; }
+        .explain-box p, .explain-box ul { margin-top: 10px; font-size: 0.93rem; color: #475569; }
+        .explain-box ul { margin-left: 20px; }
+
+        .docs-section ul { margin-left: 20px; margin-top: 12px; }
+        .docs-section li { margin-bottom: 6px; }
+        .docs-section a { color: var(--accent-blue); text-decoration: none; font-weight: 500; }
+        .docs-section a:hover { text-decoration: underline; }
+
+        span[class^="val"] {
+            font-weight: 600;
+            font-family: var(--font-mono);
+            color: var(--accent-blue);
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #dbeafe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-card">
+            <h1>🚀 Panduan Qwiklabs: Infrastructure as Code with Terraform</h1>
+            <p>Gunakan halaman panduan interaktif ini untuk menyelesaikan lab secara presisi, cepat, dan otomatis tanpa risiko kesalahan indentasi berkas Terraform.</p>
+            
+            <div class="reference-box">
+                <strong>💡 Referensi & Pelajari Lebih Lanjut:</strong>
+                <ul>
+                    <li>Course / Lab Link: <a href="https://www.skills.google/focuses/15842?parent=catalog" target="_blank">Infrastructure as Code with Terraform</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Video Pendukung -->
+        <div class="task-card">
+            <h2>📺 Video Tutorial Referensi</h2>
+            <p style="margin-bottom: 16px;">Saksikan video panduan di bawah ini untuk melihat demonstrasi visual lengkap langkah-demi-langkah:</p>
+            <div class="video-responsive">
+                <iframe src="https://www.youtube.com/embed/p2LcVEGTdKI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Form Inputs Section -->
+        <div class="input-card">
+            <h3>⚙️ Konfigurasi Variabel Lab</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Isi variabel dari panel kiri Qwiklabs Anda. Seluruh perintah di bawah akan otomatis terpasang dengan nilai ini secara presisi.</p>
+            
+            <div class="form-group">
+                <label for="projectId">GCP Project ID</label>
+                <small>Project ID dari panel kiri informasi Qwiklabs.</small>
+                <input type="text" id="projectId" placeholder="qwiklabs-gcp-XX-XXXXXXX" oninput="updateCommands()">
+            </div>
+
+            <div class="form-group">
+                <label for="region">Region</label>
+                <small>Region yang ditugaskan pada petunjuk lab (misal: us-east1).</small>
+                <input type="text" id="region" placeholder="us-east1" oninput="updateCommands()">
+            </div>
+
+            <div class="form-group">
+                <label for="zone">Zone</label>
+                <small>Zone yang ditugaskan pada petunjuk lab (misal: us-east1-c).</small>
+                <input type="text" id="zone" placeholder="us-east1-c" oninput="updateCommands()">
+            </div>
+        </div>
+
+        <!-- Warning Banner Dinamis -->
+        <div id="warningBanner" class="warning-banner">
+            ⚠️ <strong>Perhatian:</strong> Masih ada variabel yang belum diisi! Harap lengkapi semua form di atas agar skrip di bawah tidak berisi parameter kosong.
+        </div>
+
+        <!-- Setup Task -->
+        <div class="task-card">
+            <h2>⚙️ Persiapan: Akun & Instalasi Terraform</h2>
+            <p>Atur kredensial sesi aktif dan pasang repositori resmi HashiCorp Terraform pada Cloud Shell Anda.</p>
+            
+            <details class="explain-box">
+                <summary>💡 Tips Tampilan Cloud Shell (Dari Catatan Video)</summary>
+                <ul>
+                    <li>Jika font atau terminal Cloud Shell terasa terlalu besar dan terpotong, tekan <strong>Ctrl + Minus (-)</strong> pada browser Anda untuk melakukan <em>zoom out</em>.</li>
+                    <li>Otorisasi Cloud Shell saat jendela pop-up meminta persetujuan kredensial API.</li>
+                </ul>
+            </details>
+
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-setup')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-setup"></code></pre>
+            </div>
+            
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu:</strong> Tunggu sekitar 1-2 menit hingga proses instalasi selesai dan perintah <code>terraform --version</code> menampilkan versi v1.5.7 atau yang lebih baru.
+            </div>
+        </div>
+
+        <!-- Task 1 -->
+        <div class="task-card">
+            <h2>Task 1. Build Infrastructure</h2>
+            <p>Buat berkas konfigurasi <code>main.tf</code> awal untuk mendefinisikan provider Google dan resource VPC Network <span class="valProjectId"></span>.</p>
+            
+            <details class="explain-box">
+                <summary>💡 Kenapa Menggunakan Perintah <code>cat &lt;&lt;EOF</code> alih-alih Code Editor?</summary>
+                <p>Mengedit berkas Terraform secara manual melalui Code Editor rentan terhadap kesalahan spasial/indentasi. Dengan mengeksekusi blok <code>cat &lt;&lt;EOF &gt; main.tf</code>, berkas terbuat 100% presisi langsung dari terminal tanpa perlu berpindah tab.</p>
+            </details>
+
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task1"></code></pre>
+            </div>
+            
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu:</strong> Menjalankan <code>terraform apply</code> untuk membuat VPC Network memerlukan waktu sekitar 1 menit hingga status <em>"Apply complete!"</em> muncul.
+            </div>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="task-card">
+            <h2>Task 2. Change the Infrastructure</h2>
+            <p>Praktikkan penambahan resource VM Compute Instance, perubahan tags secara <em>in-place</em>, penggantian image disk (<em>destructive change</em>), dan penghancuran total infrastruktur.</p>
+
+            <h3 style="margin-top: 20px;">Langkah 2.1: Tambah VM Instance & Perbarui Tags</h3>
+            <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-1"></code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 2.2: Destructive Changes (Ubah Disk) & Destroy</h3>
+            <p>Mengubah OS disk memerlukan re-creation (replace resource). Setelah itu, lakukan pembersihan total menggunakan <code>terraform destroy</code>.</p>
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-2')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-2"></code></pre>
+            </div>
+            
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu:</strong> Proses <code>destroy</code> membutuhkan waktu sekitar 1-2 menit karena Terraform memastikan instance dihapus sebelum VPC Network dapat di-teardown.
+            </div>
+        </div>
+
+        <!-- Task 3 -->
+        <div class="task-card">
+            <h2>Task 3. Create Resource Dependencies</h2>
+            <p>Bangun kembali infrastruktur, alokasikan IP statis, dan hubungkan ketergantungan antar resource (termasuk Cloud Storage Bucket yang terikat pada Project ID <span class="valProjectId"></span>).</p>
+
+            <h3 style="margin-top: 20px;">Langkah 3.1: Alokasi Static IP & Implied Dependency</h3>
+            <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task3-1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task3-1"></code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 3.2: Deklarasi Explicit Dependency (Storage Bucket)</h3>
+            <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task3-2')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task3-2"></code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 3.3: Bersihkan Bucket & Instance Kedua</h3>
+            <p>Hapus resource bucket dan instance tambahan dari <code>main.tf</code> agar konfigurasi kembali bersih.</p>
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task3-3')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task3-3"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="task-card">
+            <h2>Task 4. Provision Infrastructure</h2>
+            <p>Gunakan <code>local-exec</code> provisioner untuk mencetak informasi IP dan gunakan perintah <code>terraform taint</code> untuk memaksa pembuatan ulang resource.</p>
+
+            <details class="explain-box">
+                <summary>💡 Catatan Penting Mengenai Progress Task 4</summary>
+                <p>Task 4 ditujukan untuk pendalaman materi mengenai Provisioner & Taint State. Pada platform Qwiklabs, modul Task 4 ini tidak memiliki tombol <em>Check my progress</em>, namun sangat disarankan untuk dijalankan hingga selesai sebagai bagian pembelajaran lengkap.</p>
+            </details>
+
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task4')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task4"></code></pre>
+            </div>
+        </div>
+
+        <!-- Footer Docs Section -->
+        <div class="docs-section">
+            <h3>📚 Dokumentasi Pendukung</h3>
+            <p>Pelajari lebih lanjut mengenai teknologi yang digunakan dalam lab ini:</p>
+            <ul>
+                <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank"><i class="fas fa-book"></i> Google Cloud Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank"><i class="fas fa-terminal"></i> Google Cloud Shell Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank"><i class="fas fa-code"></i> Google Cloud CLI (gcloud)</a></li>
+            </ul>
+        </div>
+
+        <!-- Bug Report Form -->
+        <div class="report-card">
+            <details>
+                <summary style="font-weight: 600; cursor: pointer; color: var(--accent-red); outline: none;">🚨 Lapor Bug / Variasi Lab</summary>
+                <div style="margin-top: 16px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Jika menemukan kendala eksekusi kode atau perubahan urutan tugas pada portal Qwiklabs, sampaikan laporan Anda melalui form di bawah:</p>
+                    <form style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Honeypot Anti-Spam -->
+                        <input type="checkbox" name="botcheck" style="display: none;">
+                        <textarea rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-sans); font-size: 0.9rem;" placeholder="Deskripsikan masalah, pesan error, atau perbedaan langkah yang Anda temui..."></textarea>
+                        <button type="button" style="padding: 10px 18px; background: var(--accent-blue); color: white; border: none; border-radius: 6px; cursor: pointer; align-self: flex-start; font-weight: 600; font-size: 0.9rem;">Kirim Laporan</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- JavaScript Interaktif -->
+    <script>
+        function updateCommands() {
+            // Ambil input dari form
+            const projectIdInput = document.getElementById('projectId').value.trim();
+            const regionInput = document.getElementById('region').value.trim();
+            const zoneInput = document.getElementById('zone').value.trim();
+
+            // Tentukan nilai variabel (dengan fallback placeholder abu-abu)
+            const projectId = projectIdInput || '<PROJECT_ID>';
+            const region = regionInput || '<REGION>';
+            const zone = zoneInput || '<ZONE>';
+
+            // Banner warning visibility
+            const warningBanner = document.getElementById('warningBanner');
+            if (projectId === '<PROJECT_ID>' || region === '<REGION>' || zone === '<ZONE>') {
+                warningBanner.style.display = 'block';
+            } else {
+                warningBanner.style.display = 'none';
+            }
+
+            // Update Dynamic Spans pada teks penjelasan
+            document.querySelectorAll('.valProjectId').forEach(el => el.textContent = projectId);
+            document.querySelectorAll('.valRegion').forEach(el => el.textContent = region);
+            document.querySelectorAll('.valZone').forEach(el => el.textContent = zone);
+
+            // Generate String Kode Per-Task
+
+            // Setup Task
+            document.getElementById('code-setup').textContent = `cat <<'EOF' > ~/.customize_environment
+# Set up HashiCorp repository and install Terraform
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com \$(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install -y terraform
+EOF
+bash ~/.customize_environment
+
+terraform --version`;
+
+            // Task 1: Build Infrastructure
+            document.getElementById('code-task1').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+EOF
+
+terraform init
+terraform apply -auto-approve
+terraform show`;
+
+            // Task 2.1: Add & Change resources
+            document.getElementById('code-task2-1').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.name
+    access_config {
+    }
+  }
+}
+EOF
+
+terraform apply -auto-approve`;
+
+            // Task 2.2: Destructive Change & Destroy
+            document.getElementById('code-task2-2').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.name
+    access_config {
+    }
+  }
+}
+EOF
+
+terraform apply -auto-approve
+terraform destroy -auto-approve`;
+
+            // Task 3.1: Assign Static IP
+            document.getElementById('code-task3-1').textContent = `terraform apply -auto-approve
+
+cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_address" "vm_static_ip" {
+  name = "terraform-static-ip"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    access_config {
+      nat_ip = google_compute_address.vm_static_ip.address
+    }
+  }
+}
+EOF
+
+terraform plan -out static_ip
+terraform apply "static_ip"`;
+
+            // Task 3.2: Storage Bucket Dependency
+            document.getElementById('code-task3-2').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_address" "vm_static_ip" {
+  name = "terraform-static-ip"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    access_config {
+      nat_ip = google_compute_address.vm_static_ip.address
+    }
+  }
+}
+
+# New resource for the storage bucket our application will use.
+resource "google_storage_bucket" "example_bucket" {
+  name     = "${projectId}"
+  location = "US"
+
+  website {
+    main_page_suffix = "index.html"
+    not_found_page   = "404.html"
+  }
+}
+
+# Create a new instance that uses the bucket
+resource "google_compute_instance" "another_instance" {
+  # Tells Terraform that this VM instance must be created only after the
+  # storage bucket has been created.
+  depends_on = [google_storage_bucket.example_bucket]
+
+  name         = "terraform-instance-2"
+  machine_type = "e2-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    access_config {
+    }
+  }
+}
+EOF
+
+terraform plan
+terraform apply -auto-approve`;
+
+            // Task 3.3: Delete Bucket & Instance
+            document.getElementById('code-task3-3').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_address" "vm_static_ip" {
+  name = "terraform-static-ip"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    access_config {
+      nat_ip = google_compute_address.vm_static_ip.address
+    }
+  }
+}
+EOF
+
+terraform apply -auto-approve`;
+
+            // Task 4: Provisioner & Taint
+            document.getElementById('code-task4').textContent = `cat <<EOF > main.tf
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "3.5.0"
+    }
+  }
+}
+
+provider "google" {
+  project = "${projectId}"
+  region  = "${region}"
+  zone    = "${zone}"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+
+resource "google_compute_address" "vm_static_ip" {
+  name = "terraform-static-ip"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  provisioner "local-exec" {
+    command = "echo \\\${self.name}:  \\\${self.network_interface[0].access_config[0].nat_ip} >> ip_address.txt"
+  }
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    access_config {
+      nat_ip = google_compute_address.vm_static_ip.address
+    }
+  }
+}
+EOF
+
+terraform apply -auto-approve
+terraform taint google_compute_instance.vm_instance
+terraform apply -auto-approve
+cat ip_address.txt`;
+        }
+
+        // Fungsi Salin Kode ke Clipboard
+        function copyCode(btn, elementId) {
+            const codeText = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin kode:', err);
+            });
+        }
+
+        // Inisialisasi perintah saat halaman pertama kali dimuat
+        window.onload = updateCommands;
+    </script>
+</body>
+</html>
