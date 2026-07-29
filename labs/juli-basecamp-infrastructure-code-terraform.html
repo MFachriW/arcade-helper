@@ -339,7 +339,7 @@ provider "google" {
             </details>
 
             <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-            <div class="warning-banner" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+            <div class="warning-banner" id="taskWarning" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
                 ⚠️ <strong>Penting:</strong> Sebelum menekan tombol <strong>Copy</strong> di bawah, pastikan parameter <strong>GCP Project ID</strong>, <strong>Region</strong>, dan <strong>Zone</strong> di dalam kode di bawah <strong>sudah tidak berupa placeholder</strong> (seperti <code>&lt;PROJECT_ID&gt;</code>, <code>&lt;REGION&gt;</code>, <code>&lt;ZONE&gt;</code>). Jika masih berupa placeholder, harap isi form variabel di bagian paling atas halaman terlebih dahulu!
             </div>
             <div class="code-container">
@@ -486,10 +486,13 @@ provider "google" {
 
             // Banner warning visibility
             const warningBanner = document.getElementById('warningBanner');
+            const taskWarning = document.getElementById('taskWarning');
             if (projectId === '<PROJECT_ID>' || region === '<REGION>' || zone === '<ZONE>') {
                 warningBanner.style.display = 'block';
+                if (taskWarning) taskWarning.style.display = 'block';
             } else {
                 warningBanner.style.display = 'none';
+                if (taskWarning) taskWarning.style.display = 'none';
             }
 
             // Update Dynamic Spans pada teks penjelasan

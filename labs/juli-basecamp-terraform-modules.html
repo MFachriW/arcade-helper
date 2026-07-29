@@ -598,7 +598,7 @@ git checkout tags/v6.0.1 -b v6.0.1</code></pre>
 
       <p>Selanjutnya, perbarui berkas variabel <code>variables.tf</code> pada direktori contoh proyek dengan menyetel Project ID default Anda (<code class="valProjectId">&lt;PROJECT_ID&gt;</code>) dan nama jaringan <code>example-vpc</code>:</p>
 
-      <div class="warning-banner" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+      <div class="warning-banner" id="taskWarning" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
         ⚠️ <strong>Penting:</strong> Sebelum menyalin kode di bawah, pastikan parameter <strong>Project ID</strong> dan <strong>Region</strong> di atas sudah Anda isi agar nilainya terisi secara dinamis (tidak lagi berupa placeholder <code>&lt;PROJECT_ID&gt;</code> dan <code>&lt;REGION&gt;</code>).
       </div>
       <div class="code-container">
@@ -1065,10 +1065,13 @@ gsutil cp *.html gs://<PROJECT_ID></code></pre>
 
       // Tampilkan atau sembunyikan Warning Banner Dinamis
       const warningBanner = document.getElementById('warningBanner');
+      const taskWarning = document.getElementById('taskWarning');
       if (!projectIdInput || !regionInput) {
         warningBanner.style.display = 'flex';
+        if (taskWarning) taskWarning.style.display = 'block';
       } else {
         warningBanner.style.display = 'none';
+        if (taskWarning) taskWarning.style.display = 'none';
       }
 
       // Loop perulangan untuk memperbarui seluruh span kelas pemeta variabel
