@@ -680,7 +680,7 @@
 
       <div class="banner-warning" style="background-color: #fff8e1; border: 1px solid #ffe082; color: #8c6b00; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
         <i class="fa-solid fa-hourglass-half" style="font-size: 1.2rem; color: #d97706;"></i>
-        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> pada Task 4 memerlukan waktu sekitar <strong>2 hingga 3 menit</strong> saat menjalankan scanner & severity check. Harap bersabar tunggu hingga proses di terminal selesai!</span>
+        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> pada Task 4 memerlukan waktu sekitar <strong>3 hingga 5+ menit</strong> saat menjalankan scanner & severity check. Harap bersabar tunggu hingga proses di terminal selesai!</span>
       </div>
 
       <p class="task-desc">
@@ -718,7 +718,7 @@
 
       <div class="banner-warning" style="background-color: #fff8e1; border: 1px solid #ffe082; color: #8c6b00; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
         <i class="fa-solid fa-hourglass-half" style="font-size: 1.2rem; color: #d97706;"></i>
-        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> dan deploy ke Cloud Run pada Task 5 membutuhkan waktu sekitar <strong>2 hingga 4 menit</strong>. Harap tunggu hingga terminal kembali ke prompt Cloud Shell!</span>
+        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> dan deploy ke Cloud Run pada Task 5 membutuhkan waktu sekitar <strong>3 hingga 5+ menit</strong>. Harap tunggu hingga terminal kembali ke prompt Cloud Shell!</span>
       </div>
 
       <div class="code-container">
@@ -1008,7 +1008,7 @@ steps:
   args:
   - '-c'
   - |
-      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) \\
+      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) --location us \\
       --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq CRITICAL; \\
       then echo "Failed vulnerability check for CRITICAL level" && exit 1; else echo \\
       "No CRITICAL vulnerability found, congrats !" && exit 0; fi
