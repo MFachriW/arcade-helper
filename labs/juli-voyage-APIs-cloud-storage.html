@@ -513,7 +513,7 @@
         <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 1)</summary>
         <div class="explain-content">
           <ul>
-            <li><strong>POST HTTP ke Cloud Storage API:</strong> Endpoint <code>POST /b?project=[PROJECT_ID]</code> mendaftarkan bucket baru pada infrastruktur cloud Google.</li>
+            <li><strong>POST HTTP ke Cloud Storage API:</strong> Endpoint <code>POST /b?project=<span class="valProjectId">&lt;PROJECT_ID&gt;</span></code> mendaftarkan bucket baru pada infrastruktur cloud Google.</li>
             <li><strong>OAuth Authentication Token:</strong> Perintah <code>gcloud auth print-access-token</code> menghasilkan string akses dinamis yang dikirimkan melalui header HTTP <code>Authorization: Bearer ...</code>.</li>
           </ul>
         </div>
@@ -543,7 +543,7 @@
         <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 2)</summary>
         <div class="explain-content">
           <ul>
-            <li><strong>Upload HTTP Type - Media:</strong> Pengunggahan berkas biner/gambar dilakukan melalui endpoint upload khusus <code>/upload/storage/v1/b/[BUCKET_1]/o?uploadType=media&name=world.jpeg</code> dengan mencantumkan header <code>Content-Type: image/jpeg</code>.</li>
+            <li><strong>Upload HTTP Type - Media:</strong> Pengunggahan berkas biner/gambar dilakukan melalui endpoint upload khusus <code>/upload/storage/v1/b/<span class="valProjectId">&lt;PROJECT_ID&gt;</span>-bucket-1/o?uploadType=media&name=world.jpeg</code> dengan mencantumkan header <code>Content-Type: image/jpeg</code>.</li>
           </ul>
         </div>
       </details>
@@ -757,7 +757,7 @@ curl -s -X POST -H "Authorization: Bearer \$(gcloud auth print-access-token)" \\
 
       // Update Command Task 2
       document.getElementById('code2').innerText = 
-`curl -s -LO "https://cdn.qwiklabs.com/amN7kZDhflOmMUaM3tiFSjyw5yfXIqOxtrpslYJS2Kg%3D" -o world.jpeg
+`curl -s -L "https://cdn.qwiklabs.com/amN7kZDhflOmMUaM3tiFSjyw5yfXIqOxtrpslYJS2Kg%3D" -o world.jpeg
 
 curl -s -X POST -H "Authorization: Bearer \$(gcloud auth print-access-token)" \\
      -H "Content-Type: image/jpeg" \\
@@ -825,7 +825,7 @@ curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" 
      "https://storage.googleapis.com/storage/v1/b?project=\\\${PROJECT_ID}"
 
 # 2. Upload Image
-curl -s -LO "https://cdn.qwiklabs.com/amN7kZDhflOmMUaM3tiFSjyw5yfXIqOxtrpslYJS2Kg%3D" -o world.jpeg
+curl -s -L "https://cdn.qwiklabs.com/amN7kZDhflOmMUaM3tiFSjyw5yfXIqOxtrpslYJS2Kg%3D" -o world.jpeg
 
 curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
      -H "Content-Type: image/jpeg" \\
