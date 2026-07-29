@@ -4,238 +4,713 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab: Use APIs to Work with Cloud Storage: Challenge Lab</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #fcfcfc; }
-    h1, h2, h3 { color: #0366d6; }
-    
-    .back-btn { display: inline-block; padding: 8px 14px; background: #eef6ff; color: #0366d6; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 20px; font-size: 14px; transition: background 0.2s; }
-    .back-btn:hover { background: #dbeeff; }
-    
-    .config-card { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 8px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .form-group { display: flex; flex-direction: column; margin-bottom: 12px; }
-    .form-group label { font-weight: bold; margin-bottom: 4px; font-size: 14px; color: #333; }
-    .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit; }
-    
-    .task-card { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .code-explain { font-size: 14.5px; color: #333; margin-bottom: 8px; font-weight: 500; }
-    .code-container { position: relative; margin: 8px 0 12px 0; }
-    pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: "Courier New", Courier, monospace; font-size: 13px; margin: 0; }
-    
-    .copy-btn { position: absolute; top: 10px; right: 10px; background: #2ea44f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: background 0.2s; }
-    .copy-btn:hover { background: #2c974b; }
-    
-    .submit-btn { background: #0366d6; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; margin-top: 8px; }
-    .submit-btn:hover { background: #024ea4; }
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #202124;
+      --text-muted: #5f6368;
+      --border: #dadce0;
+      --code-bg: #1e1e1e;
+      --code-text: #d4d4d4;
+      --danger-bg: #fff5f5;
+      --danger-border: #e53e3e;
+      --danger-text: #c53030;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffe082;
+      --warning-text: #b78103;
+      --info-bg: #f0f7ff;
+      --info-border: #d0e5ff;
+      --info-text: #1a73e8;
+      --success-bg: #e6f4ea;
+      --success-border: #a8dab5;
+      --success-text: #137333;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    }
 
-    .callout { background: #eef6ff; border-left: 4px solid #0366d6; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
-    .report-card { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 12px 18px; margin: 28px 0; transition: all 0.2s ease; }
-    .report-card[open] { padding: 18px; }
-    .report-card summary { cursor: pointer; font-weight: bold; color: #c53030; display: flex; justify-content: space-between; align-items: center; outline: none; user-select: none; }
-    .report-card summary::-webkit-details-marker { display: none; }
-    .report-card summary::after { content: "➕ Buka Form"; font-size: 13px; font-weight: bold; background: #c53030; color: white; padding: 4px 10px; border-radius: 6px; }
-    .report-card[open] summary::after { content: "➖ Tutup Form"; background: #718096; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    .explain-box {
-      background: #fafbfc;
-      border: 1px solid #e1e4e8;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: var(--info-bg);
+      color: var(--primary);
+      text-decoration: none;
       border-radius: 6px;
-      padding: 12px 16px;
-      margin-top: 12px;
-      font-size: 13.5px;
-    }
-    .explain-box summary {
-      cursor: pointer;
       font-weight: bold;
-      color: #0366d6;
+      margin-bottom: 20px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #dbeeff;
+    }
+
+    .header-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title i {
+      color: var(--primary);
+    }
+
+    .header-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .reference-box {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .reference-box i {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .reference-box a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .reference-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Input Controls */
+    .input-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .input-group input, .input-group select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+    .input-group input {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .input-group input:focus, .input-group select:focus {
       outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
     }
-    .explain-box ul, .explain-box ol {
-      margin: 8px 0 0 0;
+
+    /* Warning Banner */
+    .warning-banner {
+      background-color: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .warning-banner i {
+      font-size: 1.2rem;
+    }
+
+    /* Task Cards */
+    .task-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f3f4;
+      padding-bottom: 10px;
+    }
+
+    .task-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-badge {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .task-desc {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    /* Code Snippet Box */
+    .code-container {
+      position: relative;
+      background-color: var(--code-bg);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2d2d2d;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      color: #b5b5b5;
+      border-bottom: 1px solid #3c3c3c;
+    }
+
+    .code-header span {
+      font-weight: 500;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid #555;
+      color: #d4d4d4;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #3c3c3c;
+      color: #ffffff;
+      border-color: #888;
+    }
+
+    .copy-btn.copied {
+      background: var(--success-bg) !important;
+      color: var(--success-text) !important;
+      border-color: var(--success-border) !important;
+    }
+
+    pre {
+      padding: 16px;
+      margin: 0;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: var(--code-text);
+    }
+
+    /* Details / Collapsible Box */
+    .explain-box {
+      background-color: #fafbfc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .explain-box summary {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #f1f3f4;
+    }
+
+    .explain-box summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .explain-content {
+      padding: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .explain-content ul, .explain-content ol {
       padding-left: 20px;
-      color: #444;
     }
-    .explain-box li {
-      margin-bottom: 6px;
+
+    .explain-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Docs Section */
+    .docs-section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .docs-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .docs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .docs-list a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .docs-list a:hover {
+      text-decoration: underline;
+    }
+
+    /* Report Card Form */
+    .report-card {
+      background: #fff5f5;
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .report-card summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--danger-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      outline: none;
+      user-select: none;
+      font-size: 0.95rem;
+    }
+
+    .report-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .report-content {
+      margin-top: 16px;
+      border-top: 1px solid var(--danger-border);
+      padding-top: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .form-group input, .form-group textarea {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+    }
+
+    .btn-submit {
+      background-color: var(--danger-text);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #9b2c2c;
     }
   </style>
 </head>
 <body>
 
-  <!-- NAVIGASI KEMBALI -->
-  <a href="../index.html" class="back-btn">⬅️ Kembali ke Daftar Lab</a>
-  
-  <h1>🛡️ Use APIs to Work with Cloud Storage: Challenge Lab</h1>
-  <div class="callout">
-    💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/649" target="_blank" style="color: #0366d6; font-weight: bold; text-decoration: underline;">Use APIs to Work with Cloud Storage</a>.
-  </div>
-  <p>Silakan masukkan <strong>Project ID</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
-  
-  <!-- FORM INPUT INTERAKTIF UTAMA -->
-  <div class="config-card">
-    <h3>⚙️ Parameter Dinamis Lab</h3>
-    <div class="config-grid">
-      <div class="form-group">
-        <label>1. GCP Project ID:</label>
-        <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+  <div class="container">
+    <!-- NAVIGASI KEMBALI -->
+    <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+    
+    <!-- HEADER CARD -->
+    <div class="header-card">
+      <div class="header-title">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Use APIs to Work with Cloud Storage: Challenge Lab</span>
+      </div>
+      <div class="header-subtitle">
+        Panduan interaktif modern untuk membantu Anda bekerja dengan Cloud Storage menggunakan API di Google Cloud.
+      </div>
+      <div class="reference-box">
+        <i class="fa-solid fa-lightbulb"></i>
+        <span><strong>Referensi & Pelajari Lebih Lanjut:</strong> Seluruh referensi tugas dan instruksi resmi lab ini diambil dari course <a href="https://www.skills.google/course_templates/649" target="_blank">Use APIs to Work with Cloud Storage</a>.</span>
       </div>
     </div>
-  </div>
-
-  <!-- REMINDER WARNING PARAMETER -->
-  <div id="paramWarning" class="callout" style="background: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; display: none; margin-top: -12px; margin-bottom: 24px;">
-    ⚠️ <strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!
-  </div>
-
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 24px 0;">
-
-  <!-- TASK 1 -->
-  <div class="task-card">
-    <h2>📦 Task 1. Create two Cloud Storage buckets</h2>
-    <p class="code-explain">Membuat berkas JSON spesifikasi bucket dan memanggil Cloud Storage JSON API via HTTP POST untuk membuat Bucket 1 dan Bucket 2. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
     
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code1', this)">📋 Copy</button>
-      <pre><code id="code1"></code></pre>
+    <p style="margin-bottom: 20px; font-size: 0.95rem; color: var(--text-muted);">Silakan masukkan <strong>Project ID</strong> dari instruksi Qwiklabs kamu pada form di bawah ini agar seluruh variabel di langkah pengerjaan terisi otomatis!</p>
+    
+    <!-- FORM INPUT INTERAKTIF UTAMA -->
+    <div class="input-card">
+      <h3 style="margin-bottom: 14px;"><i class="fa-solid fa-sliders"></i> Parameter Dinamis Lab</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="inputProjectId">1. GCP Project ID:</label>
+          <small style="color: var(--text-muted); font-size: 0.78rem; font-weight: normal; margin-bottom: 4px; display: block;">Project ID dari panel kiri Qwiklabs</small>
+          <input type="text" id="inputProjectId" placeholder="qwiklabs-gcp-xx-xxxxxxx" oninput="updateCommands()">
+        </div>
+      </div>
     </div>
 
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 1)</summary>
-      <ul>
-        <li><strong>POST HTTP ke Cloud Storage API:</strong> Endpoint <code>POST /b?project=[PROJECT_ID]</code> mendaftarkan bucket baru pada infrastruktur cloud Google.</li>
-        <li><strong>OAuth Authentication Token:</strong> Perintah <code>gcloud auth print-access-token</code> menghasilkan string akses dinamis yang dikirimkan melalui header HTTP <code>Authorization: Bearer ...</code>.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 2 -->
-  <div class="task-card">
-    <h2>📤 Task 2. Upload an image file to a Cloud Storage bucket</h2>
-    <p class="code-explain">Mengunduh berkas gambar sampel <code>world.jpeg</code> ke Cloud Shell, kemudian mengunggahnya ke Bucket 1 menggunakan Cloud Storage Media Upload API. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code2', this)">📋 Copy</button>
-      <pre><code id="code2"></code></pre>
+    <!-- REMINDER WARNING PARAMETER -->
+    <div id="paramWarning" class="warning-banner">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span><strong>Penting:</strong> Kamu belum mengisi <strong>Project ID</strong>. Harap lengkapi form di atas terlebih dahulu agar teks panduan tersusun rapi!</span>
     </div>
 
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 2)</summary>
-      <ul>
-        <li><strong>Upload HTTP Type - Media:</strong> Pengunggahan berkas biner/gambar dilakukan melalui endpoint upload khusus <code>/upload/storage/v1/b/[BUCKET_1]/o?uploadType=media&name=world.jpeg</code> dengan mencantumkan header <code>Content-Type: image/jpeg</code>.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 3 -->
-  <div class="task-card">
-    <h2>📋 Task 3. Copy a file to another bucket</h2>
-    <p class="code-explain">Menyalin berkas gambar dari Bucket 1 ke Bucket 2 menggunakan API method <code>copyTo</code> langsung di sisi server cloud Google. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code3', this)">📋 Copy</button>
-      <pre><code id="code3"></code></pre>
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 3)</summary>
-      <ul>
-        <li><strong>copyTo API Method:</strong> Melakukan penyalinan data internal server-side dari satu bucket ke bucket lain tanpa memakan bandwidth atau mendownload berkas secara lokal.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 4 -->
-  <div class="task-card">
-    <h2>🌐 Task 4. Make an object (file) publicly accessible</h2>
-    <p class="code-explain">Mengunggah file konfigurasi Access Control List (ACL) JSON untuk memberikan hak akses baca (READER) bagi semua orang di internet (allUsers) ke berkas gambar di Bucket 1. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code4', this)">📋 Copy</button>
-      <pre><code id="code4"></code></pre>
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 4)</summary>
-      <ul>
-        <li><strong>Access Control List (ACL) API:</strong> Mengontrol siapa saja yang berhak berinteraksi dengan berkas secara granular. <code>allUsers</code> mewakili publik umum tanpa login.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- TASK 5 -->
-  <div class="task-card">
-    <h2>🗑️ Task 5. Delete the object file and Bucket 1</h2>
-    <p class="code-explain">Menghapus berkas gambar <code>world.jpeg</code> di Bucket 1, kemudian dilanjutkan dengan menghapus Bucket 1 menggunakan API method <code>DELETE</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('code5', this)">📋 Copy</button>
-      <pre><code id="code5"></code></pre>
-    </div>
-
-    <details class="explain-box" open style="margin-top: 16px;">
-      <summary>🔍 Penjelasan Langkah & Konsep (Task 5)</summary>
-      <ul>
-        <li><strong>DELETE HTTP API:</strong> Melakukan pembersihan resource. Sesuai aturan Cloud Storage, sebuah bucket tidak dapat dihapus jika di dalamnya masih terdapat berkas/objek data.</li>
-      </ul>
-    </details>
-  </div>
-
-  <!-- AUTOMATION SCRIPT (ALL-IN-ONE) -->
-  <div class="task-card" style="border-color: #ffe082;">
-    <h2 style="color: #b78103;">⚡ Skrip Otomatis Sekali Jalan (Opsional)</h2>
-    <p class="code-explain">Menjalankan seluruh tahapan dari Task 1 hingga Task 5 secara berurutan dalam satu skrip otomatis. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-    
-    <div class="code-container">
-      <button class="copy-btn" onclick="copyCode('codeAll', this)" style="background: #b78103;">📋 Copy Skrip</button>
-      <pre><code id="codeAll"></code></pre>
-    </div>
-  </div>
-
-  <!-- KARTU LAPOR SOAL BARU -->
-  <details class="report-card">
-    <summary>❓ Variasi soalmu tidak ada di daftar atas?</summary>
-    <div style="margin-top: 16px;">
-      <p style="font-size: 14px; color: #4a5568; margin-top: 0;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+    <!-- TASK 1 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-box-open"></i>
+          <span>Task 1. Create two Cloud Storage buckets</span>
+        </div>
+        <span class="task-badge">Task 1</span>
+      </div>
+      <p class="task-desc">Membuat berkas JSON spesifikasi bucket dan memanggil Cloud Storage JSON API via HTTP POST untuk membuat Bucket 1 dan Bucket 2. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
       
-      <form action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
-        <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: APIs Cloud Storage Challenge Lab">
-        
-        <!-- Anti-spam Honeypot Checkbox -->
-        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-        
-        <div class="form-group">
-          <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
-          <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Create Buckets</span>
+          <button class="copy-btn" onclick="copyCode('code1', this)"><i class="fa-regular fa-copy"></i> Copy</button>
         </div>
-        
-        <div class="form-group">
-          <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
-          <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Copy object to different destination..." required></textarea>
+        <pre><code id="code1"></code></pre>
+      </div>
+
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 1)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>POST HTTP ke Cloud Storage API:</strong> Endpoint <code>POST /b?project=[PROJECT_ID]</code> mendaftarkan bucket baru pada infrastruktur cloud Google.</li>
+            <li><strong>OAuth Authentication Token:</strong> Perintah <code>gcloud auth print-access-token</code> menghasilkan string akses dinamis yang dikirimkan melalui header HTTP <code>Authorization: Bearer ...</code>.</li>
+          </ul>
         </div>
-        
-        <button type="submit" class="submit-btn" style="background: #c53030;">🚀 Kirimkan Soal</button>
-      </form>
+      </details>
     </div>
-  </details>
 
-  <!-- DOKUMENTASI PENDUKUNG -->
-  <div class="callout" style="background: #f6f8fa; border-left: 4px solid #718096; color: #24292e; font-size: 13.5px; margin: 24px 0 16px 0;">
-    📚 <strong>Dokumentasi Pendukung:</strong>
-    <ul style="margin: 6px 0 0 0; padding-left: 20px;">
-      <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Dokumentasi Google Cloud</a></li>
-      <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud Shell</a></li>
-      <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank" style="color: #0366d6; text-decoration: underline;">Google Cloud CLI</a></li>
-    </ul>
-  </div>
+    <!-- TASK 2 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Task 2. Upload an image file to a Cloud Storage bucket</span>
+        </div>
+        <span class="task-badge">Task 2</span>
+      </div>
+      <p class="task-desc">Mengunduh berkas gambar sampel <code>world.jpeg</code> ke Cloud Shell, kemudian mengunggahnya ke Bucket 1 menggunakan Cloud Storage Media Upload API. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Upload Image</span>
+          <button class="copy-btn" onclick="copyCode('code2', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+        </div>
+        <pre><code id="code2"></code></pre>
+      </div>
 
-  <hr style="border: 0; border-top: 1px solid #e1e4e8; margin: 32px 0 24px 0;">
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 2)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>Upload HTTP Type - Media:</strong> Pengunggahan berkas biner/gambar dilakukan melalui endpoint upload khusus <code>/upload/storage/v1/b/[BUCKET_1]/o?uploadType=media&name=world.jpeg</code> dengan mencantumkan header <code>Content-Type: image/jpeg</code>.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
 
-  <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px;">
-    🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
-    <br><br>
-    Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
-    Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    <!-- TASK 3 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-copy"></i>
+          <span>Task 3. Copy a file to another bucket</span>
+        </div>
+        <span class="task-badge">Task 3</span>
+      </div>
+      <p class="task-desc">Menyalin berkas gambar dari Bucket 1 ke Bucket 2 menggunakan API method <code>copyTo</code> langsung di sisi server cloud Google. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Copy File</span>
+          <button class="copy-btn" onclick="copyCode('code3', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+        </div>
+        <pre><code id="code3"></code></pre>
+      </div>
+
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 3)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>copyTo API Method:</strong> Melakukan penyalinan data internal server-side dari satu bucket ke bucket lain tanpa memakan bandwidth atau mendownload berkas secara lokal.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-globe"></i>
+          <span>Task 4. Make an object (file) publicly accessible</span>
+        </div>
+        <span class="task-badge">Task 4</span>
+      </div>
+      <p class="task-desc">Mengunggah file konfigurasi Access Control List (ACL) JSON untuk memberikan hak akses baca (READER) bagi semua orang di internet (allUsers) ke berkas gambar di Bucket 1. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Public Access</span>
+          <button class="copy-btn" onclick="copyCode('code4', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+        </div>
+        <pre><code id="code4"></code></pre>
+      </div>
+
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 4)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>Access Control List (ACL) API:</strong> Mengontrol siapa saja yang berhak berinteraksi dengan berkas secara granular. <code>allUsers</code> mewakili publik umum tanpa login.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- TASK 5 -->
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Task 5. Delete the object file and Bucket 1</span>
+        </div>
+        <span class="task-badge">Task 5</span>
+      </div>
+      <p class="task-desc">Menghapus berkas gambar <code>world.jpeg</code> di Bucket 1, kemudian dilanjutkan dengan menghapus Bucket 1 menggunakan API method <code>DELETE</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      
+      <div class="code-container">
+        <div class="code-header">
+          <span>Bash - Delete Bucket</span>
+          <button class="copy-btn" onclick="copyCode('code5', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+        </div>
+        <pre><code id="code5"></code></pre>
+      </div>
+
+      <details class="explain-box" open>
+        <summary><i class="fa-solid fa-circle-info"></i> Penjelasan Langkah & Konsep (Task 5)</summary>
+        <div class="explain-content">
+          <ul>
+            <li><strong>DELETE HTTP API:</strong> Melakukan pembersihan resource. Sesuai aturan Cloud Storage, sebuah bucket tidak dapat dihapus jika di dalamnya masih terdapat berkas/objek data.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- AUTOMATION SCRIPT (ALL-IN-ONE) -->
+    <div class="task-card" style="border-color: var(--warning-border);">
+      <div class="task-header">
+        <div class="task-title" style="color: var(--warning-text);">
+          <i class="fa-solid fa-bolt"></i>
+          <span>⚡ Skrip Otomatis Sekali Jalan (Opsional)</span>
+        </div>
+      </div>
+      <p class="task-desc">Menjalankan seluruh tahapan dari Task 1 hingga Task 5 secara berurutan dalam satu skrip otomatis. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+      
+      <div class="code-container">
+        <div class="code-header" style="background-color: #3a321a; border-bottom-color: #5d4f26;">
+          <span style="color: var(--warning-border);">Bash - All-in-One Script</span>
+          <button class="copy-btn" onclick="copyCode('codeAll', this)" style="border-color: var(--warning-border); color: var(--warning-border);"><i class="fa-regular fa-copy"></i> Copy Skrip</button>
+        </div>
+        <pre><code id="codeAll"></code></pre>
+      </div>
+    </div>
+
+    <!-- KARTU LAPOR SOAL BARU -->
+    <details class="report-card">
+      <summary>
+        <span><i class="fa-solid fa-circle-question"></i> Variasi soalmu tidak ada di daftar atas?</span>
+        <span>Buka Form <i class="fa-solid fa-plus"></i></span>
+      </summary>
+      <div class="report-content">
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Copy-paste teks instruksi Task dari layar Qwiklabs kamu ke kolom di bawah ini. Pesan akan langsung terkirim agar bisa segera dibuatkan kodenya!</p>
+        
+        <form action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="543f6ee6-7274-447c-8816-6ece1ac6bc0d">
+          <input type="hidden" name="subject" value="Laporan Variasi Soal Baru: APIs Cloud Storage Challenge Lab">
+          
+          <!-- Anti-spam Honeypot Checkbox -->
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          
+          <div class="form-group">
+            <label for="userContact">Nama / Kontak Kamu (Opsional):</label>
+            <input type="text" id="userContact" name="contact" placeholder="Misal: Budi / Telegram @budi">
+          </div>
+          
+          <div class="form-group">
+            <label for="taskDescription">Teks Instruksi Task / Soal Qwiklabs:</label>
+            <textarea id="taskDescription" name="task_text" rows="5" placeholder="Contoh: Task 3: Copy object to different destination..." required></textarea>
+          </div>
+          
+          <button type="submit" class="btn-submit">🚀 Kirimkan Soal</button>
+        </form>
+      </div>
+    </details>
+
+    <!-- DOKUMENTASI PENDUKUNG -->
+    <div class="docs-section">
+      <div class="docs-title">
+        <i class="fa-solid fa-book"></i>
+        <span>Dokumentasi Pendukung:</span>
+      </div>
+      <ul class="docs-list">
+        <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Dokumentasi Google Cloud</a></li>
+        <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud Shell</a></li>
+        <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Google Cloud CLI</a></li>
+      </ul>
+    </div>
+
+    <!-- Success banner callout box -->
+    <div class="callout" style="background-color: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); padding: 18px; border-radius: var(--radius); margin-bottom: 30px;">
+      <div style="display: flex; gap: 12px; align-items: flex-start;">
+        <i class="fa-solid fa-circle-check" style="font-size: 1.4rem; margin-top: 2px;"></i>
+        <div>
+          <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+          <br><br>
+          Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+          Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -245,7 +720,7 @@
       // Tampilkan warning jika salah satu parameter kosong
       const warningEl = document.getElementById('paramWarning');
       if (!projectIdInput) {
-        warningEl.style.display = 'block';
+        warningEl.style.display = 'flex';
       } else {
         warningEl.style.display = 'none';
       }
@@ -388,13 +863,13 @@ curl -s -X DELETE -H "Authorization: Bearer \\\$(gcloud auth print-access-token)
       const codeText = document.getElementById(elementId).innerText;
       navigator.clipboard.writeText(codeText);
       
+      btnElement.classList.add('copied');
       const originalText = btnElement.innerHTML;
-      btnElement.innerHTML = 'Copied! ✔️';
-      btnElement.style.background = '#0366d6';
+      btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
       
       setTimeout(() => {
+        btnElement.classList.remove('copied');
         btnElement.innerHTML = originalText;
-        btnElement.style.background = '#2ea44f';
       }, 1500);
     }
 

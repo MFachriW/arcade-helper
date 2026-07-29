@@ -449,14 +449,17 @@
       <div class="input-grid">
         <div class="input-group">
           <label for="inputRegion">1. Region Target:</label>
+          <small style="color: var(--text-muted); margin-top: -2px; margin-bottom: 2px;">Region target dari deskripsi soal</small>
           <input type="text" id="inputRegion" placeholder="us-west1, us-east1, europe-west2, dll" oninput="updateCommands()">
         </div>
         <div class="input-group">
           <label for="inputCS">2. Storage Function Name:</label>
+          <small style="color: var(--text-muted); margin-top: -2px; margin-bottom: 2px;">Nama Cloud Run function untuk storage trigger</small>
           <input type="text" id="inputCS" placeholder="cs-monitor, cs-logger, cs-tracker, dll" oninput="updateCommands()">
         </div>
         <div class="input-group">
           <label for="inputHTTP">3. HTTP Function Name:</label>
+          <small style="color: var(--text-muted); margin-top: -2px; margin-bottom: 2px;">Nama Cloud Run function untuk HTTP trigger</small>
           <input type="text" id="inputHTTP" placeholder="http-messenger, hello-http, dll" oninput="updateCommands()">
         </div>
       </div>
