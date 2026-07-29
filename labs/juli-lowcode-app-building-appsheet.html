@@ -42,6 +42,10 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
@@ -135,6 +139,7 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       margin-bottom: 20px;
+      scroll-margin-top: 2rem;
     }
 
     .input-grid {
@@ -197,6 +202,7 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       margin-bottom: 24px;
+      scroll-margin-top: 2rem;
     }
 
     .task-header {
@@ -334,6 +340,150 @@
       margin-bottom: 8px;
     }
 
+    /* Collapsible Drawer (Daftar Isi) */
+    .sidebar-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 300px;
+      background: white;
+      border-left: 1px solid var(--border);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+    }
+    .drawer-title {
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+    .drawer-close-btn {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: color 0.2s;
+    }
+    .drawer-close-btn:hover {
+      color: #000;
+    }
+    .drawer-content {
+      padding: 1rem;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-item {
+      margin-bottom: 8px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Floating Menu Button */
+    .floating-menu-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(26, 115, 232, 0.35);
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .floating-menu-trigger:hover {
+      transform: scale(1.03);
+      background: var(--primary-hover);
+    }
+
+    /* Drawer Overlay */
+    .drawer-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    /* Scroll-Back Float Indicator */
+    .scroll-back-indicator {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 999;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Highlight Pulse Animation */
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.6); border-color: var(--primary); }
+      50% { box-shadow: 0 0 0 8px rgba(26, 115, 232, 0); border-color: var(--primary); }
+      100% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
+    }
+    .pulse-highlight {
+      animation: pulse-glow 1.5s ease-out 3;
+    }
+
     /* Video styling */
     .video-responsive {
       position: relative;
@@ -455,6 +605,53 @@
 </head>
 <body>
 
+  <!-- FLOATING TRIGGER BUTTON (WIDGET MENU) -->
+  <div class="floating-menu-trigger" onclick="toggleDrawer()" title="Buka Daftar Isi">
+    <i class="fas fa-list-ul"></i>
+    <span>Daftar Isi</span>
+  </div>
+
+  <!-- BACKDROP OVERLAY -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
+
+  <!-- SLIDE-OUT SIDEBAR DRAWER -->
+  <div class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <i class="fas fa-compass" style="color: var(--primary);"></i> Navigasi Pembahasan
+      </div>
+      <i class="fas fa-times drawer-close-btn" onclick="toggleDrawer()"></i>
+    </div>
+    
+    <div class="drawer-content">
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a href="#variables-form" class="sidebar-link active" onclick="toggleDrawer()"><i class="fas fa-cog"></i> Parameter Lab</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#video-tutorial" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-video"></i> Video Tutorial</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#task-card-1" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 1. Create a new AppSheet app</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#task-card-2" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 2. Add a new company</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#task-card-3" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 3. Update and regenerate structure</a>
+        </li>
+        <li class="sidebar-item">
+          <a href="#task-card-4" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 4. Deploy and test your app</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SCROLL BACK FLOAT INDICATOR -->
+  <div class="scroll-back-indicator" id="scrollBackIndicator" onclick="returnToTask()">
+    <i class="fas fa-arrow-down"></i> Kembali ke Pembahasan Task
+  </div>
+
   <div class="container">
     <!-- NAVIGASI KEMBALI -->
     <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
@@ -475,7 +672,7 @@
     </div>
 
     <!-- FORM INPUT INTERAKTIF UTAMA -->
-    <div class="input-card">
+    <div class="input-card" id="variables-form">
       <h3 style="margin-bottom: 14px;"><i class="fa-solid fa-sliders"></i> Parameter Dinamis Lab</h3>
       <div class="input-grid">
         <div class="input-group">
@@ -509,7 +706,7 @@
     </div>
 
     <!-- VIDEO WALKTHROUGH EMBED -->
-    <div class="task-card">
+    <div class="task-card" id="video-tutorial">
       <div class="task-header">
         <div class="task-title">
           <i class="fa-solid fa-video"></i>
@@ -532,7 +729,7 @@
     </div>
 
     <!-- TASK 1 -->
-    <div class="task-card">
+    <div class="task-card" id="task-card-1">
       <div class="task-header">
         <div class="task-title">
           <i class="fa-solid fa-mobile-retro"></i>
@@ -569,7 +766,7 @@
     </div>
 
     <!-- TASK 2 -->
-    <div class="task-card">
+    <div class="task-card" id="task-card-2">
       <div class="task-header">
         <div class="task-title">
           <i class="fa-solid fa-circle-plus"></i>
@@ -620,7 +817,7 @@
     </div>
 
     <!-- TASK 3 -->
-    <div class="task-card">
+    <div class="task-card" id="task-card-3">
       <div class="task-header">
         <div class="task-title">
           <i class="fa-solid fa-rotate"></i>
@@ -669,7 +866,7 @@
     </div>
 
     <!-- TASK 4 -->
-    <div class="task-card">
+    <div class="task-card" id="task-card-4">
       <div class="task-header">
         <div class="task-title">
           <i class="fa-solid fa-rocket"></i>
@@ -763,6 +960,14 @@
       </span>
     </div>
 
+    <!-- SUCCESS BANNER -->
+    <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 24px; font-size: 0.95rem;">
+      🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+      <br><br>
+      Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+      Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+    </div>
+
     <!-- DOKUMENTASI PENDUKUNG -->
     <div class="docs-section">
       <div class="docs-title">
@@ -776,14 +981,6 @@
           </a>
         </li>
       </ul>
-    </div>
-
-    <!-- SUCCESS BANNER -->
-    <div class="callout" style="background: #e6ffed; border-left: 4px solid #28a745; color: #1e4620; padding: 18px; border-radius: 8px; margin-bottom: 30px; font-size: 0.95rem;">
-      🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
-      <br><br>
-      Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
-      Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
     </div>
   </div>
 
@@ -838,16 +1035,129 @@ Test Record:
   - Website          : cymbal-houston.com`;
     }
 
+    // SLIDE-OUT DRAWER TOGGLE
+    function toggleDrawer() {
+      document.getElementById('sidebarDrawer').classList.toggle('open');
+      document.getElementById('drawerBackdrop').classList.toggle('open');
+    }
+
+    // INTERSECTION OBSERVER FOR RETURN BUTTON AUTO-HIDE
+    let taskObserver = null;
+    let lastActiveTaskId = null;
+
+    function startObservingTask(taskId) {
+      if (taskObserver) taskObserver.disconnect();
+      const taskElement = document.getElementById(taskId);
+      if (!taskElement) return;
+
+      taskObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.getElementById('scrollBackIndicator').style.display = 'none';
+            taskObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.1 });
+      taskObserver.observe(taskElement);
+    }
+
+    // SMOOTH SCROLL TO INPUTS & HIGHLIGHT
+    function scrollToInputs(targetCardId, activeTaskId) {
+      lastActiveTaskId = activeTaskId;
+      const targetEl = document.getElementById(targetCardId);
+      if (!targetEl) return;
+
+      targetEl.scrollIntoView({ behavior: 'smooth' });
+
+      // Animasi highlight
+      const inputs = targetEl.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.classList.add('pulse-highlight');
+        setTimeout(() => input.classList.remove('pulse-highlight'), 4500);
+      });
+
+      // Focus
+      if (inputs.length > 0) {
+        setTimeout(() => inputs[0].focus(), 600);
+      }
+      
+      const indicator = document.getElementById('scrollBackIndicator');
+      indicator.style.display = 'flex';
+
+      // Aktifkan Observer tunda
+      setTimeout(() => {
+        startObservingTask(activeTaskId);
+      }, 800);
+    }
+
+    function returnToTask() {
+      if (lastActiveTaskId) {
+        const activeEl = document.getElementById(lastActiveTaskId);
+        if (activeEl) {
+          activeEl.scrollIntoView({ behavior: 'smooth' });
+        }
+        document.getElementById('scrollBackIndicator').style.display = 'none';
+        if (taskObserver) taskObserver.disconnect();
+      }
+    }
+
+    // Active link highlighting on scroll inside drawer
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('.task-card, #variables-form');
+      const navLinks = document.querySelectorAll('.sidebar-link');
+      let currentSectionId = 'variables-form';
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (window.pageYOffset >= sectionTop - 150) {
+          currentSectionId = section.getAttribute('id') || currentSectionId;
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Fungsi Salin Kode dengan Validasi Placeholder Kosong
     function copyCode(elementId, btnElement) {
-      const codeText = document.getElementById(elementId).innerText;
+      let btn, codeId;
+      if (typeof elementId === 'string') {
+        codeId = elementId;
+        btn = btnElement;
+      } else {
+        btn = elementId;
+        codeId = btnElement;
+      }
+
+      const codeEl = document.getElementById(codeId);
+      const codeText = codeEl ? (codeEl.textContent || codeEl.innerText) : '';
+
+      // Validasi hanya jika kode yang akan disalin masih memiliki placeholder variabel kosong
+      if (codeText.includes('<EMAIL_STUDENT>') || codeText.includes('<NAMA_APLIKASI>') || codeText.includes('<PROJECT_ID>') || codeText.includes('<REGION>') || codeText.includes('<ZONE>')) {
+        alert("⚠️ Harap lengkapi parameter variabel di form atas terlebih dahulu sebelum menyalin kode!");
+        
+        // Cari ID task card terdekat untuk navigasi kembali
+        const taskCard = btn ? btn.closest('.task-card') : null;
+        const taskCardId = taskCard ? (taskCard.id || 'variables-form') : 'variables-form';
+        
+        scrollToInputs('variables-form', taskCardId);
+        return;
+      }
+
       navigator.clipboard.writeText(codeText).then(() => {
-        const originalHTML = btnElement.innerHTML;
-        btnElement.classList.add('copied');
-        btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Tersalin!`;
+        const originalHTML = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Tersalin!`;
         setTimeout(() => {
-          btnElement.classList.remove('copied');
-          btnElement.innerHTML = originalHTML;
+          btn.classList.remove('copied');
+          btn.innerHTML = originalHTML;
         }, 1500);
+      }).catch(err => {
+        console.error('Gagal menyalin kode:', err);
       });
     }
 

@@ -1,126 +1,711 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arcade Facilitator Helper Hub</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #24292e; max-width: 850px; margin: 0 auto; padding: 20px; background: #f8f9fa; }
-    h1 { color: #0366d6; text-align: center; margin-bottom: 8px; }
-    .subtitle { text-align: center; color: #666; margin-bottom: 24px; font-size: 14px; }
-    
-    details { background: white; border: 1px solid #e1e4e8; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; }
-    summary { padding: 14px 18px; font-weight: bold; cursor: pointer; user-select: none; background: #ffffff; color: #0366d6; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
-    summary:hover { background: #f1f8ff; }
-    
-    /* Nesting level 2 (Game level) */
-    .month-content { padding: 12px 16px 16px 16px; background: #fafbfc; border-top: 1px solid #e1e4e8; }
-    .month-content details { border: 1px solid #d1d5da; margin-bottom: 8px; }
-    .month-content summary { font-size: 15px; color: #24292e; padding: 10px 14px; background: #ffffff; }
-    .month-content summary:hover { background: #f6f8fa; color: #0366d6; }
-    
-    .lab-list { list-style: none; padding: 12px 16px; margin: 0; background: #ffffff; border-top: 1px solid #e1e4e8; }
-    .lab-list li { margin-bottom: 8px; }
-    .lab-list li:last-child { margin-bottom: 0; }
-    
-    .lab-link { display: block; padding: 10px 14px; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 6px; color: #0366d6; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
-    .lab-link:hover { background: #f1f8ff; border-color: #0366d6; }
-    
-    .empty-msg { padding: 12px 16px; color: #6a737d; font-size: 13px; font-style: italic; background: #fff8c5; border-top: 1px solid #e1e4e8; border-radius: 0 0 6px 6px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Facilitator Helper Hub 2026</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Hero Header */
+        .hero-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 30px -5px rgba(15, 23, 42, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+        .hero-card h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+        .hero-card p {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 620px;
+            margin-bottom: 24px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #38bdf8;
+        }
+        .stat-info .num {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        .stat-info .label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Instant Search Bar */
+        .search-box {
+            position: relative;
+            margin-bottom: 28px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 48px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Month Accordion Group */
+        .month-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+        }
+        .month-summary {
+            padding: 18px 24px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+        .month-summary:hover {
+            background: #f8fafc;
+        }
+        .month-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .month-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        .month-body {
+            padding: 16px;
+            background: #f8fafc;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Game Section Card */
+        .game-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+        .game-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Distinct Header Themes for Games */
+        .game-summary {
+            padding: 14px 18px;
+            font-weight: 700;
+            font-size: 0.98rem;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: opacity 0.2s;
+        }
+        .game-summary:hover {
+            opacity: 0.92;
+        }
+        
+        /* Game Theme 1: Blue (Low-Code) */
+        .theme-blue .game-summary {
+            background: #eff6ff;
+            color: #1e40af;
+            border-bottom: 1px solid #dbeafe;
+        }
+        .theme-blue .game-title i { color: #2563eb; }
+        .theme-blue .count-badge { background: #dbeafe; color: #1e40af; }
+
+        /* Game Theme 2: Purple (Data Mesh) */
+        .theme-purple .game-summary {
+            background: #f5f3ff;
+            color: #5b21b6;
+            border-bottom: 1px solid #ddd6fe;
+        }
+        .theme-purple .game-title i { color: #7c3aed; }
+        .theme-purple .count-badge { background: #ddd6fe; color: #5b21b6; }
+
+        /* Game Theme 3: Green/Teal (Voyage) */
+        .theme-green .game-summary {
+            background: #ecfdf5;
+            color: #065f46;
+            border-bottom: 1px solid #a7f3d0;
+        }
+        .theme-green .game-title i { color: #059669; }
+        .theme-green .count-badge { background: #a7f3d0; color: #065f46; }
+
+        /* Game Theme 4: Amber/Orange (Base Camp) */
+        .theme-amber .game-summary {
+            background: #fffbeb;
+            color: #92400e;
+            border-bottom: 1px solid #fde68a;
+        }
+        .theme-amber .game-title i { color: #d97706; }
+        .theme-amber .count-badge { background: #fde68a; color: #92400e; }
+
+        /* Game Theme 5: Slate (Safe Spaces) */
+        .theme-slate .game-summary {
+            background: #f1f5f9;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .theme-slate .game-title i { color: #64748b; }
+        .theme-slate .count-badge { background: #e2e8f0; color: #334155; }
+
+        .game-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .count-badge {
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* Lab Items List */
+        .lab-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 16px 16px 16px;
+            background: #ffffff;
+        }
+        .lab-item-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lab-item-link:hover {
+            border-color: var(--accent-blue);
+            background: #f0f7ff;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+        }
+        .lab-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .lab-icon {
+            color: var(--accent-blue);
+            font-size: 1rem;
+        }
+        .arrow-icon {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: transform 0.2s, color 0.2s;
+        }
+        .lab-item-link:hover .arrow-icon {
+            color: var(--accent-blue);
+            transform: translateX(3px);
+        }
+
+        /* Empty Card Message */
+        .empty-card {
+            padding: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+            background: #fafafa;
+            border-radius: 0 0 10px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Footer Request Callout */
+        .footer-callout {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
+        }
+        .footer-callout-text h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .footer-callout-text p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+        .btn-request {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--text-main);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .btn-request:hover {
+            background: var(--accent-blue);
+        }
+
+        .no-results {
+            display: none;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>🚀 Arcade Facilitator Helper Hub</h1>
-  <p class="subtitle">Pilih bulan dan game di bawah untuk melihat modul interaktif yang tersedia:</p>
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="hero-card">
+            <div class="hero-badge">
+                <i class="fas fa-bolt"></i> Google Cloud Arcade 2026
+            </div>
+            <h1>🚀 Arcade Facilitator Helper Hub</h1>
+            <p>Pilih modul game dan lab di bawah untuk melihat panduan interaktif lengkap dengan penyesuaian parameter dinamis & solusi presisi.</p>
 
-  <!-- BULAN JULI 2026 -->
-  <details open>
-    <summary>📅 Juli 2026</summary>
-    <div class="month-content">
-      
-      <!-- GAME 1 -->
-      <details open>
-        <summary>🎮 Arcade Adventure: Low-Code Development</summary>
-        <ul class="lab-list">
-          <li>
-            <a href="labs/juli-lowcode-app-building-appsheet.html" class="lab-link">🧪 App Building with AppSheet: Challenge Lab</a>
-          </li>
-          <li>
-            <a href="labs/juli-lowcode-cloud-run-challenge.html" class="lab-link">🧪 Build Serverless Applications with Cloud Run Functions: Challenge Lab</a>
-          </li>
-        </ul>
-      </details>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                    <div class="stat-info">
+                        <div class="num">10</div>
+                        <div class="label">Panduan Lab Aktif</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="stat-info">
+                        <div class="num">4</div>
+                        <div class="label">Arcade Games Juli</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-shield-halved"></i></div>
+                    <div class="stat-info">
+                        <div class="num">100%</div>
+                        <div class="label">Solusi Teruji</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <!-- GAME 2 -->
-      <details open>
-        <summary>🎮 Arcade Simulator: Data Mesh Architect</summary>
-        <ul class="lab-list">
-          <li>
-            <a href="labs/juli-datamesh-data-warehouse-bigquery.html" class="lab-link">🧪 Build a Data Warehouse with BigQuery: Challenge Lab</a>
-          </li>
-          <li>
-            <a href="labs/juli-datamesh-knowledge-catalog.html" class="lab-link">🧪 Build a Data Mesh with Knowledge Catalog: Challenge Lab</a>
-          </li>
-        </ul>
-      </details>
+        <!-- Instant Search Bar -->
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari nama lab atau kata kunci..." onkeyup="filterLabs()">
+        </div>
 
-      <!-- GAME 3 -->
-      <details open>
-        <summary>🎮 Arcade Voyage: Cloud Storage and Data Governance</summary>
-        <ul class="lab-list">
-          <li>
-            <a href="labs/juli-voyage-discovery-cloud-storage.html" class="lab-link">🧪 Enabling Sensitive Data Protection Discovery for Cloud Storage</a>
-          </li>
-          <li>
-            <a href="labs/juli-voyage-discovery-bigquery.html" class="lab-link">🧪 Enabling Sensitive Data Protection Discovery for BigQuery</a>
-          </li>
-          <li>
-            <a href="labs/juli-voyage-discover-protect-sensitive-data.html" class="lab-link">🧪 Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</a>
-          </li>
-          <li>
-            <a href="labs/juli-voyage-APIs-cloud-storage.html" class="lab-link">🧪 Use APIs to Work with Cloud Storage: Challenge Lab</a>
-          </li>
-        </ul>
-      </details>
+        <!-- No Results Box -->
+        <div id="noResults" class="no-results">
+            <i class="fas fa-search-minus" style="font-size: 1.8rem; margin-bottom: 8px; color: var(--text-muted);"></i>
+            <p>Tidak ditemukan panduan lab yang cocok dengan kata kunci pencarian Anda.</p>
+        </div>
 
-      <!-- GAME 4 -->
-      <details open>
-        <summary>🎮 Arcade Base Camp July 2026</summary>
-        <ul class="lab-list">
-          <li>
-            <a href="labs/juli-basecamp-infrastructure-code-terraform.html" class="lab-link">🧪 Infrastructure as Code with Terraform</a>
-          </li>
-          <li>
-            <a href="labs/juli-basecamp-terraform-modules.html" class="lab-link">🧪 Interact with Terraform Modules</a>
-          </li>
-        </ul>
-      </details>
+        <!-- BULAN JULI 2026 -->
+        <details class="month-card" open>
+            <summary class="month-summary">
+                <div class="month-title-group">
+                    <span>📅 Juli 2026</span>
+                    <span class="month-badge">10 Labs Available</span>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 0.85rem; color: var(--text-muted);"></i>
+            </summary>
+            
+            <div class="month-body">
+                <!-- GAME 1 (Low-Code: Blue Header) -->
+                <details class="game-card theme-blue" open>
+                    <summary class="game-summary">
+                        <div class="game-title">
+                            <i class="fas fa-cubes"></i>
+                            <span>Arcade Adventure: Low-Code Development</span>
+                        </div>
+                        <span class="count-badge">2 Labs</span>
+                    </summary>
+                    <div class="lab-grid">
+                        <a href="labs/juli-lowcode-app-building-appsheet.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>App Building with AppSheet: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
 
-      <!-- GAME 5 -->
-      <details>
-        <summary>🎮 Safe Spaces</summary>
-        <div class="empty-msg">💬 Masih kosong/belum waktunya! kalau mau request PC aja ya 😉</div>
-      </details>
+                        <a href="labs/juli-lowcode-cloud-run-challenge.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Build Serverless Applications with Cloud Run Functions: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    </div>
+                </details>
 
+                <!-- GAME 2 (Data Mesh: Purple Header) -->
+                <details class="game-card theme-purple" open>
+                    <summary class="game-summary">
+                        <div class="game-title">
+                            <i class="fas fa-database"></i>
+                            <span>Arcade Simulator: Data Mesh Architect</span>
+                        </div>
+                        <span class="count-badge">2 Labs</span>
+                    </summary>
+                    <div class="lab-grid">
+                        <a href="labs/juli-datamesh-data-warehouse-bigquery.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Build a Data Warehouse with BigQuery: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+
+                        <a href="labs/juli-datamesh-knowledge-catalog.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Build a Data Mesh with Knowledge Catalog: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    </div>
+                </details>
+
+                <!-- GAME 3 (Voyage: Green Header) -->
+                <details class="game-card theme-green" open>
+                    <summary class="game-summary">
+                        <div class="game-title">
+                            <i class="fas fa-shield-cat"></i>
+                            <span>Arcade Voyage: Cloud Storage and Data Governance</span>
+                        </div>
+                        <span class="count-badge">4 Labs</span>
+                    </summary>
+                    <div class="lab-grid">
+                        <a href="labs/juli-voyage-discovery-cloud-storage.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Enabling Sensitive Data Protection Discovery for Cloud Storage</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+
+                        <a href="labs/juli-voyage-discovery-bigquery.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Enabling Sensitive Data Protection Discovery for BigQuery</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+
+                        <a href="labs/juli-voyage-discover-protect-sensitive-data.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Discover and Protect Sensitive Data Across Your Ecosystem: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+
+                        <a href="labs/juli-voyage-APIs-cloud-storage.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Use APIs to Work with Cloud Storage: Challenge Lab</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    </div>
+                </details>
+
+                <!-- GAME 4 (Base Camp: Amber Header) -->
+                <details class="game-card theme-amber" open>
+                    <summary class="game-summary">
+                        <div class="game-title">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Arcade Base Camp July 2026</span>
+                        </div>
+                        <span class="count-badge">2 Labs</span>
+                    </summary>
+                    <div class="lab-grid">
+                        <a href="labs/juli-basecamp-infrastructure-code-terraform.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Infrastructure as Code with Terraform</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+
+                        <a href="labs/juli-basecamp-terraform-modules.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Interact with Terraform Modules</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
+                    </div>
+                </details>
+
+                <!-- GAME 5 (Safe Spaces: Slate Header) -->
+                <details class="game-card theme-slate">
+                    <summary class="game-summary">
+                        <div class="game-title">
+                            <i class="fas fa-comments"></i>
+                            <span>Safe Spaces</span>
+                        </div>
+                        <span class="count-badge">0 Labs</span>
+                    </summary>
+                    <div class="empty-card">
+                        <i class="fas fa-clock"></i> Masih belum waktunya / belum rilis! Jika butuh bantuan lab ini, silakan hubungi Fachri 😉
+                    </div>
+                </details>
+            </div>
+        </details>
+
+        <!-- BULAN AGUSTUS 2026 -->
+        <details class="month-card">
+            <summary class="month-summary">
+                <div class="month-title-group">
+                    <span>📅 Agustus 2026</span>
+                    <span class="month-badge" style="background: #f1f5f9; color: var(--text-muted);">Coming Soon</span>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 0.85rem; color: var(--text-muted);"></i>
+            </summary>
+            <div class="month-body">
+                <div class="empty-card">
+                    <i class="fas fa-calendar-plus"></i> Modul game bulan Agustus belum dibuka! Tetap pantau info terbaru dari facilitator.
+                </div>
+            </div>
+        </details>
+
+        <!-- BULAN SEPTEMBER 2026 -->
+        <details class="month-card">
+            <summary class="month-summary">
+                <div class="month-title-group">
+                    <span>📅 September 2026</span>
+                    <span class="month-badge" style="background: #f1f5f9; color: var(--text-muted);">Coming Soon</span>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 0.85rem; color: var(--text-muted);"></i>
+            </summary>
+            <div class="month-body">
+                <div class="empty-card">
+                    <i class="fas fa-calendar-plus"></i> Modul game bulan September belum dibuka! Tetap pantau info terbaru dari facilitator.
+                </div>
+            </div>
+        </details>
+
+        <!-- Footer Request Callout -->
+        <div class="footer-callout">
+            <div class="footer-callout-text">
+                <h4>💬 Butuh Bantuan atau Diskusi Lab?</h4>
+                <p>Gabung ke grup resmi Facilitator untuk berdiskusi, bertanya jawab, dan mendapatkan update modul lab terbaru.</p>
+            </div>
+            <a href="https://s.id/GCAF2026" target="_blank" class="btn-request">
+                <i class="fas fa-users"></i> Gabung Grup Facilitator
+            </a>
+        </div>
     </div>
-  </details>
 
-  <!-- BULAN AGUSTUS 2026 -->
-  <details>
-    <summary>📅 Agustus 2026</summary>
-    <div class="month-content">
-      <div class="empty-msg">💬 Masih kosong/belum waktunya! kalau mau request PC aja ya 😉</div>
-    </div>
-  </details>
+    <!-- Live Search Filter Script -->
+    <script>
+        function filterLabs() {
+            const input = document.getElementById('searchInput').value.toLowerCase().trim();
+            const labLinks = document.querySelectorAll('.lab-item-link');
+            const gameCards = document.querySelectorAll('.game-card');
+            const monthCards = document.querySelectorAll('.month-card');
+            const noResults = document.getElementById('noResults');
+            let totalVisible = 0;
 
-  <!-- BULAN SEPTEMBER 2026 -->
-  <details>
-    <summary>📅 September 2026</summary>
-    <div class="month-content">
-      <div class="empty-msg">💬 Masih kosong/belum waktunya! kalau mau request PC aja ya 😉</div>
-    </div>
-  </details>
+            if (input === '') {
+                // Reset semua ke kondisi default
+                labLinks.forEach(link => link.style.display = 'flex');
+                gameCards.forEach(card => card.style.display = 'block');
+                monthCards.forEach(card => card.style.display = 'block');
+                noResults.style.display = 'none';
+                return;
+            }
 
+            labLinks.forEach(link => {
+                const text = link.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    link.style.display = 'flex';
+                    totalVisible++;
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+
+            // Sembunyikan game-card jika tidak ada lab visible di dalamnya
+            gameCards.forEach(game => {
+                const visibleChildLabs = game.querySelectorAll('.lab-item-link[style="display: flex;"]');
+                if (visibleChildLabs.length > 0) {
+                    game.style.display = 'block';
+                    game.setAttribute('open', 'true');
+                } else {
+                    game.style.display = 'none';
+                }
+            });
+
+            // Sembunyikan month-card jika tidak ada game visible di dalamnya
+            monthCards.forEach(month => {
+                const visibleChildGames = month.querySelectorAll('.game-card[style="display: block;"]');
+                if (visibleChildGames.length > 0) {
+                    month.style.display = 'block';
+                    month.setAttribute('open', 'true');
+                } else {
+                    month.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan No Results jika tidak ada lab yang cocok
+            if (totalVisible === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
