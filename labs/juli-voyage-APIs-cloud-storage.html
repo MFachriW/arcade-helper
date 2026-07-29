@@ -709,6 +709,12 @@
 
       const projectId = projectIdInput || '<PROJECT_ID>';
 
+      // Update Teks Span Dinamis
+      const projElements = document.getElementsByClassName('valProjectId');
+      for (let i = 0; i < projElements.length; i++) {
+        projElements[i].innerText = projectId;
+      }
+
       // Update Command Task 1
       document.getElementById('code1').innerText = 
 `cat > bucket1.json <<EOF
