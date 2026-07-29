@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Lab: Build Infrastructure with Terraform on Google Cloud: Challenge Lab</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        /* Navigasi Kembali */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: #eff6ff;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #dbeafe;
+            transform: translateX(-3px);
+        }
+
+        /* Card System */
+        .task-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            border-left: 6px solid var(--primary-color);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--text-main);
+        }
+
+        /* Ref Box */
+        .reference-box {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 16px;
+            font-size: 0.92rem;
+        }
+
+        .reference-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .reference-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Inline Code Contrast Rule */
+        :not(pre) > code {
+            color: #c53030;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875em;
+            border: 1px solid #e2e8f0;
+            word-break: break-word;
+        }
+
+        /* Video Section */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 14px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Form Parameter */
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .form-group input {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .form-group small {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .search-tip-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.88rem;
+        }
+
+        /* Pulse Highlight Animation */
+        @keyframes pulse-glow {
+            0% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            50% { border-color: #2563eb; box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2); }
+            100% { border-color: #3b82f6; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .pulse-highlight {
+            animation: pulse-glow 1.5s ease-in-out 3;
+        }
+
+        /* Code Block Container */
+        .code-container {
+            position: relative;
+            background: var(--code-bg);
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            border-bottom: 1px solid #334155;
+        }
+
+        .copy-btn {
+            background: #334155;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-color);
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: var(--code-text);
+            line-height: 1.5;
+            white-space: pre;
+            border: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        /* Info & Explain Boxes */
+        .explain-box {
+            background: #f0f7ff;
+            border: 1px solid #d0e5ff;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        .warning-banner {
+            background: #fff8e1;
+            border-left: 4px solid var(--accent-yellow);
+            padding: 14px;
+            border-radius: 6px;
+            margin: 16px 0;
+            font-size: 0.88rem;
+        }
+
+        .check-progress-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Success Card */
+        .success-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #6ee7b7;
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .success-card h2 {
+            justify-content: center;
+            color: #065f46;
+        }
+
+        /* Floating Controls */
+        .floating-menu-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .floating-menu-trigger:hover {
+            transform: scale(1.08);
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 100;
+            transition: right 0.3s ease;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .sidebar-drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 10px;
+        }
+
+        .toc-list a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc-list a:hover {
+            background: #f1f5f9;
+            color: var(--primary-color);
+        }
+
+        .scroll-back-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-main);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 90;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Collapsible Bug Report */
+        details {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+        }
+
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-main);
+            user-select: none;
+        }
+
+        .bug-form {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bug-form textarea, .bug-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .bug-form button {
+            align-self: flex-start;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Toast Alert */
+        .toast-notification {
+            position: fixed;
+            bottom: 84px;
+            right: 24px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 101;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .task-card { padding: 18px; }
+            .param-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Back Floating Indicator -->
+    <div id="scroll-back" class="scroll-back-indicator" onclick="scrollToCurrentTask()">
+        <i class="fa-solid fa-arrow-up"></i> Kembali ke Task Aktif
+    </div>
+
+    <!-- Floating Menu Trigger & Drawer -->
+    <button class="floating-menu-trigger" onclick="toggleSidebar()" title="Buka Daftar Isi">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div id="sidebar-drawer" class="sidebar-drawer">
+        <div class="drawer-header">
+            <h3>Daftar Isi Lab</h3>
+            <button class="drawer-close" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#video-tutorial" onclick="toggleSidebar()">🎥 Video Tutorial</a></li>
+            <li><a href="#parameter-form" onclick="toggleSidebar()">⚙️ Form Parameter</a></li>
+            <li><a href="#task-0" onclick="toggleSidebar()">🛠️ Persiapan: Install Terraform</a></li>
+            <li><a href="#task-1" onclick="toggleSidebar()">Task 1. Buat Berkas Konfigurasi</a></li>
+            <li><a href="#task-2" onclick="toggleSidebar()">Task 2. Impor Infrastruktur</a></li>
+            <li><a href="#task-3" onclick="toggleSidebar()">Task 3. Konfigurasi Remote Backend</a></li>
+            <li><a href="#task-4" onclick="toggleSidebar()">Task 4. Modifikasi Infrastruktur</a></li>
+            <li><a href="#task-5" onclick="toggleSidebar()">Task 5. Hapus Resource</a></li>
+            <li><a href="#task-6" onclick="toggleSidebar()">Task 6. Gunakan Module Registry</a></li>
+            <li><a href="#task-7" onclick="toggleSidebar()">Task 7. Konfigurasi Firewall</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <!-- Tombol Navigasi Kembali -->
+        <a class="back-btn" href="#">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab
+        </a>
+
+        <!-- Header Card -->
+        <div class="task-card header-card">
+            <h1>Build Infrastructure with Terraform on Google Cloud: Challenge Lab</h1>
+            <p>Panduan praktis dan interaktif untuk menyelesaikan Challenge Lab Terraform (GSP345). Pada lab ini, Anda akan mengimpor VM instance yang sudah ada, membuat remote backend Cloud Storage, mengelola modul, dan mengonfigurasi VPC beserta firewall rule.</p>
+            
+            <div class="reference-box">
+                💡 <strong>Referensi & Pelajari Lebih Lanjut:</strong><br>
+                Materi ini bersumber dari modul resmi Google Cloud Skills Boost: 
+                <a href="https://www.skills.google/course_templates/636" target="_blank" rel="noopener">Build Infrastructure with Terraform on Google Cloud</a>.
+            </div>
+        </div>
+
+        <!-- Video Tutorial Card (Kondisional) -->
+        <div class="task-card" id="video-tutorial">
+            <h2><i class="fa-solid fa-video" style="color: #ef4444;"></i> Video Tutorial Pendukung</h2>
+            <p>Anda dapat memilih untuk mengikuti panduan video interaktif di bawah ini atau melanjutkan dengan versi petunjuk tertulis yang disajikan langkah demi langkah di halaman ini.</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/X71RzZBgW3c" title="YouTube video player" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Section Input Parameter -->
+        <div class="task-card" id="parameter-form">
+            <h2><i class="fa-solid fa-sliders" style="color: var(--primary-color);"></i> Konfigurasi Parameter Lab</h2>
+            <p>Isi variabel dinamis di bawah ini sebelum menyalin perintah eksekusi agar seluruh skrip dan penjelasan ter-update secara otomatis secara real-time.</p>
+
+            <div class="search-tip-box">
+                <i class="fa-solid fa-lightbulb" style="color: var(--accent-yellow);"></i> <strong>Cara Menemukan Variabel di Halaman Qwiklabs:</strong>
+                <ul style="margin-left: 20px; margin-top: 6px;">
+                    <li>Tekan <code>Ctrl + F</code> pada halaman instruksi Qwiklabs Anda.</li>
+                    <li>Cari kata kunci di kolom bantuan bawah (seperti <code>Bucket Name</code>, <code>Instance Name</code>, atau <code>VPC Name</code>), lalu salin string acak di sebelahnya.</li>
+                </ul>
+            </div>
+
+            <div class="param-grid">
+                <div class="form-group">
+                    <label for="inputZone">Zone</label>
+                    <input type="text" id="inputZone" placeholder="us-central1-a" oninput="updateCommands()">
+                    <small>Cari <code>Zone</code> di panel kiri Qwiklabs atau Task 1.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputBucket">Bucket Name</label>
+                    <input type="text" id="inputBucket" placeholder="tf-bucket-XXXXXX" oninput="updateCommands()">
+                    <small>Tekan Ctrl+F lalu cari <code>Bucket Name</code> pada Task 3.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputInstance">3rd Instance Name</label>
+                    <input type="text" id="inputInstance" placeholder="tf-instance-XXXXXX" oninput="updateCommands()">
+                    <small>Tekan Ctrl+F lalu cari <code>Instance Name</code> pada Task 4/5.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputVpc">VPC Name</label>
+                    <input type="text" id="inputVpc" placeholder="tf-vpc-XXXXXX" oninput="updateCommands()">
+                    <small>Tekan Ctrl+F lalu cari <code>VPC Name</code> pada Task 6.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task 0: Prerequisites -->
+        <div class="task-card" id="task-0">
+            <h2><i class="fa-solid fa-terminal" style="color: var(--primary-color);"></i> Persiapan: Instalasi Terraform</h2>
+            <p>Terraform belum terpasang secara default di Cloud Shell. Jalankan perintah di bawah ini untuk mengunduh dan mengonfigurasi repositori HashiCorp agar instalasi bertahan selama sesi Cloud Shell.</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-0')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-0">cat <<'EOF' > ~/.customize_environment
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install -y terraform
+EOF
+bash ~/.customize_environment</code></pre>
+            </div>
+            <p>Untuk memverifikasi bahwa Terraform telah terpasang dengan benar, Anda dapat menjalankan perintah <code>terraform --version</code>.</p>
+        </div>
+
+        <!-- Task 1 -->
+        <div class="task-card" id="task-1">
+            <h2><i class="fa-solid fa-folder-tree" style="color: var(--primary-color);"></i> Task 1. Membuat Berkas Konfigurasi</h2>
+            <p>Buat struktur direktori beserta berkas <code>main.tf</code> dan <code>variables.tf</code> utama serta modul <code>instances</code> dan <code>storage</code>.</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-1')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-1"># Perintah Task 1 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="explain-box">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary-color);"></i>
+                Skrip di atas otomatis mengkonfigurasi <code>variables.tf</code> dengan nilai default Zone <code class="valZone">...</code> dan Region <code class="valRegion">...</code>, serta menginisialisasi Terraform.
+            </div>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="task-card" id="task-2">
+            <h2><i class="fa-solid fa-file-import" style="color: var(--primary-color);"></i> Task 2. Mengimpor Infrastruktur Sesuai Keadaan</h2>
+            <p>Dua VM instance bernama <code>tf-instance-1</code> dan <code>tf-instance-2</code> sudah dibuat terlebih dahulu oleh sistem Qwiklabs. Langkah ini akan mengimpor resource tersebut ke dalam state modul <code>instances</code>.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-2')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-2"># Perintah Task 2 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" pada Task 2.
+            </div>
+        </div>
+
+        <!-- Task 3 -->
+        <div class="task-card" id="task-3">
+            <h2><i class="fa-solid fa-database" style="color: var(--primary-color);"></i> Task 3. Mengonfigurasi Remote Backend</h2>
+            <p>Buat Cloud Storage bucket <code class="valBucket">...</code> di dalam modul storage, lalu migrasikan state Terraform ke remote backend GCS tersebut dengan prefix <code>terraform/state</code>.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-3')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-3"># Perintah Task 3 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="explain-box">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary-color);"></i>
+                Perintah <code>echo "yes" | terraform init</code> secara otomatis menyetujui pemindahan data state lokal ke bucket Cloud Storage <code class="valBucket">...</code>.
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" pada Task 3.
+            </div>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="task-card" id="task-4">
+            <h2><i class="fa-solid fa-pen-to-square" style="color: var(--primary-color);"></i> Task 4. Memodifikasi dan Memperbarui Infrastruktur</h2>
+            <p>Ubah jenis tipe mesin instance pertama dan kedua menjadi <code>e2-standard-2</code>, serta tambahkan instance ketiga dengan nama <code class="valInstance">...</code>.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-4')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-4"># Perintah Task 4 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" pada Task 4.
+            </div>
+        </div>
+
+        <!-- Task 5 -->
+        <div class="task-card" id="task-5">
+            <h2><i class="fa-solid fa-trash-can" style="color: var(--accent-red);"></i> Task 5. Menghapus Resource (Destroy)</h2>
+            <p>Hapus definisi instance ketiga <code class="valInstance">...</code> dari berkas konfigurasi Terraform dan jalankan <code>terraform apply</code> untuk menghapus resource secara otomatis.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-5')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-5"># Perintah Task 5 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" pada Task 5.
+            </div>
+        </div>
+
+        <!-- Task 6 -->
+        <div class="task-card" id="task-6">
+            <h2><i class="fa-solid fa-network-wired" style="color: var(--primary-color);"></i> Task 6. Menggunakan Modul dari Terraform Registry</h2>
+            <p>Tambahkan modul VPC <code class="valVpc">...</code> dari Registry resmi dengan dua subnetwork (<code>subnet-01</code> dan <code>subnet-02</code>), lalu hubungkan masing-masing instance ke subnetwork tersebut.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-6')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-6"># Perintah Task 6 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" pada Task 6.
+            </div>
+        </div>
+
+        <!-- Task 7 -->
+        <div class="task-card" id="task-7">
+            <h2><i class="fa-solid fa-shield-halved" style="color: var(--primary-color);"></i> Task 7. Mengonfigurasi Firewall Rule</h2>
+            <p>Tambahkan aturan firewall bernama <code>tf-firewall</code> yang mengizinkan lalu lintas masuk (ingress) pada TCP port 80 untuk VPC network <code class="valVpc">...</code> dari seluruh jangkauan IP (<code>0.0.0.0/0</code>).</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Bash (Cloud Shell)</span>
+                    <button class="copy-btn" onclick="copyCode('code-task-7')"><i class="fa-regular fa-copy"></i> Salin</button>
+                </div>
+                <pre><code id="code-task-7"># Perintah Task 7 akan dirender otomatis oleh JS</code></pre>
+            </div>
+
+            <div class="check-progress-btn">
+                <i class="fa-solid fa-circle-check"></i> Klaim Poin Qwiklabs: Klik "Check my progress" akhir pada Task 7.
+            </div>
+        </div>
+
+        <!-- Kartu Ucapan Selamat (SANGAT PENTING) -->
+        <div class="task-card success-card">
+            <h2>🎉 Selamat, Kamu Udah Menyelesaikan Lab Ini!</h2>
+            <p>Seluruh konfigurasi Terraform, remote backend GCS, VPC module, dan Firewall rules telah berhasil dideploy dengan sempurna dan meraih skor 100/100.</p>
+        </div>
+
+        <!-- Dokumentasi Pendukung -->
+        <div class="task-card" id="footer-docs">
+            <h2>📚 Dokumentasi Pendukung</h2>
+            <p>Pelajari lebih lanjut mengenai konsep dan sintaks yang digunakan dalam lab ini:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><a href="https://cloud.google.com/docs" target="_blank" rel="noopener">Dokumentasi Google Cloud Platform</a></li>
+                <li><a href="https://cloud.google.com/shell/docs" target="_blank" rel="noopener">Google Cloud Shell Guide</a></li>
+                <li><a href="https://cloud.google.com/sdk/gcloud" target="_blank" rel="noopener">Google Cloud CLI Reference</a></li>
+            </ul>
+
+            <!-- Form Lapor Bug (Collapsible) -->
+            <details>
+                <summary><i class="fa-solid fa-bug" style="color: var(--accent-red);"></i> Ada Masalah / Lapor Bug Kode?</summary>
+                <div class="bug-form">
+                    <p style="font-size: 0.88rem; color: var(--text-muted);">Jika menemukan perintah yang error atau berbeda dengan versi lab terbaru, tuliskan detailnya di bawah ini:</p>
+                    <input type="checkbox" name="botcheck" style="display: none;">
+                    <input type="text" placeholder="Topik / Nama Task yang bermasalah">
+                    <textarea rows="3" placeholder="Deskripsi kendala atau pesan error yang muncul..."></textarea>
+                    <button type="button" onclick="alert('Laporan berhasil dikirim. Terima kasih!')">Kirim Laporan</button>
+                </div>
+            </details>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-notification">
+        <i class="fa-solid fa-circle-info" id="toast-icon"></i>
+        <span id="toast-message">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        let currentActiveTaskId = null;
+
+        function getParams() {
+            const zone = document.getElementById('inputZone').value.trim();
+            const bucket = document.getElementById('inputBucket').value.trim();
+            const instance = document.getElementById('inputInstance').value.trim();
+            const vpc = document.getElementById('inputVpc').value.trim();
+            
+            // Region otomatis diekstrak dari Zone (contoh: us-central1-a -> us-central1)
+            let region = "";
+            if (zone) {
+                const parts = zone.split('-');
+                if (parts.length >= 2) {
+                    region = `${parts[0]}-${parts[1]}`;
+                } else {
+                    region = zone;
+                }
+            }
+
+            return { zone, region, bucket, instance, vpc };
+        }
+
+        function updateCommands() {
+            const { zone, region, bucket, instance, vpc } = getParams();
+
+            const renderZone = zone || "<ZONE>";
+            const renderRegion = region || "<REGION>";
+            const renderBucket = bucket || "<BUCKET_NAME>";
+            const renderInstance = instance || "<3RD_INSTANCE_NAME>";
+            const renderVpc = vpc || "<VPC_NAME>";
+
+            // Update Span Mappers di Seluruh Teks
+            document.querySelectorAll('.valZone').forEach(el => el.textContent = renderZone);
+            document.querySelectorAll('.valRegion').forEach(el => el.textContent = renderRegion);
+            document.querySelectorAll('.valBucket').forEach(el => el.textContent = renderBucket);
+            document.querySelectorAll('.valInstance').forEach(el => el.textContent = renderInstance);
+            document.querySelectorAll('.valVpc').forEach(el => el.textContent = renderVpc);
+
+            // Task 1 Code
+            const task1Code = `export ZONE="${renderZone}"
+export REGION="${renderRegion}"
+export PROJECT_ID=$(gcloud config get-value project)
+
+cd ~
+touch main.tf
+touch variables.tf
+mkdir -p modules/instances modules/storage
+touch modules/instances/instances.tf modules/instances/outputs.tf modules/instances/variables.tf
+touch modules/storage/storage.tf modules/storage/outputs.tf modules/storage/variables.tf
+
+cat > variables.tf <<EOF
+variable "region" {
+  default = "\$REGION"
+}
+
+variable "zone" {
+  default = "\$ZONE"
+}
+
+variable "project_id" {
+  default = "\$PROJECT_ID"
+}
+EOF
+
+cat > main.tf <<EOF
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.53.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}
+
+module "instances" {
+  source = "./modules/instances"
+}
+EOF
+
+terraform init`;
+
+            // Task 2 Code
+            const task2Code = `export ZONE="${renderZone}"
+export PROJECT_ID=$(gcloud config get-value project)
+
+instances_output=$(gcloud compute instances list --zone=\$ZONE --format="value(id)")
+IFS=$'\\n' read -r -d '' INSTANCE_ID_1 INSTANCE_ID_2 <<< "\$instances_output"
+
+cat > modules/instances/instances.tf <<EOF
+resource "google_compute_instance" "tf-instance-1" {
+  name         = "tf-instance-1"
+  machine_type = "n1-standard-1"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "tf-instance-2" {
+  name         = "tf-instance-2"
+  machine_type = "n1-standard-1"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+EOF
+
+terraform import module.instances.google_compute_instance.tf-instance-1 \$INSTANCE_ID_1
+terraform import module.instances.google_compute_instance.tf-instance-2 \$INSTANCE_ID_2
+
+terraform plan
+terraform apply --auto-approve`;
+
+            // Task 3 Code
+            const task3Code = `export BUCKET="${renderBucket}"
+
+cat > modules/storage/storage.tf <<EOF
+resource "google_storage_bucket" "storage-bucket" {
+  name                        = "\$BUCKET"
+  location                    = "US"
+  force_destroy               = true
+  uniform_bucket_level_access = true
+}
+EOF
+
+cat > main.tf <<EOF
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.53.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}
+
+module "instances" {
+  source = "./modules/instances"
+}
+
+module "storage" {
+  source = "./modules/storage"
+}
+EOF
+
+terraform init
+terraform apply --auto-approve
+
+cat > main.tf <<EOF
+terraform {
+  backend "gcs" {
+    bucket = "\$BUCKET"
+    prefix = "terraform/state"
+  }
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.53.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}
+
+module "instances" {
+  source = "./modules/instances"
+}
+
+module "storage" {
+  source = "./modules/storage"
+}
+EOF
+
+echo "yes" | terraform init`;
+
+            // Task 4 Code
+            const task4Code = `export ZONE="${renderZone}"
+export INSTANCE="${renderInstance}"
+
+cat > modules/instances/instances.tf <<EOF
+resource "google_compute_instance" "tf-instance-1" {
+  name         = "tf-instance-1"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "tf-instance-2" {
+  name         = "tf-instance-2"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "\$INSTANCE" {
+  name         = "\$INSTANCE"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+EOF
+
+terraform init
+terraform apply --auto-approve`;
+
+            // Task 5 Code
+            const task5Code = `export ZONE="${renderZone}"
+
+cat > modules/instances/instances.tf <<EOF
+resource "google_compute_instance" "tf-instance-1" {
+  name         = "tf-instance-1"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "tf-instance-2" {
+  name         = "tf-instance-2"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+EOF
+
+terraform apply --auto-approve`;
+
+            // Task 6 Code
+            const task6Code = `export BUCKET="${renderBucket}"
+export VPC="${renderVpc}"
+export REGION="${renderRegion}"
+export ZONE="${renderZone}"
+export PROJECT_ID=$(gcloud config get-value project)
+
+cat > main.tf <<EOF
+terraform {
+  backend "gcs" {
+    bucket = "\$BUCKET"
+    prefix = "terraform/state"
+  }
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.53.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}
+
+module "instances" {
+  source = "./modules/instances"
+}
+
+module "storage" {
+  source = "./modules/storage"
+}
+
+module "vpc" {
+    source  = "terraform-google-modules/network/google"
+    version = "~> 6.0.0"
+
+    project_id   = "\$PROJECT_ID"
+    network_name = "\$VPC"
+    routing_mode = "GLOBAL"
+
+    subnets = [
+        {
+            subnet_name           = "subnet-01"
+            subnet_ip             = "10.10.10.0/24"
+            subnet_region         = "\$REGION"
+        },
+        {
+            subnet_name           = "subnet-02"
+            subnet_ip             = "10.10.20.0/24"
+            subnet_region         = "\$REGION"
+            subnet_private_access = "true"
+            subnet_flow_logs      = "true"
+            description           = "Subnet 02"
+        },
+    ]
+}
+EOF
+
+cat > modules/instances/instances.tf <<EOF
+resource "google_compute_instance" "tf-instance-1" {
+  name         = "tf-instance-1"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network    = "\$VPC"
+    subnetwork = "subnet-01"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+
+resource "google_compute_instance" "tf-instance-2" {
+  name         = "tf-instance-2"
+  machine_type = "e2-standard-2"
+  zone         = "\$ZONE"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network    = "\$VPC"
+    subnetwork = "subnet-02"
+  }
+
+  metadata_startup_script = <<-EOT
+        #!/bin/bash
+    EOT
+
+  allow_stopping_for_update = true
+}
+EOF
+
+terraform init
+terraform apply --auto-approve`;
+
+            // Task 7 Code
+            const task7Code = `export BUCKET="${renderBucket}"
+export VPC="${renderVpc}"
+export REGION="${renderRegion}"
+export ZONE="${renderZone}"
+export PROJECT_ID=$(gcloud config get-value project)
+
+cat > main.tf <<EOF
+terraform {
+  backend "gcs" {
+    bucket = "\$BUCKET"
+    prefix = "terraform/state"
+  }
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "4.53.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+}
+
+module "instances" {
+  source = "./modules/instances"
+}
+
+module "storage" {
+  source = "./modules/storage"
+}
+
+module "vpc" {
+    source  = "terraform-google-modules/network/google"
+    version = "~> 6.0.0"
+
+    project_id   = "\$PROJECT_ID"
+    network_name = "\$VPC"
+    routing_mode = "GLOBAL"
+
+    subnets = [
+        {
+            subnet_name           = "subnet-01"
+            subnet_ip             = "10.10.10.0/24"
+            subnet_region         = "\$REGION"
+        },
+        {
+            subnet_name           = "subnet-02"
+            subnet_ip             = "10.10.20.0/24"
+            subnet_region         = "\$REGION"
+            subnet_private_access = "true"
+            subnet_flow_logs      = "true"
+            description           = "Subnet 02"
+        },
+    ]
+}
+
+resource "google_compute_firewall" "tf-firewall"{
+  name    = "tf-firewall"
+  network = "projects/\$PROJECT_ID/global/networks/\$VPC"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  source_tags   = ["web"]
+  source_ranges = ["0.0.0.0/0"]
+}
+EOF
+
+terraform init
+terraform apply --auto-approve`;
+
+            // Update textContent untuk menjaga indentasi dan spasi multiline
+            document.getElementById('code-task-1').textContent = task1Code;
+            document.getElementById('code-task-2').textContent = task2Code;
+            document.getElementById('code-task-3').textContent = task3Code;
+            document.getElementById('code-task-4').textContent = task4Code;
+            document.getElementById('code-task-5').textContent = task5Code;
+            document.getElementById('code-task-6').textContent = task6Code;
+            document.getElementById('code-task-7').textContent = task7Code;
+        }
+
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const textToCopy = codeElement.textContent;
+
+            // Validasi apakah parameter masih kosong / memuat placeholder
+            if (textToCopy.includes("<ZONE>") || textToCopy.includes("<BUCKET_NAME>") || 
+                textToCopy.includes("<3RD_INSTANCE_NAME>") || textToCopy.includes("<VPC_NAME>")) {
+                
+                showToast("⚠️ Silakan lengkapi parameter di atas terlebih dahulu!", "#f59e0b");
+                
+                // Scroll ke form parameter
+                const formElem = document.getElementById('parameter-form');
+                formElem.scrollIntoView({ behavior: 'smooth' });
+
+                // Highlight & focus input yang kosong
+                const inputs = formElem.querySelectorAll('input');
+                let firstEmpty = null;
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.remove('pulse-highlight');
+                        void input.offsetWidth; // Trigger reflow
+                        input.classList.add('pulse-highlight');
+                        if (!firstEmpty) firstEmpty = input;
+                    }
+                });
+
+                if (firstEmpty) {
+                    setTimeout(() => firstEmpty.focus(), 600);
+                }
+
+                return; // Batalkan copy ke clipboard
+            }
+
+            // Jika valid, lakukan penyalinan
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("✅ Berhasil disalin ke clipboard!", "#10b981");
+            }).catch(err => {
+                showToast("❌ Gagal menyalin kode.", "#ef4444");
+            });
+        }
+
+        function showToast(message, bgColor) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.style.background = bgColor || '#1e293b';
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        function toggleSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            drawer.classList.toggle('active');
+        }
+
+        function scrollToCurrentTask() {
+            if (currentActiveTaskId) {
+                const elem = document.getElementById(currentActiveTaskId);
+                if (elem) {
+                    elem.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        // IntersectionObserver untuk memantau task mana yang sedang dilihat
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        currentActiveTaskId = entry.target.id;
+                        document.getElementById('scroll-back').style.display = 'none';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.task-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Pantau event scroll manual ke bawah
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', () => {
+                let st = window.pageYOffset || document.documentElement.scrollTop;
+                if (st < lastScrollTop) {
+                    // Scroll ke atas
+                    if (currentActiveTaskId && window.scrollY > 400) {
+                        setTimeout(() => {
+                            document.getElementById('scroll-back').style.display = 'flex';
+                        }, 800);
+                    }
+                }
+                lastScrollTop = st <= 0 ? 0 : st;
+            }, false);
+        });
+
+        // Inisialisasi awal saat halaman selesai dimuat
+        window.onload = updateCommands;
+    </script>
+</body>
+</html>
