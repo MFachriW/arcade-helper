@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Premium Lab Guide - Arcade Facilitator 2026</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem 100px 1rem;
+        }
+
+        /* Navigasi Kembali */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            transition: transform 0.2s;
+        }
+        .back-btn:hover {
+            transform: translateX(-4px);
+        }
+
+        /* Header Card */
+        .header-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .header-card h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .header-card p {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+        .reference-box strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #f1f5f9;
+        }
+        .reference-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .reference-box li {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        .reference-box a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .reference-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Form Inputs Card */
+        .input-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            scroll-margin-top: 2rem;
+        }
+        .input-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+        .form-group small {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Task Card */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            scroll-margin-top: 2rem;
+        }
+        .task-card h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .task-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 8px;
+        }
+        .task-card p {
+            font-size: 0.95rem;
+            color: #334155;
+            margin-bottom: 16px;
+        }
+
+        /* Warning & Info Banners */
+        .warning-banner {
+            background: #fff5f5;
+            border-left: 4px solid var(--accent-red);
+            padding: 16px;
+            border-radius: 4px;
+            color: #b91c1c;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            color: #1e40af;
+            font-size: 0.95rem;
+        }
+
+        /* Code Block Container */
+        .code-container {
+            background: var(--code-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+        .code-header {
+            background: #1e293b;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            border-bottom: 1px solid #334155;
+        }
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .copy-btn.copied { background: var(--accent-green); color: white; }
+        
+        pre { padding: 16px; overflow-x: auto; margin: 0; }
+        pre code { font-family: var(--font-mono); color: var(--code-text); font-size: 0.88rem; white-space: pre; }
+        :not(pre) > code { font-family: var(--font-mono); color: #c53030; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; font-weight: 500; }
+
+        /* Explain Box (Collapsible Concepts) */
+        .explain-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .explain-box summary {
+            padding: 12px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            outline: none;
+            font-size: 0.95rem;
+            background: #f1f5f9;
+        }
+        .explain-content {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Collapsible Drawer (Daftar Isi) */
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 300px;
+            background: white;
+            border-left: 1px solid var(--border-color);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+        .drawer-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        .drawer-title {
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        .drawer-close-btn {
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+        .drawer-close-btn:hover {
+            color: #000;
+        }
+        .drawer-content {
+            padding: 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-item {
+            margin-bottom: 8px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: #eff6ff;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* Floating Menu Button */
+        .floating-menu-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .floating-menu-trigger:hover {
+            transform: scale(1.03);
+            background: var(--accent-blue-hover);
+        }
+
+        /* Drawer Overlay */
+        .drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+        .drawer-backdrop.open {
+            display: block;
+        }
+
+        /* Scroll-Back Float Indicator */
+        .scroll-back-indicator {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 999;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Highlight Pulse Animation */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); border-color: var(--accent-blue); }
+            50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); border-color: var(--accent-blue); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .pulse-highlight {
+            animation: pulse-glow 1.5s ease-out 3;
+        }
+
+        /* Video Responsive */
+        .video-responsive {
+            overflow: hidden;
+            padding-bottom: 56.25%;
+            position: relative;
+            height: 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .video-responsive iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+        /* Bug Report & Resources Footer Card */
+        .report-card, .docs-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .docs-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .docs-section ul { margin-left: 20px; margin-top: 12px; }
+        .docs-section li { margin-bottom: 6px; }
+        .docs-section a { color: var(--accent-blue); text-decoration: none; font-weight: 500; }
+        .docs-section a:hover { text-decoration: underline; }
+
+        span[class^="val"] {
+            font-weight: 600;
+            font-family: var(--font-mono);
+            color: var(--accent-blue);
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #dbeafe;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- FLOATING TRIGGER BUTTON (WIDGET MENU) -->
+    <div class="floating-menu-trigger" onclick="toggleDrawer()" title="Buka Daftar Isi">
+        <i class="fas fa-list-ul"></i>
+        <span>Daftar Isi</span>
+    </div>
+
+    <!-- BACKDROP OVERLAY -->
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
+
+    <!-- SLIDE-OUT SIDEBAR DRAWER -->
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <i class="fas fa-compass" style="color: var(--accent-blue);"></i> Navigasi Pembahasan
+            </div>
+            <i class="fas fa-times drawer-close-btn" onclick="toggleDrawer()"></i>
+        </div>
+        
+        <div class="drawer-content">
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="#variables-form" class="sidebar-link active" onclick="toggleDrawer()"><i class="fas fa-cog"></i> Parameter Lab</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#video-tutorial" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-video"></i> Video Tutorial</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#prep-installation" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-tools"></i> Persiapan & Instalasi</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-1" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 1. [Nama Task 1]</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-2" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 2. [Nama Task 2]</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-3" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 3. [Nama Task 3]</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-4" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 4. [Nama Task 4]</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-5" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 5. [Nama Task 5]</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SCROLL BACK FLOAT INDICATOR -->
+    <div class="scroll-back-indicator" id="scrollBackIndicator" onclick="returnToTask()">
+        <i class="fas fa-arrow-down"></i> Kembali ke Pembahasan Task
+    </div>
+
+    <div class="container">
+        <!-- NAVIGASI KEMBALI -->
+        <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+        
+        <!-- Header Section -->
+        <div class="header-card">
+            <h1>🚀 Panduan Qwiklabs: [Nama Resmi Lab Qwiklabs]</h1>
+            <p>Deskripsi singkat lab untuk membantu pemahaman alur pengerjaan cepat dan tepat.</p>
+            
+            <div class="reference-box">
+                <strong>💡 Referensi & Pelajari Lebih Lanjut:</strong>
+                <ul>
+                    <li>Course / Lab Link: <a href="[URL_RESMI_LAB_QWIKLABS]" target="_blank">[Nama Resmi Lab Qwiklabs]</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Video Pendukung -->
+        <div class="task-card" id="video-tutorial">
+            <h2>📺 Video Tutorial Referensi</h2>
+            <p style="margin-bottom: 16px;">Saksikan video panduan di bawah ini untuk melihat demonstrasi visual lengkap langkah-demi-langkah:</p>
+            <div class="video-responsive">
+                <iframe src="https://www.youtube.com/embed/[ID_VIDEO_YOUTUBE]" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Form Inputs Section -->
+        <div class="input-card" id="variables-form">
+            <h3>⚙️ Konfigurasi Variabel Lab</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Isi variabel dari panel kiri Qwiklabs Anda. Seluruh perintah di bawah akan otomatis terpasang dengan nilai ini secara presisi.</p>
+            
+            <div class="form-group">
+                <label for="projectId">GCP Project ID</label>
+                <small>Project ID dari panel kiri informasi Qwiklabs.</small>
+                <input type="text" id="projectId" placeholder="qwiklabs-gcp-XX-XXXXXXX" oninput="updateCommands()">
+            </div>
+
+            <!-- Tambahkan input parameter lainnya di sini jika dibutuhkan (misal: Region / Zone) -->
+        </div>
+
+        <!-- Warning Banner -->
+        <div id="warningBanner" class="warning-banner" style="display: flex;">
+            <span>⚠️ <strong>Penting:</strong> Beberapa variabel parameter di atas belum Anda isi. Pastikan Anda mengisinya terlebih dahulu sebelum menyalin perintah di bawah agar terpasang secara dinamis.</span>
+        </div>
+
+        <!-- Setup/Persiapan Task -->
+        <div class="task-card" id="prep-installation">
+            <h2>⚙️ Persiapan & Instalasi</h2>
+            <p>Konfigurasikan lingkungan terminal aktif Cloud Shell sebelum memulai task utama.</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-setup')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-setup"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 1 -->
+        <div class="task-card" id="task-card-1">
+            <h2>Task 1. [Nama Task 1]</h2>
+            <p>Deskripsi tugas 1. Cetak Project ID secara dinamis: <span class="valProjectId">&lt;PROJECT_ID&gt;</span>.</p>
+            
+            <div class="warning-banner" id="taskWarning1" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+                ⚠️ <strong>Peringatan:</strong> Kode di bawah mengandung parameter dinamis. Silakan isi form parameter di atas terlebih dahulu agar terisi otomatis.
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task1"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="task-card" id="task-card-2">
+            <h2>Task 2. [Nama Task 2]</h2>
+            <p>Deskripsi tugas 2.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 3 -->
+        <div class="task-card" id="task-card-3">
+            <h2>Task 3. [Nama Task 3]</h2>
+            <p>Deskripsi tugas 3.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task3')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task3"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="task-card" id="task-card-4">
+            <h2>Task 4. [Nama Task 4]</h2>
+            <p>Deskripsi tugas 4.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task4')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task4"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 5 -->
+        <div class="task-card" id="task-card-5">
+            <h2>Task 5. [Nama Task 5]</h2>
+            <p>Deskripsi tugas 5.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task5')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task5"></code></pre>
+            </div>
+        </div>
+
+        <!-- Congratulations Section -->
+        <div class="explain-box" style="border-color: #a3cfbb; background: #e6f4ea; margin-top: 24px; margin-bottom: 24px;">
+            <summary style="background: #e6f4ea; color: #0f5132; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 16px; border-bottom: 1px solid #a3cfbb;">
+                <i class="fa-solid fa-circle-check"></i> Lab Selesai!
+            </summary>
+            <div class="explain-content" style="padding: 16px; color: #0f5132; line-height: 1.6;">
+                🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+                <br><br>
+                Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+                Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+            </div>
+        </div>
+
+        <!-- Footer Docs Section -->
+        <div class="docs-section">
+            <h3>📚 Dokumentasi Pendukung</h3>
+            <p>Pelajari lebih lanjut mengenai teknologi yang digunakan dalam lab ini:</p>
+            <ul>
+                <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank"><i class="fas fa-book"></i> Google Cloud Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank"><i class="fas fa-terminal"></i> Google Cloud Shell Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank"><i class="fas fa-code"></i> Google Cloud CLI (gcloud)</a></li>
+            </ul>
+        </div>
+
+        <!-- Bug Report Form -->
+        <div class="report-card">
+            <details>
+                <summary style="font-weight: 600; cursor: pointer; color: var(--accent-red); outline: none;">🚨 Lapor Bug / Variasi Lab</summary>
+                <div style="margin-top: 16px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Jika menemukan kendala eksekusi kode atau perubahan urutan tugas pada portal Qwiklabs, sampaikan laporan Anda melalui form di bawah:</p>
+                    <form style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Honeypot Anti-Spam -->
+                        <input type="checkbox" name="botcheck" style="display: none;">
+                        <textarea rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-sans); font-size: 0.9rem;" placeholder="Deskripsikan masalah, pesan error, atau perbedaan langkah yang Anda temui..."></textarea>
+                        <button type="button" style="padding: 10px 18px; background: var(--accent-blue); color: white; border: none; border-radius: 6px; cursor: pointer; align-self: flex-start; font-weight: 600; font-size: 0.9rem;">Kirim Laporan</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- JavaScript Interaktif -->
+    <script>
+        function updateCommands() {
+            // 1. Ambil input variabel
+            const projectIdInput = document.getElementById('projectId').value.trim();
+            const projectId = projectIdInput || '<PROJECT_ID>';
+
+            // 2. Kontrol visibilitas Warning Banner global & per-task
+            const warningBanner = document.getElementById('warningBanner');
+            const taskWarning1 = document.getElementById('taskWarning1');
+            
+            if (projectId === '<PROJECT_ID>') {
+                warningBanner.style.display = 'block';
+                if (taskWarning1) taskWarning1.style.display = 'block';
+            } else {
+                warningBanner.style.display = 'none';
+                if (taskWarning1) taskWarning1.style.display = 'none';
+            }
+
+            // 3. Update Spans Dinamis pada Teks Penjelasan
+            document.querySelectorAll('.valProjectId').forEach(el => el.textContent = projectId);
+
+            // 4. Generate String Kode Per-Task (Gunakan backtick untuk menulis string)
+            // CONTOH KODE STATIS (BISA DILANGSUNG COPY TANPA VALIDASI)
+            document.getElementById('code-setup').textContent = `gcloud services list --enabled`;
+            
+            // CONTOH KODE DINAMIS (TERPROTEKSI VALIDASI JIKA PROJECT ID KOSONG)
+            document.getElementById('code-task1').textContent = `gcloud config set project ${projectId}
+gcloud services enable compute.googleapis.com`;
+            
+            document.getElementById('code-task2').textContent = ``;
+            
+            document.getElementById('code-task3').textContent = ``;
+            
+            document.getElementById('code-task4').textContent = ``;
+            
+            document.getElementById('code-task5').textContent = ``;
+        }
+
+        // SLIDE-OUT DRAWER TOGGLE
+        function toggleDrawer() {
+            document.getElementById('sidebarDrawer').classList.toggle('open');
+            document.getElementById('drawerBackdrop').classList.toggle('open');
+        }
+
+        // INTERSECTION OBSERVER FOR RETURN BUTTON AUTO-HIDE
+        let taskObserver = null;
+        let lastActiveTaskId = null;
+
+        function startObservingTask(taskId) {
+            if (taskObserver) taskObserver.disconnect();
+            const taskElement = document.getElementById(taskId);
+            if (!taskElement) return;
+
+            taskObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.getElementById('scrollBackIndicator').style.display = 'none';
+                        taskObserver.disconnect();
+                    }
+                });
+            }, { threshold: 0.1 });
+            taskObserver.observe(taskElement);
+        }
+
+        // SMOOTH SCROLL TO INPUTS & HIGHLIGHT
+        function scrollToInputs(targetCardId, activeTaskId) {
+            lastActiveTaskId = activeTaskId;
+            const targetEl = document.getElementById(targetCardId);
+            if (!targetEl) return;
+
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+
+            // Animasi highlight
+            const inputs = targetEl.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.add('pulse-highlight');
+                setTimeout(() => input.classList.remove('pulse-highlight'), 4500);
+            });
+
+            // Focus
+            if (inputs.length > 0) {
+                setTimeout(() => inputs[0].focus(), 600);
+            }
+            
+            const indicator = document.getElementById('scrollBackIndicator');
+            indicator.style.display = 'flex';
+
+            // Aktifkan Observer tunda
+            setTimeout(() => {
+                startObservingTask(activeTaskId);
+            }, 800);
+        }
+
+        function returnToTask() {
+            if (lastActiveTaskId) {
+                const activeEl = document.getElementById(lastActiveTaskId);
+                if (activeEl) {
+                    activeEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                document.getElementById('scrollBackIndicator').style.display = 'none';
+                if (taskObserver) taskObserver.disconnect();
+            }
+        }
+
+        // Active link highlighting on scroll inside drawer
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.task-card, #variables-form');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            let currentSectionId = 'variables-form';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 150) {
+                    currentSectionId = section.getAttribute('id') || currentSectionId;
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Fungsi Salin Kode dengan Validasi Placeholder Kosong
+        function copyCode(btn, elementId) {
+            const codeText = document.getElementById(elementId).textContent;
+
+            // Validasi hanya jika kode yang akan disalin masih memiliki placeholder variabel kosong
+            if (codeText.includes('<PROJECT_ID>') || codeText.includes('<REGION>') || codeText.includes('<ZONE>')) {
+                alert("⚠️ Harap lengkapi parameter variabel di form atas terlebih dahulu sebelum menyalin kode!");
+                
+                // Cari ID task card terdekat untuk navigasi kembali
+                const taskCard = btn.closest('.task-card');
+                const taskCardId = taskCard ? taskCard.id || 'task-card-1' : 'task-card-1';
+                
+                scrollToInputs('variables-form', taskCardId);
+                return;
+            }
+
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin kode:', err);
+            });
+        }
+
+        // Inisialisasi perintah saat halaman pertama kali dimuat
+        window.onload = updateCommands;
+    </script>
+</body>
+</html>
