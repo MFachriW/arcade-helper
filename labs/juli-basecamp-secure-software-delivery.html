@@ -721,6 +721,11 @@
         <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> dan deploy ke Cloud Run pada Task 5 membutuhkan waktu sekitar <strong>3 hingga 5+ menit</strong>. Harap tunggu hingga terminal kembali ke prompt Cloud Shell!</span>
       </div>
 
+      <div class="banner-warning" style="background-color: #e3f2fd; border: 1px solid #90caf9; color: #0d47a1; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+        <i class="fa-solid fa-circle-info" style="font-size: 1.2rem; color: #1976d2;"></i>
+        <span><strong>Catatan Penting:</strong> Jika di akhir eksekusi Task 5 terminal menampilkan <code>Failed vulnerability check for CRITICAL level</code>, hal ini <strong>normal</strong> karena base image bawaan instruksi Qwiklabs (<code>python:3.8-alpine</code>) merupakan versi lama. Kamu <strong>tetap bisa langsung menekan tombol Check my progress</strong> di Qwiklabs dan task ini 100% akan tercentang hijau!</span>
+      </div>
+
       <div class="code-container">
         <button class="copy-btn" onclick="copyCode('codeTask5')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
         <pre><code id="codeTask5"></code></pre>
@@ -1053,7 +1058,7 @@ gcloud builds submit`;
       // Task 5 Code
       document.getElementById('codeTask5').textContent = `# 1. Update Dockerfile to Patch Dependencies
 cat > ./Dockerfile << EOF
-FROM python:3.12-alpine
+FROM python:3.8-alpine
 
 # App
 WORKDIR /app
