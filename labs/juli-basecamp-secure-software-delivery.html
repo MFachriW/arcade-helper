@@ -609,9 +609,10 @@
         <div class="task-number">2</div>
         <div class="task-title">Create the Cloud Build Pipeline</div>
       </div>
-      <p class="task-desc">
-        Di task ini, kita memberikan hak akses IAM ke Cloud Build Service Account dan membuat pipeline awal <code>cloudbuild.yaml</code> untuk build dan push Docker image awal ke scanning repository.
-      </p>
+      <div class="banner-warning" style="background-color: #fff8e1; border: 1px solid #ffe082; color: #8c6b00; padding: 12px 16px; border-radius: 8px; margin: 14px 0; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+        <i class="fa-solid fa-hourglass-half" style="font-size: 1.2rem; color: #d97706;"></i>
+        <span><strong>Catatan Waktu:</strong> Eksekusi <code>gcloud builds submit</code> pada Task 2 memerlukan waktu sekitar <strong>1 hingga 2 menit</strong> untuk build & push sampel image awal. Harap tunggu hingga terminal kembali ke prompt Cloud Shell!</span>
+      </div>
 
       <div class="code-container">
         <button class="copy-btn" onclick="copyCode('codeTask2')"><i class="fa-solid fa-copy"></i> Salin Kode</button>
@@ -1007,7 +1008,7 @@ steps:
   args:
   - '-c'
   - |
-      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) \\
+      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) --location us \\
       --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq CRITICAL; \\
       then echo "Failed vulnerability check for CRITICAL level" && exit 1; else echo \\
       "No CRITICAL vulnerability found, congrats !" && exit 0; fi
