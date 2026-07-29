@@ -1008,7 +1008,7 @@ steps:
   args:
   - '-c'
   - |
-      gcloud artifacts docker images list-vulnerabilities \$(cat /workspace/scan_id.txt) --location us \\
+      gcloud artifacts docker images list-vulnerabilities --location=us \$(cat /workspace/scan_id.txt) \\
       --format="value(vulnerability.effectiveSeverity)" | if grep -Fxq CRITICAL; \\
       then echo "Failed vulnerability check for CRITICAL level" && exit 1; else echo \\
       "No CRITICAL vulnerability found, congrats !" && exit 0; fi
