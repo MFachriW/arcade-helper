@@ -542,7 +542,7 @@
       <div class="form-group">
         <label for="inputRegion">GCP Region</label>
         <small><i class="fa-solid fa-circle-info"></i> Region GCP dari panel kredensial Qwiklabs sebelah kiri (Contoh: us-central1, us-east1)</small>
-        <input type="text" id="inputRegion" class="input-control" placeholder="us-central1" value="us-central1" oninput="updateCommands()">
+        <input type="text" id="inputRegion" class="input-control" placeholder="us-central1" value="" oninput="updateCommands()">
       </div>
     </div>
 
@@ -850,7 +850,7 @@
     // Main Function: Update All Dynamic Code Snippets & Explanations
     function updateCommands() {
       const regionInput = document.getElementById('inputRegion').value.trim();
-      const region = regionInput !== '' ? regionInput : 'us-central1';
+      const region = regionInput !== '' ? regionInput : '<REGION>';
 
       // Update all inline HTML span values with class valRegion
       document.querySelectorAll('.valRegion').forEach(el => {

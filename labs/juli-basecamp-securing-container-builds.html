@@ -542,7 +542,7 @@
       <div class="form-group">
         <label for="inputRegion">GCP Region</label>
         <small><i class="fa-solid fa-circle-info"></i> Region dari panel kredensial Qwiklabs sebelah kiri (Default: us-central1)</small>
-        <input type="text" id="inputRegion" class="input-control" placeholder="us-central1" value="us-central1" oninput="updateCommands()">
+        <input type="text" id="inputRegion" class="input-control" placeholder="us-central1" value="" oninput="updateCommands()">
       </div>
     </div>
 
@@ -634,6 +634,13 @@
         </div>
       </details>
 
+      <div class="banner banner-warning">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <div>
+          <strong>Catatan Durasi:</strong> Proses <code>mvn deploy</code> mengunduh plugin Maven wagon dan mengompilasi artefak Java ke Artifact Registry (membutuhkan waktu sekitar <strong>1 hingga 3 menit</strong>). Harap bersabar tunggu hingga terminal selesai memproses dan kembali ke prompt Cloud Shell!
+        </div>
+      </div>
+
       <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
 
       <div class="code-container">
@@ -684,6 +691,14 @@
       </div>
 
       <p><strong>Langkah 2: Konfigurasi pom.xml, extensions.xml & Lakukan Kompilasi Cache</strong></p>
+
+      <div class="banner banner-warning">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <div>
+          <strong>Catatan Durasi:</strong> Perintah <code>mvn compile</code> mengunduh ulang seluruh cache dependensi Maven dari repositori remote baru (membutuhkan waktu sekitar <strong>2 hingga 4 menit</strong>). Harap bersabar tunggu hingga proses kompilasi selesai sempurna!
+        </div>
+      </div>
+
       <p>Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
 
       <div class="code-container">
@@ -804,7 +819,7 @@
     // Dynamic Commands Generator
     function updateCommands() {
       const regionInput = document.getElementById('inputRegion').value.trim();
-      const region = regionInput !== '' ? regionInput : 'us-central1';
+      const region = regionInput !== '' ? regionInput : '<REGION>';
 
       // Update all inline HTML spans matching class valRegion
       document.querySelectorAll('.valRegion').forEach(el => {
