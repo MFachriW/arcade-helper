@@ -785,9 +785,9 @@
                 <pre><code id="code-task1-init-apply"></code></pre>
             </div>
 
-            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 4: Migrasi State ke Cloud Storage (GCS) Backend</h3>
+            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 4: Migrasi State ke Cloud Storage (GCS) Backend & Labeling</h3>
             <p style="font-size: 0.9rem;">
-                Ubah konfigurasi backend di <code class="inline-code">main.tf</code> dari <code class="inline-code">local</code> menjadi <code class="inline-code">gcs</code>, lalu migrasikan berkas state ke Cloud Storage.
+                Ubah konfigurasi backend di <code class="inline-code">main.tf</code> dari <code class="inline-code">local</code> menjadi <code class="inline-code">gcs</code>, jalankan migrasi state, dan perbarui label bucket agar langsung terdeteksi oleh sistem pemantau Qwiklabs.
             </p>
 
             <div class="code-container">
@@ -798,21 +798,6 @@
                     </button>
                 </div>
                 <pre><code id="code-task1-migrate-gcs"></code></pre>
-            </div>
-
-            <h3 style="font-size: 1rem; margin-top: 20px; margin-bottom: 8px;">Langkah 5: Refresh State & Pembersihan (Cleanup)</h3>
-            <p style="font-size: 0.9rem;">
-                Jalankan refresh state, kemudian kembalikan backend ke lokal dengan opsi <code class="inline-code">force_destroy = true</code> agar bucket dapat dihapus beserta konten di dalamnya.
-            </p>
-
-            <div class="code-container">
-                <div class="code-header">
-                    <span class="code-lang">Bash</span>
-                    <button class="copy-btn" onclick="copyCode(this, 'code-task1-cleanup')">
-                        <i class="far fa-copy"></i> Salin Perintah
-                    </button>
-                </div>
-                <pre><code id="code-task1-cleanup"></code></pre>
             </div>
 
             <div class="info-box">
@@ -1049,35 +1034,9 @@ terraform {
 }
 EOF
 
-terraform init -migrate-state -force-copy`;
-
-            document.getElementById('code-task1-cleanup').textContent = 
-`terraform refresh
-terraform show
-
-cat <<EOF > main.tf
-provider "google" {
-  project     = "${projectId}"
-  region      = "${region}"
-}
-
-resource "google_storage_bucket" "test-bucket-for-state" {
-  name        = "${projectId}"
-  location    = "US"
-  uniform_bucket_level_access = true
-  force_destroy = true
-}
-
-terraform {
-  backend "local" {
-    path = "terraform/state/terraform.tfstate"
-  }
-}
-EOF
-
 terraform init -migrate-state -force-copy
-terraform apply -auto-approve
-terraform destroy -auto-approve`;
+gcloud storage buckets update gs://${projectId} --update-labels=key=value
+sleep 3`;
 
             // Task 2 Codes
             document.getElementById('code-task2-docker-run').textContent = 
