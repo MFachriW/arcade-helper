@@ -279,6 +279,22 @@
             </div>
         </div>
 
+        <!-- Info Box Penunjuk Region & Zone -->
+        <div style="background: #f0f7ff; border-left: 4px solid var(--accent-blue); padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0; color: #1e40af; font-size: 0.95rem;">
+            <i class="fa-solid fa-circle-info" style="font-size: 1.1rem; margin-right: 6px;"></i>
+            <strong>💡 Cara Menemukan Region & Zone:</strong>
+            <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-main);">
+                Setelah menekan tombol <strong>Start Lab</strong> di Qwiklabs, buka petunjuk pengerjaan <strong>Task 1 (Build infrastructure) Langkah ke-3</strong>.
+                Cari kotak kode <code>provider "google"</code> yang tampilannya seperti di bawah ini, lalu salin nilainya ke form di atas:
+            </p>
+            <pre style="background: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem; margin-top: 10px; border: 1px solid var(--border-color); overflow-x: auto; white-space: pre;">
+provider "google" {
+  project = "..."
+  region  = "us-east1"   <span style="color: #38bdf8; font-weight: bold;">&lt;--- Salin ini ke kolom REGION</span>
+  zone    = "us-east1-b" <span style="color: #38bdf8; font-weight: bold;">&lt;--- Salin ini ke kolom ZONE</span>
+}</pre>
+        </div>
+
         <!-- Warning Banner Dinamis -->
         <div id="warningBanner" class="warning-banner">
             ⚠️ <strong>Perhatian:</strong> Masih ada variabel yang belum diisi! Harap lengkapi semua form di atas agar skrip di bawah tidak berisi parameter kosong.
@@ -323,6 +339,9 @@
             </details>
 
             <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="warning-banner" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+                ⚠️ <strong>Penting:</strong> Sebelum menekan tombol <strong>Copy</strong> di bawah, pastikan parameter <strong>GCP Project ID</strong>, <strong>Region</strong>, dan <strong>Zone</strong> di dalam kode di bawah <strong>sudah tidak berupa placeholder</strong> (seperti <code>&lt;PROJECT_ID&gt;</code>, <code>&lt;REGION&gt;</code>, <code>&lt;ZONE&gt;</code>). Jika masih berupa placeholder, harap isi form variabel di bagian paling atas halaman terlebih dahulu!
+            </div>
             <div class="code-container">
                 <div class="code-header">
                     <span>Cloud Shell Terminal</span>
