@@ -635,24 +635,6 @@
         </div>
       </details>
     </div>
-
-    <!-- AUTOMATION SCRIPT (ALL-IN-ONE) -->
-    <div class="task-card" style="border-color: var(--warning-border);">
-      <div class="task-header">
-        <div class="task-title" style="color: var(--warning-text);">
-          <i class="fa-solid fa-bolt"></i>
-          <span>⚡ Skrip Otomatis Sekali Jalan (Opsional)</span>
-        </div>
-      </div>
-      <p class="task-desc">Menjalankan seluruh tahapan dari Task 1 hingga Task 5 secara berurutan dalam satu skrip otomatis. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
-      
-      <div class="code-container">
-        <div class="code-header" style="background-color: #3a321a; border-bottom-color: #5d4f26;">
-          <span style="color: var(--warning-border);">Bash - All-in-One Script</span>
-          <button class="copy-btn" onclick="copyCode('codeAll', this)" style="border-color: var(--warning-border); color: var(--warning-border);"><i class="fa-regular fa-copy"></i> Copy Skrip</button>
-        </div>
-        <pre><code id="codeAll"></code></pre>
-      </div>
     </div>
 
     <!-- KARTU LAPOR SOAL BARU -->
@@ -792,71 +774,6 @@ curl -s -X POST --data-binary @public_access.json \\
 
 curl -s -X DELETE -H "Authorization: Bearer \$(gcloud auth print-access-token)" \\
      "https://storage.googleapis.com/storage/v1/b/${projectId}-bucket-1"`;
-
-      // Update Complete Automation Script
-      document.getElementById('codeAll').innerText = 
-`export PROJECT_ID="${projectId}"
-
-# 1. Create Buckets
-cat > bucket1.json <<EOF
-{  
-   "name": "\\\${PROJECT_ID}-bucket-1",
-   "location": "us",
-   "storageClass": "multi_regional"
-}
-EOF
-
-curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     -H "Content-Type: application/json" \\
-     --data-binary @bucket1.json \\
-     "https://storage.googleapis.com/storage/v1/b?project=\\\${PROJECT_ID}"
-
-cat > bucket2.json <<EOF
-{  
-   "name": "\\\${PROJECT_ID}-bucket-2",
-   "location": "us",
-   "storageClass": "multi_regional"
-}
-EOF
-
-curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     -H "Content-Type: application/json" \\
-     --data-binary @bucket2.json \\
-     "https://storage.googleapis.com/storage/v1/b?project=\\\${PROJECT_ID}"
-
-# 2. Upload Image
-curl -s -L "https://cdn.qwiklabs.com/amN7kZDhflOmMUaM3tiFSjyw5yfXIqOxtrpslYJS2Kg%3D" -o world.jpeg
-
-curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     -H "Content-Type: image/jpeg" \\
-     --data-binary @world.jpeg \\
-     "https://storage.googleapis.com/upload/storage/v1/b/\\\${PROJECT_ID}-bucket-1/o?uploadType=media&name=world.jpeg"
-
-# 3. Copy Image
-curl -s -X POST -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     -H "Content-Type: application/json" \\
-     --data "{\\"destination\\": \\"\\\${PROJECT_ID}-bucket-2\\"}" \\
-     "https://storage.googleapis.com/storage/v1/b/\\\${PROJECT_ID}-bucket-1/o/world.jpeg/copyTo/b/\\\${PROJECT_ID}-bucket-2/o/world.jpeg"
-
-# 4. Make Public
-cat > public_access.json <<EOF
-{
-  "entity": "allUsers",
-  "role": "READER"
-}
-EOF
-
-curl -s -X POST --data-binary @public_access.json \\
-     -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     -H "Content-Type: application/json" \\
-     "https://storage.googleapis.com/storage/v1/b/\\\${PROJECT_ID}-bucket-1/o/world.jpeg/acl"
-
-# 5. Clean up Bucket 1
-curl -s -X DELETE -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     "https://storage.googleapis.com/storage/v1/b/\\\${PROJECT_ID}-bucket-1/o/world.jpeg"
-
-curl -s -X DELETE -H "Authorization: Bearer \\\$(gcloud auth print-access-token)" \\
-     "https://storage.googleapis.com/storage/v1/b/\\\${PROJECT_ID}-bucket-1"`;
     }
 
     function copyCode(elementId, btnElement) {
