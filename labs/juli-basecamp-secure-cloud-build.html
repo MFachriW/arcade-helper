@@ -978,8 +978,8 @@ gcloud artifacts docker images scan \\
 # 3. Tampilkan ID Laporan Pemindaian
 cat scan_id.txt
 
-# 4. Tampilkan daftar kerentanan yang terdeteksi
-gcloud artifacts docker images list-vulnerabilities \$(cat scan_id.txt)
+# 4. Tampilkan sampel ringkasan kerentanan (dibatasi 10 terbanyak agar terminal tidak flooded)
+gcloud artifacts docker images list-vulnerabilities \$(cat scan_id.txt) --limit=10
 
 # 5. Evaluasi kerentanan tingkat CRITICAL
 export SEVERITY=CRITICAL
