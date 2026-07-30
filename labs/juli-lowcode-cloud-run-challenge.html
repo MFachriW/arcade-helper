@@ -802,6 +802,17 @@
         </div>
         <pre><code id="code4b"></code></pre>
       </div>
+
+      <div class="explain-box" style="border-color: #ffe082; background: #fff8e1; margin-top: 14px;">
+        <summary style="background: #fff8e1; color: #8c6b00; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 16px; border-bottom: 1px solid #ffe082;">
+          <i class="fa-solid fa-terminal" style="color: #d97706;"></i> Konfirmasi Prompt Terminal (Allow Unauthenticated)
+        </summary>
+        <div class="explain-content" style="padding: 12px 16px; color: #5d4037; font-size: 0.9rem; line-height: 1.5;">
+          Saat perintah deploy di atas dijalankan di Cloud Shell, terminal akan menampilkan pertanyaan konfirmasi akses publik:
+          <br><code style="background: #f5f5f5; color: #d32f2f; padding: 3px 8px; border-radius: 4px; display: inline-block; margin: 6px 0; font-family: monospace;">Allow unauthenticated invocations of new function [<span class="valHttpName">http-responder</span>]? (y/N)?</code>
+          <br>Ketik <strong><code>y</code></strong> (atau <code>Y</code>) pada terminal Cloud Shell lalu tekan <strong>Enter</strong> untuk menyetujui izin akses HTTP publik agar proses deployment berjalan hingga selesai!
+        </div>
+      </div>
     </div>
 
     <!-- Congratulations Section -->
@@ -883,6 +894,8 @@
       const region = regionVal || '<REGION>';
       const csName = csNameVal || '<STORAGE_FUNCTION_NAME>';
       const httpName = httpNameVal || '<HTTP_FUNCTION_NAME>';
+
+      document.querySelectorAll('.valHttpName').forEach(el => el.textContent = httpName);
 
       // Code 1: Setup IAM & API
       document.getElementById('code1').textContent = 
