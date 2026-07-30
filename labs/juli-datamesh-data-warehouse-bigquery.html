@@ -741,6 +741,7 @@
           <select id="selTask2" onchange="updateCommands()">
             <option value="A">Varian A: Create a new table 'country_area_data'</option>
             <option value="B">Varian B: Alter Table 'global_mobility_tracker_data' (Add Columns/STRUCT)</option>
+            <option value="C">Varian C: Populate Mobility Record Data ('consolidate_covid_tracker_data')</option>
           </select>
         </div>
       </div>
@@ -779,6 +780,7 @@
           <select id="selTask3" onchange="updateCommands()">
             <option value="A">Varian A: Create a new table 'mobility_data'</option>
             <option value="B">Varian B: Populate Population Data (ECDC Data)</option>
+            <option value="C">Varian C: Query missing data in population & country_area ('oxford_policy_tracker_worldwide')</option>
           </select>
         </div>
       </div>
@@ -817,6 +819,7 @@
           <select id="selTask4" onchange="updateCommands()">
             <option value="A">Varian A: Delete Null population and country area data</option>
             <option value="B">Varian B: Populate/Update Country Area & Mobility Data</option>
+            <option value="C">Varian C: Create table 'pop_data_2019' (Copy ECDC Public Dataset)</option>
           </select>
         </div>
       </div>
@@ -973,7 +976,7 @@ FROM \\\`bigquery-public-data.census_bureau_international.country_names_area\\\`
   <li><strong>CREATE OR REPLACE TABLE ... AS SELECT:</strong> Query BigQuery yang membuat tabel lokal bernama <code>country_area_data</code> di bawah dataset target, lalu mengisi datanya langsung dengan hasil duplikasi dari public dataset Census Bureau.</li>
   <li><strong>census_bureau_international.country_names_area:</strong> Dataset publik global Google Cloud yang memuat informasi statistik demografi serta batas wilayah/luas area geografis negara di dunia.</li>
 </ul>`;
-      } else {
+      } else if (t2Val === 'B') {
         document.getElementById('descTask2').innerHTML = "Menambahkan kolom population, country_area, dan mobility STRUCT pada tabel global_mobility_tracker_data. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
         document.getElementById('code2').textContent = 
 `# Memodifikasi skema tabel yang sudah ada untuk menambahkan kolom baru serta tipe objek bersarang (STRUCT)
@@ -999,6 +1002,38 @@ ADD COLUMN mobility STRUCT<
   <li><strong>ALTER TABLE ... ADD COLUMN:</strong> Mengubah definisi skema tabel tanpa merusak data yang telah tersimpan sebelumnya. Sangat berguna saat struktur skema perlu disesuaikan di tengah jalan.</li>
   <li><strong>STRUCT:</strong> Tipe data BigQuery yang merepresentasikan kontainer terstruktur bersarang (nested structure) mirip format JSON. Membantu mengelompokkan metrik mobilitas harian (retail, grocery, dll) ke dalam satu lingkup kolom bernama <code>mobility</code> untuk mempermudah organisasi skema database.</li>
 </ul>`;
+      } else if (t2Val === 'C') {
+        document.getElementById('descTask2').innerHTML = "Mengisi data pergerakan mobilitas (mobility record) pada tabel <code>consolidate_covid_tracker_data</code> dari dataset publik Google COVID-19 Mobility. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
+        document.getElementById('code2').textContent = 
+`# Mengisi kolom bertipe STRUCT (mobility) pada tabel consolidate_covid_tracker_data dari data agregat publik
+bq query --use_legacy_sql=false \\
+"
+UPDATE \\\`${ds2}.consolidate_covid_tracker_data\\\` t0
+SET
+  t0.mobility.avg_retail      = t1.avg_retail,
+  t0.mobility.avg_grocery     = t1.avg_grocery,
+  t0.mobility.avg_parks       = t1.avg_parks,
+  t0.mobility.avg_transit     = t1.avg_transit,
+  t0.mobility.avg_workplace   = t1.avg_workplace,
+  t0.mobility.avg_residential = t1.avg_residential
+FROM (
+  SELECT country_region, date,
+    AVG(retail_and_recreation_percent_change_from_baseline) as avg_retail,
+    AVG(grocery_and_pharmacy_percent_change_from_baseline)  as avg_grocery,
+    AVG(parks_percent_change_from_baseline) as avg_parks,
+    AVG(transit_stations_percent_change_from_baseline) as avg_transit,
+    AVG(workplaces_percent_change_from_baseline) as avg_workplace,
+    AVG(residential_percent_change_from_baseline)  as avg_residential
+  FROM \\\`bigquery-public-data.covid19_google_mobility.mobility_report\\\`
+  GROUP BY country_region, date
+) AS t1
+WHERE CONCAT(t0.country_name, t0.date) = CONCAT(t1.country_region, t1.date);
+"`;
+        document.getElementById('explainTask2').innerHTML = 
+`<ul>
+  <li><strong>Populate Mobility Record:</strong> Query ini menghitung nilai rata-rata (AVG) dari 6 indikator mobilitas harian (retail, grocery, parks, transit, workplace, residential) dari dataset publik <code>covid19_google_mobility.mobility_report</code>.</li>
+  <li><strong>UPDATE ... SET t0.mobility:</strong> Meng-update kolom bertipe <code>STRUCT</code> bernama <code>mobility</code> pada tabel <code>consolidate_covid_tracker_data</code> dengan mengawinkan record berdasarkan kombinasi nama negara dan tanggal (<code>CONCAT(country_name, date)</code>).</li>
+</ul>`;
       }
 
       // --- TASK 3 ---
@@ -1017,7 +1052,7 @@ FROM \\\`bigquery-public-data.covid19_google_mobility.mobility_report\\\`
 `<ul>
   <li><strong>covid19_google_mobility.mobility_report:</strong> Dataset publik yang merekam statistik pergerakan harian masyarakat global ke berbagai kategori titik penting (mall, halte transit, taman) selama pandemi untuk dianalisis relasinya terhadap kebijakan pemerintah.</li>
 </ul>`;
-      } else {
+      } else if (t3Val === 'B') {
         document.getElementById('descTask3').innerHTML = "Membuat tabel bantu populasi ECDC 2019 dan meng-update kolom populasi pada tabel konsolidasi. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
         document.getElementById('code3').textContent = 
 `# 1. Membuat tabel duplikat mentah dari data ECDC global
@@ -1043,6 +1078,26 @@ WHERE TRIM(t0.alpha_3_code) = TRIM(t1.country_territory_code);
   <li><strong>pop_data_2019_small:</strong> Dibuat dengan metode <code>GROUP BY</code> agar diperoleh pasangan unik kode negara dan total populasinya. Jika kita langsung melakukan update dari tabel mentah ECDC yang memiliki banyak tanggal per negara, BigQuery akan memunculkan error karena query menghasilkan banyak nilai untuk satu target update.</li>
   <li><strong>UPDATE ... FROM:</strong> Query DML BigQuery untuk meng-update record kolom pada tabel konsolidasi dengan mencocokkan kode negara (JOIN) dari tabel populasi yang telah disederhanakan.</li>
 </ul>`;
+      } else if (t3Val === 'C') {
+        document.getElementById('descTask3').innerHTML = "Mencari daftar negara yang tidak memiliki data populasi atau data luas area pada tabel <code>oxford_policy_tracker_worldwide</code>. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
+        document.getElementById('code3').textContent = 
+`# Kueri daftar negara yang data populasi (NULL) atau data luas area (NULL) tidak ada, diurutkan alfabetis
+bq query --use_legacy_sql=false \\
+"
+SELECT country_name 
+FROM \\\`${ds2}.oxford_policy_tracker_worldwide\\\` 
+WHERE population IS NULL
+UNION ALL
+SELECT country_name 
+FROM \\\`${ds2}.oxford_policy_tracker_worldwide\\\` 
+WHERE country_area IS NULL
+ORDER BY country_name;
+"`;
+        document.getElementById('explainTask3').innerHTML = 
+`<ul>
+  <li><strong>UNION ALL:</strong> Menggabungkan hasil pencarian <code>SELECT</code> dari negara dengan populasi NULL dan negara dengan luas area NULL. Penggunaan <code>UNION ALL</code> menyebabkan negara yang tidak memiliki kedua data tersebut akan muncul sebanyak 2 kali (sesuai spesifikasi soal).</li>
+  <li><strong>ORDER BY country_name:</strong> Mengurutkan daftar nama negara secara alfabetis.</li>
+</ul>`;
       }
 
       // --- TASK 4 ---
@@ -1060,7 +1115,7 @@ WHERE population IS NULL OR country_area IS NULL
 `<ul>
   <li><strong>DELETE FROM:</strong> Perintah pembersihan data (data cleansing) untuk membuang seluruh record baris yang tidak memiliki nilai (NULL) pada kolom populasi atau luas area, memastikan analisis atau pemodelan ke depan terbebas dari bias data kosong.</li>
 </ul>`;
-      } else {
+      } else if (t4Val === 'B') {
         document.getElementById('descTask4').innerHTML = "Meng-update data country_area dari Census Bureau dan mengisi nilai agregat mobility STRUCT ke tabel konsolidasi. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
         document.getElementById('code4').textContent = 
 `# 1. Update data luas area negara (country_area) pada tabel konsolidasi (t0) dengan mencocokkan nama negara dari data Census Bureau (t1)
@@ -1098,6 +1153,20 @@ WHERE CONCAT(t0.country_name, t0.date) = CONCAT(t1.country_region, t1.date);
 `<ul>
   <li><strong>Akses STRUCT Column:</strong> Di BigQuery, properti di dalam STRUCT diakses dengan notasi titik seperti objek biasa (misal: <code>t0.mobility.avg_retail</code>).</li>
   <li><strong>Subquery Aggregation:</strong> Bagian <code>FROM (...) AS t1</code> melakukan pra-kalkulasi rata-rata (AVG) persentase perubahan harian dari seluruh stasiun pemantau sebelum dicocokkan ke tabel gabungan <code>t0</code> berdasarkan kombinasi nama negara dan tanggal.</li>
+</ul>`;
+      } else if (t4Val === 'C') {
+        document.getElementById('descTask4').innerHTML = "Membuat tabel baru <code>pop_data_2019</code> dan menduplikasi data populasi dari ECDC COVID-19 public dataset. Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:";
+        document.getElementById('code4').textContent = 
+`# Membuat tabel pop_data_2019 di dataset target dan meng-copy seluruh data geografis publik ECDC 2019
+bq query --use_legacy_sql=false \\
+"
+CREATE OR REPLACE TABLE \\\`${ds2}.pop_data_2019\\\` AS
+SELECT * 
+FROM \\\`bigquery-public-data.covid19_ecdc.covid_19_geographic_distribution_worldwide\\\`;
+"`;
+        document.getElementById('explainTask4').innerHTML = 
+`<ul>
+  <li><strong>CREATE OR REPLACE TABLE ... AS SELECT:</strong> Kueri BigQuery untuk membuat tabel lokal bernama <code>pop_data_2019</code> di dataset target Anda dan mengisinya secara penuh dengan data populasi dari dataset publik <code>covid19_ecdc</code>.</li>
 </ul>`;
       }
     }
