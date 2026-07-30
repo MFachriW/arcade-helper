@@ -934,8 +934,7 @@ gcloud functions deploy ${csName} \\
   --region ${region} \\
   --trigger-bucket $PROJECT_ID \\
   --trigger-location ${region} \\
-  --max-instances 2 \\
-  --quiet`;
+  --max-instances 2`;
 
       // Code 4a: Task 3 HTTP Function - Source Code
       document.getElementById('code4a').textContent = 
@@ -970,8 +969,7 @@ gcloud functions deploy ${httpName} \\
   --region ${region} \\
   --trigger-http \\
   --min-instances 1 \\
-  --max-instances 2 \\
-  --quiet`;
+  --max-instances 2`;
     }
 
     // SLIDE-OUT DRAWER TOGGLE
