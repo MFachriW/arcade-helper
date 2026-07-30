@@ -416,15 +416,15 @@
                 <div class="stat-item">
                     <div class="stat-icon"><i class="fas fa-flask"></i></div>
                     <div class="stat-info">
-                        <div class="num">16</div>
+                        <div class="num" id="statTotalLabs">17</div>
                         <div class="label">Panduan Lab Aktif</div>
                     </div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
                     <div class="stat-info">
-                        <div class="num">4</div>
-                        <div class="label">Arcade Games Juli</div>
+                        <div class="num" id="statActiveGames">5</div>
+                        <div class="label">Grup Game Aktif</div>
                     </div>
                 </div>
                 <div class="stat-item">
@@ -461,7 +461,7 @@
             
             <div class="month-body">
                 <!-- GAME 1 (Low-Code: Blue Header) -->
-                <details class="game-card theme-blue" open>
+                <details class="game-card theme-blue">
                     <summary class="game-summary">
                         <div class="game-title">
                             <i class="fas fa-cubes"></i>
@@ -489,7 +489,7 @@
                 </details>
 
                 <!-- GAME 2 (Data Mesh: Purple Header) -->
-                <details class="game-card theme-purple" open>
+                <details class="game-card theme-purple">
                     <summary class="game-summary">
                         <div class="game-title">
                             <i class="fas fa-database"></i>
@@ -517,7 +517,7 @@
                 </details>
 
                 <!-- GAME 3 (Voyage: Green Header) -->
-                <details class="game-card theme-green" open>
+                <details class="game-card theme-green">
                     <summary class="game-summary">
                         <div class="game-title">
                             <i class="fas fa-shield-cat"></i>
@@ -561,7 +561,7 @@
                 </details>
 
                 <!-- GAME 4 (Base Camp: Amber Header) -->
-                <details class="game-card theme-amber" open>
+                <details class="game-card theme-amber">
                     <summary class="game-summary">
                         <div class="game-title">
                             <i class="fas fa-layer-group"></i>
@@ -643,10 +643,16 @@
                             <i class="fas fa-comments"></i>
                             <span>Safe Spaces</span>
                         </div>
-                        <span class="count-badge">0 Labs</span>
+                        <span class="count-badge">1 Lab</span>
                     </summary>
-                    <div class="empty-card">
-                        <i class="fas fa-clock"></i> Masih belum waktunya / belum rilis! Jika butuh bantuan lab ini, silakan hubungi Fachri 😉
+                    <div class="lab-grid">
+                        <a href="labs/juli-safespaces-cost-optimization-gke-vm.html" class="lab-item-link">
+                            <div class="lab-info">
+                                <i class="fas fa-vial lab-icon"></i>
+                                <span>Exploring Cost-optimization for GKE Virtual Machines</span>
+                            </div>
+                            <i class="fas fa-chevron-right arrow-icon"></i>
+                        </a>
                     </div>
                 </details>
             </div>
@@ -696,8 +702,52 @@
         </div>
     </div>
 
-    <!-- Live Search Filter Script -->
+    <!-- Live Search Filter & Dynamic Stats Script -->
     <script>
+        function updateDynamicStats() {
+            // 1. Total Panduan Lab Aktif (hitung seluruh .lab-item-link di DOM)
+            const allLabLinks = document.querySelectorAll('.lab-item-link');
+            const totalLabs = allLabLinks.length;
+            const statTotalLabs = document.getElementById('statTotalLabs');
+            if (statTotalLabs) statTotalLabs.textContent = totalLabs;
+
+            // 2. Total Grup Game Aktif (hitung game-card yang memuat lab)
+            const gameCards = document.querySelectorAll('.game-card');
+            let activeGamesCount = 0;
+
+            gameCards.forEach(game => {
+                const labsInGame = game.querySelectorAll('.lab-item-link').length;
+                if (labsInGame > 0) {
+                    activeGamesCount++;
+                }
+
+                // Update count-badge per game card secara otomatis
+                const countBadge = game.querySelector('.count-badge');
+                if (countBadge) {
+                    countBadge.textContent = labsInGame === 1 ? '1 Lab' : `${labsInGame} Labs`;
+                }
+            });
+
+            const statActiveGames = document.getElementById('statActiveGames');
+            if (statActiveGames) statActiveGames.textContent = activeGamesCount;
+
+            // 3. Update month-badge per month-card secara otomatis
+            const monthCards = document.querySelectorAll('.month-card');
+            monthCards.forEach(month => {
+                const labsInMonth = month.querySelectorAll('.lab-item-link').length;
+                const monthBadge = month.querySelector('.month-badge');
+                if (monthBadge && labsInMonth > 0) {
+                    monthBadge.textContent = labsInMonth === 1 ? '1 Lab Available' : `${labsInMonth} Labs Available`;
+                    monthBadge.style.background = '';
+                    monthBadge.style.color = '';
+                }
+            });
+        }
+
+        // Inisialisasi statistik otomatis
+        document.addEventListener('DOMContentLoaded', updateDynamicStats);
+        updateDynamicStats();
+
         function filterLabs() {
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const labLinks = document.querySelectorAll('.lab-item-link');
