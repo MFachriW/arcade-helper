@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Qwiklabs: Understanding and Combining GKE Autoscaling Strategies</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 24px 16px;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            transition: transform 0.2s;
+        }
+        .back-btn:hover {
+            transform: translateX(-4px);
+        }
+        
+        .header-card, .input-card, .task-card, .report-card, .docs-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            scroll-margin-top: 2rem;
+        }
+
+        h1 { color: #0f172a; font-size: 1.6rem; margin-bottom: 12px; font-weight: 700; line-height: 1.3; }
+        h2 { color: #0f172a; font-size: 1.3rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-weight: 600; }
+        h3 { color: #0f172a; font-size: 1.1rem; margin-bottom: 12px; font-weight: 600; margin-top: 24px; }
+
+        .reference-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.95rem;
+        }
+        .reference-box ul { margin-left: 20px; margin-top: 8px; }
+        .reference-box a { color: #166534; text-decoration: none; font-weight: 600; }
+        .reference-box a:hover { text-decoration: underline; }
+
+        .video-responsive {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            background-color: #000;
+        }
+        .video-responsive iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: #1e293b; }
+        .form-group small { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; line-height: 1.4; }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #f8fafc;
+        }
+        .form-group input:focus {
+            background: white;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+
+        .warning-banner {
+            background: #fff5f5;
+            border-left: 4px solid var(--accent-red);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            color: #991b1b;
+            margin-bottom: 24px;
+            font-weight: 500;
+            display: block;
+        }
+        
+        .warning-yellow {
+            background: #fff8e1;
+            border-left: 4px solid var(--accent-yellow);
+            color: #b45309;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            color: #1e40af;
+            font-size: 0.95rem;
+        }
+
+        .code-container {
+            background: var(--code-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+        .code-header {
+            background: #1e293b;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+            border-bottom: 1px solid #334155;
+        }
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .copy-btn.copied { background: var(--accent-green); color: white; }
+        
+        pre { padding: 16px; overflow-x: auto; margin: 0; }
+        pre code { font-family: var(--font-mono); color: var(--code-text); font-size: 0.88rem; white-space: pre; }
+        :not(pre) > code { font-family: var(--font-mono); color: #c53030; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; font-weight: 500; }
+
+        .explain-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        .explain-box summary {
+            padding: 12px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f1f5f9;
+            user-select: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .explain-box summary:hover { background: #e2e8f0; }
+        .explain-content {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .explain-content p { margin-bottom: 10px; }
+        .explain-content ul { margin-left: 20px; }
+
+        .docs-section ul { margin-left: 20px; margin-top: 12px; }
+        .docs-section li { margin-bottom: 6px; }
+        .docs-section a { color: var(--accent-blue); text-decoration: none; font-weight: 500; }
+        .docs-section a:hover { text-decoration: underline; }
+
+        span[class^="val"] {
+            font-weight: 600;
+            font-family: var(--font-mono);
+            color: var(--accent-blue);
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #dbeafe;
+        }
+
+        /* UNIFIED COLLAPSIBLE SIDEBAR DRAWER */
+        html { scroll-behavior: smooth; }
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 320px;
+            background: white;
+            border-left: 1px solid var(--border-color);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-drawer.open { transform: translateX(0); }
+        .drawer-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        .drawer-title { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+        .drawer-close-btn { cursor: pointer; color: var(--text-muted); font-size: 1.2rem; transition: color 0.2s; }
+        .drawer-close-btn:hover { color: #000; }
+        .drawer-content { padding: 1rem; overflow-y: auto; flex-grow: 1; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-item { margin-bottom: 8px; }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: #eff6ff;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        .floating-menu-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .floating-menu-trigger:hover { transform: scale(1.03); background: var(--accent-blue-hover); }
+        .drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+        .drawer-backdrop.open { display: block; }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6); border-color: var(--accent-blue); }
+            50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); border-color: var(--accent-blue); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .pulse-highlight { animation: pulse-glow 1.5s ease-out 3; }
+        
+        .scroll-back-indicator {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 999;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- FLOATING TRIGGER BUTTON (WIDGET MENU) -->
+    <div class="floating-menu-trigger" onclick="toggleDrawer()" title="Buka Daftar Isi">
+        <i class="fas fa-list-ul"></i>
+        <span>Daftar Isi</span>
+    </div>
+
+    <!-- BACKDROP OVERLAY -->
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
+
+    <!-- SLIDE-OUT SIDEBAR DRAWER -->
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <i class="fas fa-compass" style="color: var(--accent-blue);"></i> Navigasi Pembahasan
+            </div>
+            <i class="fas fa-times drawer-close-btn" onclick="toggleDrawer()"></i>
+        </div>
+        
+        <div class="drawer-content">
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="#variables-form" class="sidebar-link active" onclick="toggleDrawer()"><i class="fas fa-cog"></i> Parameter Lab</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#video-tutorial" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-video"></i> Video Tutorial</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#prep-installation" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-tools"></i> Persiapan Lingkungan</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-1" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 1. Horizontal Autoscaling</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-2" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 2. Vertical Autoscaling</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-3" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 3 & 4. HPA & VPA Results</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-5" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 5. Cluster Autoscaler</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-6" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 6. Node Auto Provisioning</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-7" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 7. Test Larger Demand</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#task-card-8" class="sidebar-link" onclick="toggleDrawer()"><i class="fas fa-terminal"></i> Task 8. Optimize Larger Loads</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SCROLL BACK FLOAT INDICATOR -->
+    <div class="scroll-back-indicator" id="scrollBackIndicator" onclick="returnToTask()">
+        <i class="fas fa-arrow-down"></i> Kembali ke Pembahasan Task
+    </div>
+
+    <div class="container">
+        <!-- NAVIGASI KEMBALI -->
+        <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Lab</a>
+        
+        <!-- Header Section -->
+        <div class="header-card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
+            <h1 style="color: white;">🚀 Panduan Qwiklabs: Understanding and Combining GKE Autoscaling Strategies</h1>
+            <p style="color: #94a3b8; font-size: 1rem; max-width: 700px;">Gunakan halaman panduan interaktif ini untuk mengonfigurasi klaster Kubernetes (GKE) agar dapat melakukan penskalaan otomatis secara vertikal, horizontal, dan pada tingkat infrastruktur secara efisien.</p>
+            
+            <div class="reference-box" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <strong style="color: #f1f5f9;">💡 Referensi & Pelajari Lebih Lanjut:</strong>
+                <ul>
+                    <li>Course / Lab Link: <a href="https://www.skills.google/focuses/15636/?parent=catalog" target="_blank" style="color: #38bdf8;">Understanding and Combining GKE Autoscaling Strategies</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Video Pendukung -->
+        <div class="task-card" id="video-tutorial">
+            <h2>📺 Video Tutorial Referensi</h2>
+            <p style="margin-bottom: 16px;">Saksikan video panduan di bawah ini untuk melihat demonstrasi visual lengkap langkah-demi-langkah:</p>
+            <div class="video-responsive">
+                <iframe src="https://www.youtube.com/embed/L9aWRYnerSI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Form Inputs Section -->
+        <div class="input-card" id="variables-form">
+            <h3>⚙️ Konfigurasi Variabel Lab</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Isi variabel dari panel kiri Qwiklabs Anda. Seluruh perintah di bawah akan otomatis terpasang dengan nilai ini secara presisi.</p>
+            
+            <div class="form-group">
+                <label for="zone">GCP Zone</label>
+                <small>Lihat paragraf awal bagian <strong>Provision testing environment</strong> di instruksi Qwiklabs. Tekan <code>Ctrl + F</code> lalu cari perintah <code>gcloud config set compute/zone</code> (contoh: <code>us-east1-c</code> atau <code>europe-west1-d</code>).</small>
+                <input type="text" id="zone" placeholder="us-east1-c" oninput="updateCommands()">
+            </div>
+        </div>
+
+        <!-- Warning Banner Dinamis -->
+        <div id="warningBanner" class="warning-banner">
+            ⚠️ <strong>Perhatian:</strong> Variabel Zone belum diisi! Harap lengkapi form di atas agar skrip di bawah tidak berisi parameter kosong.
+        </div>
+
+        <!-- Setup Task -->
+        <div class="task-card" id="prep-installation">
+            <h2>⚙️ Persiapan: Provision Testing Environment</h2>
+            <p>Atur zona default ke <span class="valZone">&lt;ZONE&gt;</span> dan buat klaster GKE baru dengan 3 node yang mendukung Vertical Pod Autoscaling.</p>
+            
+            <p style="margin-top: 12px;">Untuk menyelesaikannya, jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            
+            <div class="warning-banner" id="taskWarning1" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309; margin-top: 12px; margin-bottom: 12px;">
+                ⚠️ <strong>Penting:</strong> Pastikan parameter <strong>Zone</strong> di atas sudah diisi.
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>1. Buat Klaster GKE</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-setup-1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-setup-1"></code></pre>
+            </div>
+            
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu (3-5 Menit):</strong> Terminal akan terlihat memproses (loading). Tunggu hingga prompt terminal kembali muncul sebelum melanjutkan ke langkah berikutnya.
+            </div>
+
+            <h3 style="margin-top: 24px;">Deploy Aplikasi PHP-Apache</h3>
+            <p>Buat manifest deployment untuk aplikasi yang akan digunakan untuk mendemonstrasikan autoscaling.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>2. Terapkan Manifest</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-setup-2')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-setup-2"></code></pre>
+            </div>
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Setelah perintah di atas selesai, silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Provision testing environment</em> di Qwiklabs.
+            </div>
+        </div>
+
+        <!-- Task 1 -->
+        <div class="task-card" id="task-card-1">
+            <h2>Task 1. Scale pods with Horizontal Pod Autoscaling</h2>
+            <p>HPA (Horizontal Pod Autoscaler) akan secara otomatis menambah atau mengurangi jumlah pod berdasarkan penggunaan CPU.</p>
+            
+            <details class="explain-box">
+                <summary><i class="fas fa-lightbulb" style="color: var(--accent-yellow);"></i> Konsep HPA</summary>
+                <div class="explain-content">
+                    <p>Perintah <code>autoscale</code> di bawah akan menjaga rata-rata penggunaan CPU pada 50%. Jika beban naik melebihi 50%, HPA akan menambah pod (maksimal 10). Jika beban turun, HPA akan mengurangi pod (minimal 1).</p>
+                </div>
+            </details>
+
+            <p style="margin-top: 12px;">Jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task1"></code></pre>
+            </div>
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Scale pods with Horizontal Pod Autoscaling</em> di Qwiklabs.
+            </div>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="task-card" id="task-card-2">
+            <h2>Task 2. Scale size of pods with Vertical Pod Autoscaling</h2>
+            <p>VPA (Vertical Pod Autoscaler) bertugas merekomendasikan atau secara otomatis memperbarui nilai *requests* dan *limits* CPU/Memori untuk sebuah container.</p>
+
+            <h3 style="margin-top: 20px;">Langkah 2.1: Deploy Hello Server</h3>
+            <p>Jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-1"></code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 2.2: Buat & Terapkan VPA (Mode Off)</h3>
+            <p>Pertama, kita deploy VPA dalam mode <code>Off</code> untuk sekadar melihat rekomendasinya tanpa mengubah pod secara langsung.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Buat VPA</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-2a')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-2a"></code></pre>
+            </div>
+
+            <div class="warning-yellow">
+                ⏳ <strong>Tunggu Sekitar 1 Menit:</strong> VPA membutuhkan waktu untuk mengumpulkan data riwayat dari container sebelum bisa memberikan rekomendasi (Container Recommendations).
+            </div>
+
+            <p>Setelah menunggu sekitar 1 menit, jalankan perintah ini untuk melihat hasil rekomendasinya:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cek Rekomendasi VPA</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-2b')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-2b"></code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 2.3: Ubah VPA ke Mode Auto</h3>
+            <p>Ubah kebijakan pembaruan menjadi <code>Auto</code> agar VPA dapat menghapus dan membuat ulang pod dengan ukuran resource yang baru direkomendasikan.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task2-3')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task2-3"></code></pre>
+            </div>
+            
+            <div class="info-box" style="background: #fff9db; border-left-color: #f59e0b; color: #b45309;">
+                <i class="fa-solid fa-keyboard"></i> <strong>Tindakan Manual:</strong> Perintah terakhir di atas (<code>kubectl get pods -w</code>) akan terus memantau status pod secara realtime. <strong>Tunggu</strong> hingga Anda melihat pod <code>hello-server</code> berstatus <em>terminating</em> atau <em>pending</em>. Setelah itu, tekan <strong>Ctrl + C</strong> di terminal untuk menghentikan pantauan.
+            </div>
+            
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Scale size of pods with Vertical Pod Autoscaling</em> di Qwiklabs.
+            </div>
+        </div>
+
+        <!-- Task 3 & 4 -->
+        <div class="task-card" id="task-card-3">
+            <h2>Task 3 & 4. HPA & VPA Results</h2>
+            <p>Pada tahap ini, Anda hanya perlu menginspeksi hasil dari autoscaler yang telah dikonfigurasi sebelumnya. Karena aplikasi saat ini tidak menerima trafik, HPA akan menurunkan skala deployment ke jumlah minimum, dan VPA akan menyesuaikan request CPU ke nilai yang lebih rendah.</p>
+
+            <p style="margin-top: 12px;">Jalankan perintah berikut di <strong>Cloud Shell</strong> untuk melihat hasilnya:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task34')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task34"></code></pre>
+            </div>
+        </div>
+
+        <!-- Task 5 -->
+        <div class="task-card" id="task-card-5">
+            <h2>Task 5. Cluster Autoscaler</h2>
+            <p>Cluster Autoscaler akan menambah node ke node pool saat beban tinggi, dan menghapus node saat beban rendah untuk menghemat biaya.</p>
+
+            <h3 style="margin-top: 20px;">Langkah 5.1: Aktifkan Cluster Autoscaler</h3>
+            <p>Jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Update Klaster</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task5-1')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task5-1"></code></pre>
+            </div>
+
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu (2-3 Menit):</strong> Perintah <code>gcloud update</code> di atas akan membuat terminal Anda memproses cukup lama. Jangan tutup terminal, tunggu sampai proses selesai dan prompt shell muncul kembali.
+            </div>
+
+            <h3 style="margin-top: 24px;">Langkah 5.2: Terapkan Pod Disruption Budgets (PDB)</h3>
+            <details class="explain-box">
+                <summary><i class="fas fa-lightbulb" style="color: var(--accent-yellow);"></i> Kenapa butuh PDB?</summary>
+                <div class="explain-content">
+                    <p>Secara default, pod sistem (seperti <code>kube-dns</code>, <code>metrics-server</code>) mencegah Cluster Autoscaler untuk menghapus node tempat mereka berjalan. Dengan menerapkan PDB, kita mengizinkan Kubernetes untuk memindahkan pod-pod tersebut dengan aman sehingga node yang kosong bisa dihapus/dikecilkan skalanya.</p>
+                </div>
+            </details>
+
+            <p style="margin-top: 12px;">Jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Terapkan PDB</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task5-2')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task5-2"></code></pre>
+            </div>
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Cluster autoscaler</em> di Qwiklabs.
+            </div>
+            
+            <p style="margin-top: 16px;">Anda dapat mengecek status jumlah node yang menyusut (dari 3 menjadi 2) dengan menjalankan <code>kubectl get nodes</code> secara berkala.</p>
+        </div>
+
+        <!-- Task 6 -->
+        <div class="task-card" id="task-card-6">
+            <h2>Task 6. Node Auto Provisioning</h2>
+            <p>Node Auto Provisioning (NAP) memungkinkan GKE untuk membuat <em>node pool</em> baru secara otomatis dengan spesifikasi mesin yang paling optimal sesuai kebutuhan beban kerja, alih-alih hanya menambah node pada pool yang sudah ada.</p>
+
+            <p style="margin-top: 12px;">Jalankan perintah berikut di <strong>Cloud Shell</strong>:</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task6')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task6"></code></pre>
+            </div>
+
+            <div class="warning-yellow">
+                ⏳ <strong>Proses Memakan Waktu:</strong> Sama seperti Task 5, proses update klaster ini akan memakan waktu beberapa menit.
+            </div>
+
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Setelah selesai, silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Node Auto Provisioning</em> di Qwiklabs.
+            </div>
+        </div>
+
+        <!-- Task 7 -->
+        <div class="task-card" id="task-card-7">
+            <h2>Task 7. Test with larger demand</h2>
+            <p>Sekarang kita akan memberikan beban palsu (load test) untuk melihat bagaimana HPA, Cluster Autoscaler, dan NAP bekerja sama menangani lonjakan trafik.</p>
+
+            <div class="info-box" style="background: #e0e7ff; border-left-color: #4f46e5; color: #3730a3;">
+                <i class="fa-solid fa-plus-square"></i> <strong>LANGKAH MANUAL PENTING:</strong>
+                <ol style="margin-top: 8px; margin-left: 20px;">
+                    <li>Buka tab Cloud Shell baru dengan mengklik ikon <strong>(+)</strong> (Add a Cloud Shell) di bagian atas terminal.</li>
+                    <li>Salin dan jalankan kode di bawah ini pada tab baru tersebut. Perintah ini akan berjalan terus-menerus (infinite loop).</li>
+                    <li>Biarkan tab tersebut berjalan, lalu <strong>kembali ke tab Cloud Shell pertama</strong> Anda untuk memantau hasilnya menggunakan perintah <code>kubectl get hpa</code>.</li>
+                </ol>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Jalankan di Tab Cloud Shell KEDUA (+)</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task7')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task7"></code></pre>
+            </div>
+            
+            <div class="warning-yellow">
+                ⏳ <strong>Tunggu 1-3 Menit:</strong> Setelah menjalankan load test, pantau terus `kubectl get hpa` di tab pertama Anda. Tunggu sampai kolom target menunjukkan CPU di atas 100% dan pod mulai bertambah.
+            </div>
+
+            <p style="margin-top: 16px;">Setelah Anda melihat HPA merespons beban, Anda bisa kembali ke tab kedua dan menekan <strong>Ctrl + C</strong> untuk menghentikan load test.</p>
+        </div>
+
+        <!-- Task 8 -->
+        <div class="task-card" id="task-card-8">
+            <h2>Task 8. Optimize larger loads</h2>
+            <p>Untuk menghindari waktu tunggu (latency) yang lama saat Cluster Autoscaler membuat node baru, kita dapat menggunakan strategi <strong>Pause Pods</strong> (Overprovisioning).</p>
+
+            <details class="explain-box">
+                <summary><i class="fas fa-lightbulb" style="color: var(--accent-yellow);"></i> Konsep Pause Pods</summary>
+                <div class="explain-content">
+                    <p>Pause Pod adalah pod dengan prioritas sangat rendah yang tidak melakukan apa-apa selain memesan (reserve) ruang di node. Saat aplikasi utama membutuhkan ruang secara mendadak, Kubernetes akan menendang (evict) Pause Pod ini dan langsung memasukkan pod aplikasi utama, sehingga aplikasi tidak perlu menunggu node baru selesai dibuat.</p>
+                </div>
+            </details>
+
+            <p style="margin-top: 12px;">Jalankan perintah berikut di <strong>Cloud Shell</strong> (Tab Pertama):</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task8')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task8"></code></pre>
+            </div>
+            <div class="info-box">
+                <i class="fa-solid fa-check-circle"></i> Silakan klik tombol <strong>Check my progress</strong> pada bagian <em>Optimize larger loads</em> di Qwiklabs.
+            </div>
+        </div>
+
+        <!-- Congratulations Section -->
+        <div class="explain-box" style="border-color: #a3cfbb; background: #e6f4ea; margin-top: 24px; margin-bottom: 24px;">
+            <summary style="background: #e6f4ea; color: #0f5132; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 16px; border-bottom: 1px solid #a3cfbb;">
+                <i class="fa-solid fa-circle-check"></i> Lab Selesai!
+            </summary>
+            <div class="explain-content" style="padding: 16px; color: #0f5132; line-height: 1.6;">
+                🎉 <strong>Selamat, kamu udah menyelesaikan labnya!</strong> Skormu harusnya udah 100% sekarang.
+                <br><br>
+                Jika di pertengahan ada kendala atau masih gagal, jangan sungkan untuk kabari ke <strong>Fachri</strong> ya. 
+                Jangan lupa sertakan <strong>screenshot pesan errornya</strong> dan sebutkan <strong>nama lab</strong> yang sedang kamu kerjakan biar bisa dibantu cek dengan cepat!
+            </div>
+        </div>
+
+        <!-- Footer Docs Section -->
+        <div class="docs-section">
+            <h3>📚 Dokumentasi Pendukung</h3>
+            <p>Pelajari lebih lanjut mengenai teknologi yang digunakan dalam lab ini:</p>
+            <ul>
+                <li><a href="https://docs.cloud.google.com/docs?hl=id" target="_blank"><i class="fas fa-book"></i> Google Cloud Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/shell/docs?hl=id" target="_blank"><i class="fas fa-terminal"></i> Google Cloud Shell Documentation</a></li>
+                <li><a href="https://docs.cloud.google.com/sdk/docs?hl=id" target="_blank"><i class="fas fa-code"></i> Google Cloud CLI (gcloud)</a></li>
+            </ul>
+        </div>
+
+        <!-- Bug Report Form -->
+        <div class="report-card">
+            <details>
+                <summary style="font-weight: 600; cursor: pointer; color: var(--accent-red); outline: none;">🚨 Lapor Bug / Variasi Lab</summary>
+                <div style="margin-top: 16px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Jika menemukan kendala eksekusi kode atau perubahan urutan tugas pada portal Qwiklabs, sampaikan laporan Anda melalui form di bawah:</p>
+                    <form style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Honeypot Anti-Spam -->
+                        <input type="checkbox" name="botcheck" style="display: none;">
+                        <textarea rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-sans); font-size: 0.9rem;" placeholder="Deskripsikan masalah, pesan error, atau perbedaan langkah yang Anda temui..."></textarea>
+                        <button type="button" style="padding: 10px 18px; background: var(--accent-blue); color: white; border: none; border-radius: 6px; cursor: pointer; align-self: flex-start; font-weight: 600; font-size: 0.9rem;">Kirim Laporan</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- JavaScript Interaktif -->
+    <script>
+        function updateCommands() {
+            // Ambil input dari form
+            const zoneInput = document.getElementById('zone').value.trim();
+            const zone = zoneInput || '<ZONE>';
+
+            // Banner warning visibility
+            const warningBanner = document.getElementById('warningBanner');
+            const taskWarning1 = document.getElementById('taskWarning1');
+            
+            if (zone === '<ZONE>') {
+                warningBanner.style.display = 'block';
+                if (taskWarning1) taskWarning1.style.display = 'block';
+            } else {
+                warningBanner.style.display = 'none';
+                if (taskWarning1) taskWarning1.style.display = 'none';
+            }
+
+            // Update Dynamic Spans pada teks penjelasan
+            document.querySelectorAll('.valZone').forEach(el => el.textContent = zone);
+
+            // Generate String Kode Per-Task
+
+            // Prep: Cluster Creation
+            document.getElementById('code-setup-1').textContent = `gcloud config set compute/zone ${zone}
+gcloud container clusters create scaling-demo --num-nodes=3 --enable-vertical-pod-autoscaling`;
+
+            // Prep: Manifest Deployment
+            document.getElementById('code-setup-2').textContent = `cat << EOF > php-apache.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+        image: k8s.gcr.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-apache
+  labels:
+    run: php-apache
+spec:
+  ports:
+  - port: 80
+  selector:
+    run: php-apache
+EOF
+
+kubectl apply -f php-apache.yaml`;
+
+            // Task 1: HPA
+            document.getElementById('code-task1').textContent = `kubectl get deployment
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+kubectl get hpa`;
+
+            // Task 2.1: VPA Hello Server
+            document.getElementById('code-task2-1').textContent = `gcloud container clusters describe scaling-demo | grep ^verticalPodAutoscaling -A 1
+kubectl create deployment hello-server --image=gcr.io/google-samples/hello-app:1.0
+kubectl get deployment hello-server
+kubectl set resources deployment hello-server --requests=cpu=450m
+kubectl describe pod hello-server | sed -n "/Containers:$/,/Conditions:/p"`;
+
+            // Task 2.2a: VPA Off Mode Creation
+            document.getElementById('code-task2-2a').textContent = `cat << EOF > hello-vpa.yaml
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: hello-server-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       hello-server
+  updatePolicy:
+    updateMode: "Off"
+EOF
+
+kubectl apply -f hello-vpa.yaml`;
+
+            // Task 2.2b: VPA Off Mode Describe
+            document.getElementById('code-task2-2b').textContent = `kubectl describe vpa hello-server-vpa`;
+
+            // Task 2.3: VPA Auto Mode
+            document.getElementById('code-task2-3').textContent = `sed -i 's/Off/Auto/g' hello-vpa.yaml
+kubectl apply -f hello-vpa.yaml
+kubectl scale deployment hello-server --replicas=2
+kubectl get pods -w`;
+
+            // Task 3 & 4: HPA & VPA Results
+            document.getElementById('code-task34').textContent = `kubectl get hpa
+kubectl describe pod hello-server | sed -n "/Containers:$/,/Conditions:/p"`;
+
+            // Task 5.1: Cluster Autoscaler Update
+            document.getElementById('code-task5-1').textContent = `gcloud beta container clusters update scaling-demo --enable-autoscaling --min-nodes 1 --max-nodes 5
+gcloud beta container clusters update scaling-demo --autoscaling-profile optimize-utilization`;
+
+            // Task 5.2: Cluster Autoscaler PDB
+            document.getElementById('code-task5-2').textContent = `kubectl get deployment -n kube-system
+
+kubectl create poddisruptionbudget kube-dns-pdb --namespace=kube-system --selector k8s-app=kube-dns --max-unavailable 1
+kubectl create poddisruptionbudget prometheus-pdb --namespace=kube-system --selector k8s-app=prometheus-to-sd --max-unavailable 1
+kubectl create poddisruptionbudget kube-proxy-pdb --namespace=kube-system --selector component=kube-proxy --max-unavailable 1
+kubectl create poddisruptionbudget metrics-agent-pdb --namespace=kube-system --selector k8s-app=gke-metrics-agent --max-unavailable 1
+kubectl create poddisruptionbudget metrics-server-pdb --namespace=kube-system --selector k8s-app=metrics-server --max-unavailable 1
+kubectl create poddisruptionbudget fluentd-pdb --namespace=kube-system --selector k8s-app=fluentd-gke --max-unavailable 1
+kubectl create poddisruptionbudget backend-pdb --namespace=kube-system --selector k8s-app=glbc --max-unavailable 1
+kubectl create poddisruptionbudget kube-dns-autoscaler-pdb --namespace=kube-system --selector k8s-app=kube-dns-autoscaler --max-unavailable 1
+kubectl create poddisruptionbudget stackdriver-pdb --namespace=kube-system --selector app=stackdriver-metadata-agent --max-unavailable 1
+kubectl create poddisruptionbudget event-pdb --namespace=kube-system --selector k8s-app=event-exporter --max-unavailable 1`;
+
+            // Task 6: Node Auto Provisioning
+            document.getElementById('code-task6').textContent = `gcloud container clusters update scaling-demo \\
+    --enable-autoprovisioning \\
+    --min-cpu 1 \\
+    --min-memory 2 \\
+    --max-cpu 45 \\
+    --max-memory 160`;
+
+            // Task 7: Load Generator
+            document.getElementById('code-task7').textContent = `kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"`;
+
+            // Task 8: Pause Pods
+            document.getElementById('code-task8').textContent = `cat << EOF > pause-pod.yaml
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: overprovisioning
+value: -1
+globalDefault: false
+description: "Priority class used by overprovisioning."
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overprovisioning
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: overprovisioning
+  template:
+    metadata:
+      labels:
+        run: overprovisioning
+    spec:
+      priorityClassName: overprovisioning
+      containers:
+        - name: reserve-resources
+          image: k8s.gcr.io/pause
+          resources:
+            requests:
+              cpu: 1
+              memory: 4Gi
+EOF
+
+kubectl apply -f pause-pod.yaml`;
+        }
+
+        // SLIDE-OUT DRAWER TOGGLE
+        function toggleDrawer() {
+            document.getElementById('sidebarDrawer').classList.toggle('open');
+            document.getElementById('drawerBackdrop').classList.toggle('open');
+        }
+
+        // INTERSECTION OBSERVER FOR RETURN BUTTON AUTO-HIDE
+        let taskObserver = null;
+        let lastActiveTaskId = null;
+
+        function startObservingTask(taskId) {
+            if (taskObserver) taskObserver.disconnect();
+            const taskElement = document.getElementById(taskId);
+            if (!taskElement) return;
+
+            taskObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.getElementById('scrollBackIndicator').style.display = 'none';
+                        taskObserver.disconnect();
+                    }
+                });
+            }, { threshold: 0.1 });
+            taskObserver.observe(taskElement);
+        }
+
+        // SMOOTH SCROLL TO INPUTS & HIGHLIGHT
+        function scrollToInputs(targetCardId, activeTaskId) {
+            lastActiveTaskId = activeTaskId;
+            const targetEl = document.getElementById(targetCardId);
+            if (!targetEl) return;
+
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+
+            // Animasi highlight
+            const inputs = targetEl.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.add('pulse-highlight');
+                setTimeout(() => input.classList.remove('pulse-highlight'), 4500);
+            });
+
+            // Focus
+            if (inputs.length > 0) {
+                setTimeout(() => inputs[0].focus(), 600);
+            }
+            
+            const indicator = document.getElementById('scrollBackIndicator');
+            indicator.style.display = 'flex';
+
+            // Aktifkan Observer tunda
+            setTimeout(() => {
+                startObservingTask(activeTaskId);
+            }, 800);
+        }
+
+        function returnToTask() {
+            if (lastActiveTaskId) {
+                const activeEl = document.getElementById(lastActiveTaskId);
+                if (activeEl) {
+                    activeEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                document.getElementById('scrollBackIndicator').style.display = 'none';
+                if (taskObserver) taskObserver.disconnect();
+            }
+        }
+
+        // Active link highlighting on scroll inside drawer
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.task-card, #variables-form');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            let currentSectionId = 'variables-form';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 150) {
+                    currentSectionId = section.getAttribute('id') || currentSectionId;
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Fungsi Salin Kode ke Clipboard dengan Validasi
+        function copyCode(btn, elementId) {
+            const codeText = document.getElementById(elementId).textContent;
+
+            // Validasi hanya jika kode yang akan disalin masih memiliki placeholder variabel kosong
+            if (codeText.includes('<ZONE>')) {
+                alert("⚠️ Harap lengkapi GCP Zone di form atas terlebih dahulu sebelum menyalin kode!");
+                
+                // Cari ID task card terdekat untuk navigasi kembali
+                const taskCard = btn.closest('.task-card');
+                const taskCardId = taskCard ? taskCard.id || 'prep-installation' : 'prep-installation';
+                
+                scrollToInputs('variables-form', taskCardId);
+                return;
+            }
+
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin kode:', err);
+            });
+        }
+
+        // Inisialisasi perintah saat halaman pertama kali dimuat
+        window.onload = updateCommands;
+    </script>
+</body>
+</html>
