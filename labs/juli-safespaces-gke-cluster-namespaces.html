@@ -703,6 +703,9 @@
 
             <h3 style="margin-top: 24px;">Langkah 3.2: Uji Akses Service Account</h3>
             <p>Sekarang kita akan mensimulasikan login sebagai developer <code>team-a</code>. Buka <strong>Tab Baru (New Tab)</strong> di Cloud Shell Anda (klik ikon <strong>+</strong> di atas terminal), lalu jalankan perintah ini:</p>
+            <div class="warning-yellow" style="margin-top: 12px; margin-bottom: 12px; background: #fff9db; border-left-color: #f59e0b; color: #b45309;">
+                💡 <strong>Petunjuk Tab Cloud Shell:</strong> Sangat disarankan untuk membuka <strong>Tab Cloud Shell Baru (+)</strong> saat mengeksekusi Langkah 3.2 di bawah agar identitas akun Admin utama Anda di Tab 1 tetap terjaga.
+            </div>
             <div class="code-container">
                 <div class="code-header">
                     <span>Cloud Shell Terminal (TAB BARU)</span>
@@ -935,7 +938,11 @@ kubectl get pods --namespace=team-b || true`;
 gcloud container clusters get-credentials multi-tenant-cluster --zone \${ZONE} --project \${GOOGLE_CLOUD_PROJECT}`;
 
             // Task 4.1
-            document.getElementById('code-task4-1').textContent = `kubectl create quota test-quota \\
+            document.getElementById('code-task4-1').textContent = `# Switch kembali ke akun Admin Utama (student) jika pengerjaan berlanjut di terminal yang sama
+gcloud config set account \$(gcloud auth list --format="value(account)" | grep "qwiklabs.net")
+gcloud container clusters get-credentials multi-tenant-cluster --zone \${ZONE}
+
+kubectl create quota test-quota \\
 --hard=count/pods=2,count/services.loadbalancers=1 --namespace=team-a
 
 kubectl run app-server-2 --image=quay.io/centos/centos:9 --namespace=team-a -- sleep infinity
