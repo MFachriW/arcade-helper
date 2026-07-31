@@ -907,16 +907,18 @@ kubectl describe pod app-server`;
 
             // Task 3.1
             document.getElementById('code-task3-1').textContent = `gcloud projects add-iam-policy-binding \${GOOGLE_CLOUD_PROJECT} \\
---member=serviceAccount:team-a-dev@\${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com  \\
+--member=serviceAccount:team-a-dev@\${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com \\
 --role=roles/container.clusterViewer
 
 kubectl create role pod-reader \\
---resource=pods --verb=watch --verb=get --verb=list
+--resource=pods --verb=watch --verb=get --verb=list \\
+-n team-a
 
 kubectl create -f developer-role.yaml
 
 kubectl create rolebinding team-a-developers \\
---role=developer --user=team-a-dev@\${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
+--role=developer --user=team-a-dev@\${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com \\
+-n team-a
 
 gcloud iam service-accounts keys create /tmp/key.json --iam-account team-a-dev@\${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com`;
 
