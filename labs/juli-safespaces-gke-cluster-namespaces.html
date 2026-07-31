@@ -977,7 +977,10 @@ gcloud container clusters \\
   update multi-tenant-cluster --zone \${ZONE} \\
   --resource-usage-bigquery-dataset cluster_dataset
 
-export GCP_BILLING_EXPORT_TABLE_FULL_PATH=\${GOOGLE_CLOUD_PROJECT}.billing_dataset.gcp_billing_export_v1_xxxx
+# Otomatis mengambil nama tabel billing dan membuat path lengkapnya
+export BILLING_TABLE=\$(bq ls --format=sparse billing_dataset | grep -o 'gcp_billing_export_v1_[^ ]*')
+export GCP_BILLING_EXPORT_TABLE_FULL_PATH="\${GOOGLE_CLOUD_PROJECT}.billing_dataset.\${BILLING_TABLE}"
+
 export USAGE_METERING_DATASET_ID=cluster_dataset
 export COST_BREAKDOWN_TABLE_ID=usage_metering_cost_breakdown
 
