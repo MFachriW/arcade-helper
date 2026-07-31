@@ -517,6 +517,26 @@ provider "google" {
             </div>
         </div>
 
+        <!-- Emergency Reset Box -->
+        <details class="explain-box" style="background: #fff8e1; border-color: #f59e0b; margin-bottom: 24px;">
+            <summary style="background: #fef3c7; color: #92400e; font-weight: 700; cursor: pointer; outline: none;">
+                🚨 Terlanjur Error / Ingin Reset State Terraform dari Awal? Klik di sini
+            </summary>
+            <div class="explain-content" style="color: #78350f; line-height: 1.6; padding: 14px;">
+                Jika Anda terlanjur menjalankan Langkah 2.2 / 3 tanpa mengecek progress Task 2 (sehingga muncul error <em>"Please modify main.tf file and add 'tags'..."</em> atau skor terhenti 10/20), jalankan perintah pembersihan total ini di <strong>Cloud Shell</strong> untuk mereset seluruh resource dan state Terraform secara bersih:
+                
+                <div class="code-container" style="margin-top: 12px;">
+                    <div class="code-header">
+                        <span>Bash - Emergency Reset Terraform State</span>
+                        <button class="copy-btn" onclick="copyCode(this, 'code-reset-tf')"><i class="fas fa-copy"></i> Copy Reset</button>
+                    </div>
+                    <pre><code id="code-reset-tf">terraform destroy -auto-approve || true
+rm -rf .terraform* main.tf* static_ip</code></pre>
+                </div>
+                <p style="margin-top: 8px; font-size: 0.9rem;"><em>Setelah perintah di atas selesai, Anda dapat memulai kembali pengerjaan dari <strong>Task 1</strong> secara bersih dan lancar!</em></p>
+            </div>
+        </details>
+
         <!-- Task 1 -->
         <div class="task-card" id="task-card-1">
             <h2 id="task1">Task 1. Build Infrastructure</h2>
@@ -557,6 +577,22 @@ provider "google" {
                     <button class="copy-btn" onclick="copyCode(this, 'code-task2-1')"><i class="fas fa-copy"></i> Copy</button>
                 </div>
                 <pre><code id="code-task2-1"></code></pre>
+            </div>
+
+            <div class="info-box" style="background: #e6f4ea; border-color: #a3cfbb; color: #0f5132; margin-top: 16px; margin-bottom: 16px;">
+                ✅ <strong>CHECK MY PROGRESS SEKARANG:</strong> Klik tombol <strong>Check my progress pada Task 2</strong> di portal Qwiklabs Anda sekarang!
+            </div>
+
+            <div class="explain-box" style="background: #fff5f5; border: 2px solid #ef4444; color: #991b1b; margin-bottom: 24px;">
+                <summary style="background: #fee2e2; color: #991b1b; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.2rem;"></i> 🛑 STOP! JANGAN JALANKAN LANGKAH 2.2 SEBELUM CHECK PROGRESS!
+                </summary>
+                <div class="explain-content" style="color: #7f1d1d; line-height: 1.6; padding: 14px;">
+                    <strong>Mengapa ini sangat penting?</strong><br>
+                    Langkah 2.1 di atas baru saja membuat VM Instance dengan OS <code>debian-12</code> dan tag <code>["web", "dev"]</code> yang <strong>wajib diverifikasi oleh Qwiklabs terlebih dahulu</strong>.<br><br>
+                    Jika Anda langsung mengeksekusi <strong>Langkah 2.2</strong> di bawah sebelum menekan tombol verifikasi, Langkah 2.2 akan mengedit OS disk dan mengeksekusi <code>terraform destroy</code> yang menghapus instance tersebut. Jika ini terjadi sebelum Anda mengecek progress, Qwiklabs akan mengeluarkan error: <code>Please modify main.tf file and add 'tags' argument in vm instance using terraform.</code><br><br>
+                    <strong>Pastikan Task 2 sudah centang hijau di Qwiklabs sebelum lanjut ke Langkah 2.2!</strong>
+                </div>
             </div>
 
             <h3 style="margin-top: 24px;">Langkah 2.2: Destructive Changes (Ubah Disk) & Destroy</h3>
