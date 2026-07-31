@@ -517,26 +517,6 @@ provider "google" {
             </div>
         </div>
 
-        <!-- Emergency Reset Box -->
-        <details class="explain-box" style="background: #fff8e1; border-color: #f59e0b; margin-bottom: 24px;">
-            <summary style="background: #fef3c7; color: #92400e; font-weight: 700; cursor: pointer; outline: none;">
-                🚨 Terlanjur Error / Ingin Reset State Terraform dari Awal? Klik di sini
-            </summary>
-            <div class="explain-content" style="color: #78350f; line-height: 1.6; padding: 14px;">
-                Jika Anda terlanjur menjalankan Langkah 2.2 / 3 tanpa mengecek progress Task 2 (sehingga muncul error <em>"Please modify main.tf file and add 'tags'..."</em> atau skor terhenti 10/20), jalankan perintah pembersihan total ini di <strong>Cloud Shell</strong> untuk mereset seluruh resource dan state Terraform secara bersih:
-                
-                <div class="code-container" style="margin-top: 12px;">
-                    <div class="code-header">
-                        <span>Bash - Emergency Reset Terraform State</span>
-                        <button class="copy-btn" onclick="copyCode(this, 'code-reset-tf')"><i class="fas fa-copy"></i> Copy Reset</button>
-                    </div>
-                    <pre><code id="code-reset-tf">terraform destroy -auto-approve || true
-rm -rf .terraform* main.tf* static_ip</code></pre>
-                </div>
-                <p style="margin-top: 8px; font-size: 0.9rem;"><em>Setelah perintah di atas selesai, Anda dapat memulai kembali pengerjaan dari <strong>Task 1</strong> secara bersih dan lancar!</em></p>
-            </div>
-        </details>
-
         <!-- Task 1 -->
         <div class="task-card" id="task-card-1">
             <h2 id="task1">Task 1. Build Infrastructure</h2>
