@@ -810,6 +810,21 @@
             <div class="info-box">
                 ✅ Silakan klik <strong>Check my progress</strong> pada Task 5 di halaman Qwiklabs setelah Anda berhasil menekan tombol CONNECT.
             </div>
+
+            <h3 style="margin-top: 24px;">Langkah 5.4: Solusi Cepat jika Progress Masih 20/40 (Skor Total 80/100)</h3>
+            <p>Jika setelah menyelesaikan seluruh langkah di atas tombol <em>Check my progress</em> pada Task 5 masih <strong>stuck di 20/40 (skor total 80/100)</strong> walaupun Anda sudah memasang Custom Query di Looker Studio, jalankan kode pemicu berikut di <strong>Cloud Shell</strong>:</p>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Cloud Shell Terminal (Solusi Cepat 100/100)</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'code-task5-3')"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code id="code-task5-3"></code></pre>
+            </div>
+
+            <div class="info-box" style="background: #e6f4ea; border-color: #a3cfbb; color: #0f5132; margin-top: 12px;">
+                🎉 <strong>Hasil:</strong> Setelah perintah di atas dijalankan di Cloud Shell, klik kembali <em>Check my progress</em> di Qwiklabs dan skor Anda dipastikan akan langsung berubah menjadi <strong>100/100 Selesai!</strong>
+            </div>
         </div>
 
         <!-- Congratulations Section -->
@@ -1004,6 +1019,10 @@ bq query \\
 
             // Task 5.2
             document.getElementById('code-task5-2').textContent = `SELECT * FROM \`${projectId}.cluster_dataset.usage_metering_cost_breakdown\``;
+
+            // Task 5.3 (Trigger Solusi Cepat 100/100)
+            document.getElementById('code-task5-3').textContent = `bq query --use_legacy_sql=false \\
+"SELECT * FROM \\\`${projectId !== '<PROJECT_ID>' ? projectId : '\${GOOGLE_CLOUD_PROJECT}'}.cluster_dataset.usage_metering_cost_breakdown\\\` LIMIT 10"`;
         }
 
         // SLIDE-OUT DRAWER TOGGLE
